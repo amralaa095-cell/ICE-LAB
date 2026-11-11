@@ -1,6 +1,12 @@
 <!doctype html>
 <html lang="en" data-theme="dark">
 <head>
+<meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 30 virtual benches with data analysis and calibration, and the Manufacturing Lab with its own machine simulations.">
+<meta name="theme-color" content="#050A1A">
+<link rel="icon" type="image/png" href="img/ice-mark.png">
+<meta property="og:title" content="ICE Lab · American University of Bahrain">
+<meta property="og:description" content="Book lab equipment, run the virtual benches and analyse your data.">
+<meta property="og:image" content="img/ice-mark.png">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8">
 <title>ICE Lab Virtual Bench</title>
@@ -253,7 +259,7 @@ input[type=range]{accent-color:#E5383B}
 </style>
 <div class="site-bar"><div class="in">
 <a class="brand" href="Home.dc.html" aria-label="ICE Lab home"><img src="img/ice-mark.png" alt=""><img src="img/ice-wordmark.png" alt="ICE LAB"></a>
-<nav aria-label="Main"><a href="Home.dc.html">Home</a><a href="SimHub.dc.html" aria-current="page">Simulation</a><a href="Manufacturing.dc.html">Manufacturing</a><a href="Booking.dc.html">Book</a></nav>
+<nav aria-label="Main"><a href="Home.dc.html">Home</a><a href="Main.dc.html">Equipment</a><a href="SimHub.dc.html" aria-current="page">Simulation</a><a href="Manufacturing.dc.html">Manufacturing</a><a href="Booking.dc.html">Book</a></nav>
 </div></div>
 <div class="wrap">
   <header class="top">
@@ -5594,7 +5600,8 @@ buildView=function(d){
   const tools=document.createElement('div');tools.className='wb-tools';
   if(sel){sel.setAttribute('aria-label','Choose equipment');tools.appendChild(sel);}
   
-  const all=document.createElement('a');all.href='SimHub.dc.html';all.textContent='All benches';tools.appendChild(all);
+  const isM=d.sec==='mfg';if(sel){sel.querySelectorAll('option').forEach(o=>{if(!o.value)return;const dv=DEVMAP[o.value];const hide=!dv||(dv.sec==='mfg')!==isM;o.hidden=hide;o.disabled=hide;});sel.querySelectorAll('optgroup').forEach(g=>{g.hidden=[...g.children].every(o=>o.hidden);});const o0=sel.querySelector('option[value=""]');if(o0)o0.textContent=isM?'Manufacturing machines':'All equipment';}
+  const all=document.createElement('a');all.href=isM?'Manufacturing.dc.html':'SimHub.dc.html';all.textContent=isM?'All machines':'All benches';tools.appendChild(all);
   hd.appendChild(tools);wb.appendChild(hd);
   /* apparatus */
   app.classList.add('wb-app');const h3=app.querySelector('h3'),bar=app.querySelector('#d3bar');const ah=document.createElement('div');ah.className='wb-apphead';ah.appendChild(h3);if(bar)ah.appendChild(bar);app.insertBefore(ah,app.firstChild);
@@ -5636,7 +5643,7 @@ buildView=function(d){
   scrollTo(0,0);fit();requestAnimationFrame(fit);if(rso){rso.disconnect();rso.observe(hd);}
 };
 /* overview (no device chosen): normal page */
-const baseRoute=route;route=function(){const h=(location.hash||'').slice(1);if(!DEVMAP[h]){document.body.classList.remove('wbmode');document.querySelectorAll('.wb-info').forEach(x=>x.remove());const sel=$$('mobSel'),mob=document.querySelector('.mobnav');if(sel&&mob&&!mob.contains(sel))mob.appendChild(sel);}baseRoute();};
+const baseRoute=route;route=function(){const h=(location.hash||'').slice(1);if(!DEVMAP[h]){document.body.classList.remove('wbmode');document.querySelectorAll('.wb-info').forEach(x=>x.remove());const sel=$$('mobSel'),mob=document.querySelector('.mobnav');if(sel&&mob&&!mob.contains(sel))mob.appendChild(sel);}baseRoute();if(!DEVMAP[h]){/* Manufacturing simulations live on the Manufacturing Lab page */document.querySelectorAll('.overview .ov-sec').forEach(sec=>{const a=sec.querySelector('a.card');if(a&&DEVMAP[a.getAttribute('href').slice(1)]&&DEVMAP[a.getAttribute('href').slice(1)].sec==='mfg')sec.remove();});const sel=$$('mobSel');if(sel){sel.querySelectorAll('option').forEach(o=>{if(!o.value)return;const dv=DEVMAP[o.value];const hide=!dv||dv.sec==='mfg';o.hidden=hide;o.disabled=hide;});sel.querySelectorAll('optgroup').forEach(g=>{g.hidden=[...g.children].every(o=>o.hidden);});const o0=sel.querySelector('option[value=""]');if(o0)o0.textContent='All equipment';}}};
 })();
 
 Object.keys(DEVMAP).forEach(function(id){var d=DEVMAP[id];if(d.sec!=='thermo'&&d.view3d){d._had3d=true;delete d.view3d;}});

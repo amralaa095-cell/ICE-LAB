@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 30 virtual benches with data analysis and calibration, and the Manufacturing Lab with its own machine simulations.">
+<meta name="theme-color" content="#050A1A">
+<link rel="icon" type="image/png" href="img/ice-mark.png">
+<meta property="og:title" content="ICE Lab · American University of Bahrain">
+<meta property="og:description" content="Book lab equipment, run the virtual benches and analyse your data.">
+<meta property="og:image" content="img/ice-mark.png">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Manufacturing Lab</title>
 <script src="./support.js"></script>
@@ -24,25 +30,12 @@ a{color:#8FB3FF}a:hover{color:#C3D5FF}
 </helmet>
 <div style="font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5; color: #E8ECF8; background: #050A1A; min-height: 100vh; color-scheme: dark">
 
-<header style="position: sticky; top: 0; z-index: 10; background: rgba(5,10,26,.92); backdrop-filter: blur(10px); border-bottom: 1px solid #16224A">
-<div style="max-width: 1400px; margin: 0 auto; padding: 10px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 28px">
-<a href="Home.dc.html" aria-label="ICE Lab home" style="display: flex; align-items: center; gap: 12px; text-decoration: none">
-<img src="img/ice-mark.png" alt="" style="width: 30px; height: auto">
-<img src="img/ice-wordmark.png" alt="ICE LAB" style="height: 30px; width: auto">
-</a>
-<nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto; justify-content: flex-end">
-<a href="Home.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px">Home</a>
-<a href="SimHub.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px">Simulation</a>
-<a href="Manufacturing.dc.html" aria-current="page" style="color: #FFFFFF; text-decoration: none; padding: 10px 14px; font-weight: 600; box-shadow: inset 0 -2px 0 #3A7BFF">Manufacturing</a>
-<a href="Booking.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px">Book</a>
-</nav>
-</div>
-</header>
+<style>.ice-hd{position:sticky;top:0;z-index:20;background:rgba(5,10,26,.92);backdrop-filter:blur(10px);border-bottom:1px solid #16224A;font-family:"IBM Plex Sans",system-ui,sans-serif}.ice-hd .in{max-width:1400px;margin:0 auto;padding:10px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px;box-sizing:border-box}.ice-hd .brand{display:flex;align-items:center;gap:12px;text-decoration:none}.ice-hd .brand img{height:30px;width:auto}.ice-hd nav{display:flex;flex-wrap:wrap;gap:2px;flex:1 1 auto;justify-content:flex-end}.ice-hd nav a{color:#B7C2E2;text-decoration:none;padding:10px 12px;font-size:15px;white-space:nowrap}.ice-hd nav a:hover{color:#fff}.ice-hd nav a[aria-current]{color:#fff;font-weight:600;box-shadow:inset 0 -2px 0 #3A7BFF}@media (max-width:720px){.ice-hd .in{padding:8px 14px}.ice-hd nav{flex:1 1 100%;min-width:0;max-width:calc(100% + 24px);justify-content:flex-start;margin:0 -12px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}.ice-hd nav::-webkit-scrollbar{display:none}.ice-hd nav a{padding:8px 12px;font-size:14px}}</style><header class="ice-hd"><div class="in"><a class="brand" href="Home.dc.html" aria-label="ICE Lab home"><img src="img/ice-mark.png" alt=""><img src="img/ice-wordmark.png" alt="ICE LAB"></a><nav aria-label="Main"><a href="Home.dc.html">Home</a><a href="Main.dc.html">Equipment</a><a href="SimHub.dc.html">Simulation</a><a href="Manufacturing.dc.html" aria-current="page">Manufacturing</a><a href="Booking.dc.html">Book</a><a href="MyBookings.dc.html">My requests</a></nav></div></header>
 
 <main style="max-width: 1400px; margin: 0 auto; padding: 0 24px 56px">
-<div style="padding: 30px 0 22px; display: grid; gap: 10px">
+<div style="padding: 30px 0 22px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px">
 <p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #8E9AC0">American University of Bahrain · Manufacturing Lab</p>
-<h1 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 54px; line-height: 1; letter-spacing: .01em; text-transform: uppercase">Manufacturing Lab</h1>
+<h1 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: clamp(34px, 10vw, 54px); line-height: 1; letter-spacing: .01em; text-transform: uppercase">Manufacturing Lab</h1>
 <p style="margin: 0; max-width: 74ch; color: #AEB9DA">Eleven desktop machines for making real parts: manual lathes and mills, a drilling machine, CNC mill and lathe, a laser cutter and a hot-wire cutter. Each machine can be booked for a session in the lab, or practised first on its simulation.</p>
 <ul style="margin: 6px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #B7C2E2">
 <li style="padding: 4px 10px; border: 1px solid #2C4699; border-radius: 999px">11 machines</li>

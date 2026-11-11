@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 30 virtual benches with data analysis and calibration, and the Manufacturing Lab with its own machine simulations.">
+<meta name="theme-color" content="#050A1A">
+<link rel="icon" type="image/png" href="img/ice-mark.png">
+<meta property="og:title" content="ICE Lab · American University of Bahrain">
+<meta property="og:description" content="Book lab equipment, run the virtual benches and analyse your data.">
+<meta property="og:image" content="img/ice-mark.png">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Booking form</title>
 <script src="./support.js"></script>
@@ -18,21 +24,7 @@ a{color:#8FB3FF}a:hover{color:#C3D5FF}
 </helmet>
 <div style="font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #E8ECF8; background: #050A1A; color-scheme: dark; min-height: 100vh">
 
-<header style="background: rgba(5,10,26,.92); border-bottom: 1px solid #16224A; color: #FFFFFF">
-<div style="max-width: 1280px; margin: 0 auto; padding: 12px 32px; min-height: 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 32px">
-<a href="Home.dc.html" aria-label="ICE Lab home" style="display: flex; align-items: center; gap: 12px; color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 15px">
-<img src="img/ice-mark.png" alt="" style="width: 30px; height: auto">
-<img src="img/ice-wordmark.png" alt="ICE LAB" style="height: 30px; width: auto">
-<span style="padding-left: 12px; border-left: 1px solid #2C4699; color: #B7C2E2">Booking</span>
-</a>
-<nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto">
-<a href="Main.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; border-radius: 6px; font-size: 15px">Equipment</a>
-<a href="Booking.dc.html" aria-current="page" style="color: #FFFFFF; text-decoration: none; padding: 10px 14px; border-radius: 6px; background: #12224F; font-size: 15px; font-weight: 500">New booking</a>
-<a href="MyBookings.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; border-radius: 6px; font-size: 15px">My bookings</a>
-<a href="Admin.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; border-radius: 6px; font-size: 15px">Admin</a>
-</nav>
-</div>
-</header>
+<style>.ice-hd{position:sticky;top:0;z-index:20;background:rgba(5,10,26,.92);backdrop-filter:blur(10px);border-bottom:1px solid #16224A;font-family:"IBM Plex Sans",system-ui,sans-serif}.ice-hd .in{max-width:1400px;margin:0 auto;padding:10px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px;box-sizing:border-box}.ice-hd .brand{display:flex;align-items:center;gap:12px;text-decoration:none}.ice-hd .brand img{height:30px;width:auto}.ice-hd nav{display:flex;flex-wrap:wrap;gap:2px;flex:1 1 auto;justify-content:flex-end}.ice-hd nav a{color:#B7C2E2;text-decoration:none;padding:10px 12px;font-size:15px;white-space:nowrap}.ice-hd nav a:hover{color:#fff}.ice-hd nav a[aria-current]{color:#fff;font-weight:600;box-shadow:inset 0 -2px 0 #3A7BFF}@media (max-width:720px){.ice-hd .in{padding:8px 14px}.ice-hd nav{flex:1 1 100%;min-width:0;max-width:calc(100% + 24px);justify-content:flex-start;margin:0 -12px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}.ice-hd nav::-webkit-scrollbar{display:none}.ice-hd nav a{padding:8px 12px;font-size:14px}}</style><header class="ice-hd"><div class="in"><a class="brand" href="Home.dc.html" aria-label="ICE Lab home"><img src="img/ice-mark.png" alt=""><img src="img/ice-wordmark.png" alt="ICE LAB"></a><nav aria-label="Main"><a href="Home.dc.html">Home</a><a href="Main.dc.html">Equipment</a><a href="SimHub.dc.html">Simulation</a><a href="Manufacturing.dc.html">Manufacturing</a><a href="Booking.dc.html" aria-current="page">Book</a><a href="MyBookings.dc.html">My requests</a></nav></div></header>
 
 <main style="max-width: 1280px; margin: 0 auto; padding: 32px 32px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
 
@@ -83,11 +75,15 @@ a{color:#8FB3FF}a:hover{color:#C3D5FF}
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px">
 <div style="display: flex; flex-direction: column; gap: 6px">
 <label for="fn" style="font-size: 14px; font-weight: 500">Full name <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
-<input id="fn" type="text" value="Sara Alharbi" style="height: 44px; padding: 0 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
+<input id="fn" type="text" autocomplete="name" placeholder="Your full name" style="height: 44px; padding: 0 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
 </div>
 <div style="display: flex; flex-direction: column; gap: 6px">
 <label for="sid" style="font-size: 14px; font-weight: 500">{{idLabel}} <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
 <input id="sid" type="text" placeholder="e.g. 202310457" style="height: 44px; padding: 0 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="em" style="font-size: 14px; font-weight: 500">University email <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<input id="em" type="email" autocomplete="email" placeholder="name@aubh.edu.bh" style="height: 44px; padding: 0 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
 </div>
 <div style="display: flex; flex-direction: column; gap: 6px">
 <label for="dep" style="font-size: 14px; font-weight: 500">Department <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
@@ -183,7 +179,7 @@ a{color:#8FB3FF}a:hover{color:#C3D5FF}
 </div>
 </sc-if>
 </div>
-<p style="margin: 0; padding: 10px 12px; border-radius: 6px; background: #0F2E22; color: #6EE7A8; font-size: 14px">{{availability}}</p>
+<p style="margin: 0; padding: 10px 12px; border-radius: 6px; background: #0E1A40; border: 1px solid #1D2C5E; color: #B7C2E2; font-size: 14px">The lab team checks the schedule and confirms the slot when they review your request.</p>
 </sc-if>
 </section>
 
@@ -210,15 +206,18 @@ a{color:#8FB3FF}a:hover{color:#C3D5FF}
 <section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
 <h2 style="margin: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 28px; height: 28px; border-radius: 50%; background: #1C3A9E; color: #FFFFFF; display: flex; align-items: center; justify-content: center">{{supNo}}</span>Supervisor approval</h2>
 <div style="display: flex; flex-direction: column; gap: 6px; max-width: 480px">
-<label for="sup" style="font-size: 14px; font-weight: 500">Supervisor <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
-<select id="sup" style="height: 44px; padding: 0 10px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; background: #0B1636; color: #E8ECF8"><option>Select supervisor…</option><option>[Supervisor 1]</option><option>[Supervisor 2]</option><option>[Supervisor 3]</option></select>
-<span style="font-size: 13px; color: #8E9AC0">The request is emailed to this supervisor to approve.</span>
+<label for="spn" style="font-size: 14px; font-weight: 500">Supervisor <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<input id="spn" type="text" placeholder="Supervisor’s full name" style="height: 44px; padding: 0 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
+<label for="spe" style="font-size: 14px; font-weight: 500; margin-top: 8px">Supervisor email <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<input id="spe" type="email" placeholder="supervisor@aubh.edu.bh" style="height: 44px; padding: 0 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
+<span style="font-size: 13px; color: #8E9AC0">Your supervisor is copied on the request and approves it.</span>
+<label style="display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; font-size: 14px; line-height: 1.45"><input id="ppe" type="checkbox" style="width: 18px; height: 18px; margin: 1px 0 0; accent-color: #3A7BFF"> I will bring the PPE listed for this equipment in the catalog (closed-toe shoes always; safety shoes in the Manufacturing Lab).</label>
 </div>
 </section>
 
 <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end">
 <a href="Main.dc.html" style="display: flex; align-items: center; height: 48px; padding: 0 20px; border-radius: 6px; color: #E8ECF8; text-decoration: none; font-size: 15px; font-weight: 500">Cancel</a>
-<a href="Confirm.dc.html" style="display: flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 6px; background: linear-gradient(135deg, #2A6BFF, #0B33C9); color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600">Submit request</a>
+<p id="bk-err" role="alert" hidden style="flex: 1 1 100%; margin: 0; padding: 10px 12px; border-radius: 6px; background: #3A1220; color: #FFB3C1; font-size: 14px; text-align: right"></p><button id="bk-submit" type="button" style="display: flex; align-items: center; height: 48px; padding: 0 24px; border: 0; border-radius: 6px; background: linear-gradient(135deg, #2A6BFF, #0B33C9); color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">Submit request</button>
 </div>
 </form>
 
@@ -226,16 +225,16 @@ a{color:#8FB3FF}a:hover{color:#C3D5FF}
 <h2 style="margin: 0; font-size: 18px; font-weight: 600">Booking information</h2>
 <dl style="margin: 0; display: grid; grid-template-columns: 100px 1fr; gap: 10px 12px; font-size: 15px">
 <dt style="color: #8E9AC0">Lab</dt><dd style="margin: 0; font-weight: 500">{{labName}}</dd>
-<dt style="color: #8E9AC0">Requester</dt><dd style="margin: 0">Sara Alharbi · {{roleLabel}}</dd>
+<dt style="color: #8E9AC0">Requester</dt><dd style="margin: 0" id="sum-req">Your name · {{roleLabel}}</dd>
 <dt style="color: #8E9AC0">Request</dt><dd style="margin: 0; font-weight: 500">{{typeLabel}}</dd>
-<dt style="color: #8E9AC0">{{itemKey}}</dt><dd style="margin: 0">{{itemVal}}</dd>
-<dt style="color: #8E9AC0">{{whenKey}}</dt><dd style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 14px">{{whenVal}}</dd>
+<dt style="color: #8E9AC0">{{itemKey}}</dt><dd style="margin: 0" id="sum-item">{{itemVal}}</dd>
+<dt style="color: #8E9AC0">{{whenKey}}</dt><dd style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 14px" id="sum-when">{{whenVal}}</dd>
 </dl>
 <div style="height: 1px; background: #1D2C5E"></div>
 <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #B7C2E2; line-height: 1.5">
 <p style="margin: 0; font-weight: 600; color: #E8ECF8">After you submit</p>
 <p style="margin: 0">1. Your supervisor gets an email to approve.</p>
-<p style="margin: 0">2. You get the booking information by email and in My bookings.</p>
+<p style="margin: 0">2. You get the decision by email; the request is also listed under My requests on this device.</p>
 <p style="margin: 0">3. The lab team prepares the equipment or room.</p>
 </div>
 </aside>
@@ -299,12 +298,51 @@ class Component extends DCLogic {
       descLabel, descPh,
       typeLabel: isBorrow ? 'Borrow' : isUse ? 'Use in lab' : 'Classroom booking',
       itemKey: isRoom ? 'Room' : 'Equipment',
-      itemVal: isRoom ? roomLabel : (lab === 'mfg' ? 'UNIMAT CNC 3-axis mill' : 'MTS Universal Testing Machine'),
+      itemVal: isRoom ? roomLabel : 'Not chosen yet',
       whenKey: isBorrow ? 'Dates' : 'When',
-      whenVal: isBorrow ? '10 Nov – 12 Nov 2026' : 'Tue 10 Nov · 09:00–11:00'
+      whenVal: ''
     };
   }
 }
+</script>
+<script src="config.js"></script>
+<script src="booking.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const today=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10);};
+function val(id){const e=$(id);return e?String(e.value||'').trim():'';}
+function visible(e){return !!(e&&e.offsetParent!==null);}
+function pressed(groupLabel){const g=[...document.querySelectorAll('[role=radio][aria-checked=true]')];return g.map(b=>b.textContent.replace(/\s+/g,' ').trim());}
+function state(){const on=[...document.querySelectorAll('[role=radio][aria-checked=true]')].map(b=>b.querySelector('b,strong,span')?b.innerText.split('\n')[0].trim():b.innerText.trim());
+  const lab=on.find(t=>/Lab$/.test(t))||'';const role=on.find(t=>t==='Student'||t==='Staff')||'Student';const type=on.find(t=>/^(Borrow equipment|Use in the lab|Book a classroom)/.test(t))||'Use in the lab';const room=on.find(t=>/^Classroom \d/.test(t))||'';
+  return {lab,role,type,room};}
+function when(st){if(/^Borrow/.test(st.type))return (val('bd')||'?')+' to '+(val('rd')||'?');return (val('ud')||'?')+' · '+(val('ts')||'?')+'–'+(val('te')||'?');}
+function item(st){if(/^Book a classroom/.test(st.type))return st.room||'Classroom';const v=val('eq');return v&&!/^Select/.test(v)?v:'';}
+function setDates(){['bd','rd','ud'].forEach(id=>{const e=$(id);if(e&&!e.dataset.fx){e.dataset.fx=1;e.min=today();if(!e.value||e.value<today())e.value=today();}});const r=$('rd');if(r&&r.dataset.fx==='1'){r.dataset.fx=2;const d=new Date();d.setDate(d.getDate()+2);r.value=d.toISOString().slice(0,10);}}
+function summary(){const st=state();const s=(id,t)=>{const e=$(id);if(e)e.textContent=t;};
+  s('sum-req',(val('fn')||'Your name')+' · '+st.role);s('sum-item',item(st)||'Not chosen yet');s('sum-when',when(st));}
+function err(msg,el){const b=$('bk-err');b.textContent=msg;b.hidden=!msg;if(el&&el.focus){el.focus();el.scrollIntoView({block:'center'});}}
+async function submit(ev){ev.preventDefault();if(notReady())return;const st=state();
+  const need=[['fn','your full name'],['sid','your ID'],['em','your email'],['dep','your department'],['desc','a description'],['spn','your supervisor’s name'],['spe','your supervisor’s email']];
+  for(const [id,lab] of need){const e=$(id);if(!e)continue;const v=val(id);if(!v||/^Select/.test(v))return err('Please enter '+lab+'.',e);}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val('em')))return err('Please enter a valid email address.',$('em'));
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val('spe')))return err('Please enter a valid supervisor email.',$('spe'));
+  if(!/^Book a classroom/.test(st.type)&&!item(st))return err('Please choose the equipment.',$('eq'));
+  if(!/^Borrow/.test(st.type)){if(val('te')<=val('ts'))return err('The end time must be after the start time.',$('te'));}
+  else if(val('rd')<val('bd'))return err('The return date must be after the borrow date.',$('rd'));
+  if($('ppe')&&!$('ppe').checked)return err('Please confirm that you will bring the required PPE.',$('ppe'));
+  err('');const btn=$('bk-submit');btn.disabled=true;btn.textContent='Sending…';
+  const r={ref:ICEBOOK.newRef(),created:new Date().toISOString(),lab:st.lab,type:/^Borrow/.test(st.type)?'Borrow':/^Use/.test(st.type)?'Use in the lab':'Classroom',item:item(st),when:when(st),att:/^Book a classroom/.test(st.type)?val('att'):'',
+    name:val('fn'),role:st.role,sid:val('sid'),email:val('em'),dept:val('dep'),course:val('cc'),desc:val('desc'),sup:val('spn'),supEmail:val('spe'),ppe:$('ppe')&&$('ppe').checked?'Will bring the required PPE':''};
+  await ICEBOOK.send(r);if(r.status!=='sent')location.href=ICEBOOK.mailto(r);setTimeout(()=>{location.href='Confirm.dc.html#ref='+encodeURIComponent(r.ref);},r.status==='sent'?0:600);}
+function notReady(){const C=window.ICE_CONFIG||{};return !C.endpoint&&!C.labEmail;}
+function banner(){if(!notReady()||$('bk-soon'))return;const f=document.querySelector('form');if(!f)return;const d=document.createElement('p');d.id='bk-soon';d.setAttribute('role','status');d.style.cssText='margin:0;padding:14px 16px;border-radius:8px;border:1px solid #5A4512;background:rgba(252,211,77,.08);color:#FCD34D;font-size:15px;line-height:1.5';d.textContent='Online booking is being set up and is not accepting requests yet. For now, please contact the lab team in person to book equipment.';f.parentNode.insertBefore(d,f);const b=$('bk-submit');if(b){b.disabled=true;b.style.opacity='.5';b.style.cursor='not-allowed';b.title='Online booking is not open yet';}}
+function wire(){setDates();banner();const b=$('bk-submit');if(b&&!b.dataset.w){b.dataset.w=1;b.addEventListener('click',submit);}summary();}
+document.addEventListener('input',summary);document.addEventListener('change',summary);document.addEventListener('click',()=>setTimeout(wire,30));
+new MutationObserver(()=>{clearTimeout(window.__bkT);window.__bkT=setTimeout(wire,20);}).observe(document.body,{childList:true,subtree:true});
+setTimeout(wire,300);
+})();
 </script>
 </body>
 </html>

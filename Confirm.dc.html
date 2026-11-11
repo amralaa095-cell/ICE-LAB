@@ -2,105 +2,64 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 30 virtual benches with data analysis and calibration, and the Manufacturing Lab with its own machine simulations.">
+<meta name="theme-color" content="#050A1A">
+<link rel="icon" type="image/png" href="img/ice-mark.png">
+<meta property="og:title" content="ICE Lab · American University of Bahrain">
+<meta property="og:description" content="Book lab equipment, run the virtual benches and analyse your data.">
+<meta property="og:image" content="img/ice-mark.png">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Booking information</title>
-<script src="./support.js"></script>
+<title>Request submitted · ICE Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap">
+<style>
+:root{color-scheme:dark}
+body{margin:0;background:#050A1A;color:#E8ECF8;font-family:"IBM Plex Sans",system-ui,sans-serif}
+a{color:#8FB3FF}a:hover{color:#C3D5FF}
+main{max-width:960px;margin:0 auto;padding:40px 24px 72px;box-sizing:border-box;display:flex;flex-direction:column;gap:22px}
+h1{margin:0;font-family:Montserrat,sans-serif;font-size:32px;letter-spacing:-.01em}
+.lede{margin:0;font-size:16px;line-height:1.55;color:#AEB9DA;max-width:640px}
+.card{background:#0B1636;border:1px solid #1D2C5E;border-radius:10px;overflow:hidden}
+.card .hd{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid #1D2C5E;background:#0E1A40}
+.card .bd{padding:18px 22px}
+.mono{font-family:"IBM Plex Mono",monospace}
+dl{display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:8px 18px;margin:0;font-size:15px}dt{color:#8E9AC0}dd{margin:0;overflow-wrap:anywhere}
+.k{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#7E8BB3;margin:14px 0 8px}
+.pill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:12.5px;font-weight:600}
+.pend{background:#3A2A0B;color:#FCD34D}.sent{background:#0F2E22;color:#6EE7A8}.draft{background:#3A1220;color:#FF9CB0}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;height:44px;padding:0 18px;border-radius:7px;border:1px solid #2C4699;background:#0E1A40;color:#E8ECF8;text-decoration:none;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.btn.pri{background:linear-gradient(135deg,#2A6BFF,#0B33C9);border-color:transparent;color:#fff}
+.btn:hover{color:#fff;border-color:#3A7BFF}
+ol.next{margin:0;padding-left:20px;display:grid;gap:8px;line-height:1.5;color:#C9D2EA}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid #1D2C5E;vertical-align:top}th{color:#8E9AC0;font-weight:500;font-size:13px}
+.tw{overflow-x:auto}
+.note{font-size:13.5px;color:#8E9AC0;line-height:1.5}
+footer{border-top:1px solid #16224A;background:#040816;color:#8E9AC0;font-size:13.5px}footer .in{max-width:960px;margin:0 auto;padding:22px 24px}
+@media (max-width:600px){dl{grid-template-columns:1fr;gap:2px}dd{margin-bottom:8px}h1{font-size:26px}}
+</style>
 </head>
 <body>
-<div id="dc-root"></div>
-<script type="text/x-dc-tpl">
-<helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Montserrat:wght@600;700;800&amp;display=swap">
-<style>
-body{margin:0;background:#050A1A}
-a{color:#8FB3FF}a:hover{color:#C3D5FF}
-</style>
-</helmet>
-<div style="font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #E8ECF8; background: #050A1A; color-scheme: dark; min-height: 100vh">
+<style>.ice-hd{position:sticky;top:0;z-index:20;background:rgba(5,10,26,.92);backdrop-filter:blur(10px);border-bottom:1px solid #16224A;font-family:"IBM Plex Sans",system-ui,sans-serif}.ice-hd .in{max-width:1400px;margin:0 auto;padding:10px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px;box-sizing:border-box}.ice-hd .brand{display:flex;align-items:center;gap:12px;text-decoration:none}.ice-hd .brand img{height:30px;width:auto}.ice-hd nav{display:flex;flex-wrap:wrap;gap:2px;flex:1 1 auto;justify-content:flex-end}.ice-hd nav a{color:#B7C2E2;text-decoration:none;padding:10px 12px;font-size:15px;white-space:nowrap}.ice-hd nav a:hover{color:#fff}.ice-hd nav a[aria-current]{color:#fff;font-weight:600;box-shadow:inset 0 -2px 0 #3A7BFF}@media (max-width:720px){.ice-hd .in{padding:8px 14px}.ice-hd nav{flex:1 1 100%;min-width:0;max-width:calc(100% + 24px);justify-content:flex-start;margin:0 -12px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}.ice-hd nav::-webkit-scrollbar{display:none}.ice-hd nav a{padding:8px 12px;font-size:14px}}</style><header class="ice-hd"><div class="in"><a class="brand" href="Home.dc.html" aria-label="ICE Lab home"><img src="img/ice-mark.png" alt=""><img src="img/ice-wordmark.png" alt="ICE LAB"></a><nav aria-label="Main"><a href="Home.dc.html">Home</a><a href="Main.dc.html">Equipment</a><a href="SimHub.dc.html">Simulation</a><a href="Manufacturing.dc.html">Manufacturing</a><a href="Booking.dc.html" aria-current="page">Book</a><a href="MyBookings.dc.html">My requests</a></nav></div></header>
+<main>
 
-<header style="background: rgba(5,10,26,.92); border-bottom: 1px solid #16224A; color: #FFFFFF">
-<div style="max-width: 1280px; margin: 0 auto; padding: 12px 32px; min-height: 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 32px">
-<a href="Home.dc.html" aria-label="ICE Lab home" style="display: flex; align-items: center; gap: 12px; color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 15px">
-<img src="img/ice-mark.png" alt="" style="width: 30px; height: auto">
-<img src="img/ice-wordmark.png" alt="ICE LAB" style="height: 30px; width: auto">
-<span style="padding-left: 12px; border-left: 1px solid #2C4699; color: #B7C2E2">Booking</span>
-</a>
-<nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto">
-<a href="Main.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; border-radius: 6px; font-size: 15px">Equipment</a>
-<a href="Booking.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; border-radius: 6px; font-size: 15px">New booking</a>
-<a href="MyBookings.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; border-radius: 6px; font-size: 15px">My bookings</a>
-<a href="Admin.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; border-radius: 6px; font-size: 15px">Admin</a>
-</nav>
-</div>
-</header>
-
-<main style="max-width: 760px; margin: 0 auto; padding: 56px 24px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
-
-<div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px">
-<span style="width: 64px; height: 64px; border-radius: 50%; background: #0F2E22; display: flex; align-items: center; justify-content: center">
-<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#6EE7A8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>
-</span>
-<h1 style="margin: 0; font-family: 'Montserrat', sans-serif; letter-spacing: -.01em; font-size: 32px; font-weight: 700">Request submitted</h1>
-<p style="margin: 0; font-size: 17px; line-height: 1.5; color: #8E9AC0; max-width: 560px">Your booking information was sent to <strong style="color: #E8ECF8">sara.alharbi@university.edu</strong>. Your supervisor got an email to approve it.</p>
-</div>
-
-<section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; overflow: hidden">
-<div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid #1D2C5E; background: #0E1A40">
-<div style="display: flex; flex-direction: column; gap: 2px">
-<span style="font-size: 13px; color: #8E9AC0">Booking reference</span>
-<span style="font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 500">BK-2026-0142</span>
-</div>
-<span style="font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: #3A2A0B; color: #FCD34D">Waiting for supervisor approval</span>
-</div>
-<div style="padding: 20px 24px; display: flex; flex-direction: column; gap: 20px">
-<div style="display: flex; flex-direction: column; gap: 10px">
-<h2 style="margin: 0; font-size: 13px; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.06em; text-transform: uppercase; color: #8E9AC0">Requester</h2>
-<dl style="margin: 0; display: grid; grid-template-columns: minmax(120px, 160px) 1fr; gap: 10px 16px; font-size: 15px">
-<dt style="color: #8E9AC0">Name</dt><dd style="margin: 0; font-weight: 500">Sara Alharbi</dd>
-<dt style="color: #8E9AC0">Role</dt><dd style="margin: 0">Student</dd>
-<dt style="color: #8E9AC0">Student ID</dt><dd style="margin: 0; font-family: 'IBM Plex Mono', monospace">202310457</dd>
-<dt style="color: #8E9AC0">Department</dt><dd style="margin: 0">Mechanical Engineering</dd>
-</dl>
-</div>
-<div style="height: 1px; background: #16224A"></div>
-<div style="display: flex; flex-direction: column; gap: 10px">
-<h2 style="margin: 0; font-size: 13px; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.06em; text-transform: uppercase; color: #8E9AC0">Booking</h2>
-<dl style="margin: 0; display: grid; grid-template-columns: minmax(120px, 160px) 1fr; gap: 10px 16px; font-size: 15px">
-<dt style="color: #8E9AC0">Lab</dt><dd style="margin: 0">Manufacturing Lab</dd>
-<dt style="color: #8E9AC0">Request type</dt><dd style="margin: 0; font-weight: 500">Use in the lab</dd>
-<dt style="color: #8E9AC0">Equipment</dt><dd style="margin: 0; font-weight: 500">M-07 · UNIMAT CNC 3-axis mill</dd>
-<dt style="color: #8E9AC0">Date &amp; time</dt><dd style="margin: 0; font-weight: 500; font-family: 'IBM Plex Mono', monospace">Tue 10 Nov 2026 · 09:00 – 11:00</dd>
-<dt style="color: #8E9AC0">Description</dt><dd style="margin: 0; line-height: 1.5">Machining an aluminium gear blank for my senior design project.</dd>
-<dt style="color: #8E9AC0">Supervisor</dt><dd style="margin: 0">[Supervisor 1]</dd>
-</dl>
-</div>
-</div>
-</section>
-
-<section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px">
-<h2 style="margin: 0; font-size: 18px; font-weight: 600">What happens next</h2>
-<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px">
-<li style="display: flex; gap: 14px; align-items: flex-start"><span style="flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; background: #1C3A9E; color: #FFFFFF; font-family: 'IBM Plex Mono', monospace; font-size: 13px; display: flex; align-items: center; justify-content: center">1</span><span style="font-size: 15px; line-height: 1.5; padding-top: 3px">Your supervisor approves or declines the request by email.</span></li>
-<li style="display: flex; gap: 14px; align-items: flex-start"><span style="flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; background: #14214A; color: #E8ECF8; font-family: 'IBM Plex Mono', monospace; font-size: 13px; display: flex; align-items: center; justify-content: center">2</span><span style="font-size: 15px; line-height: 1.5; padding-top: 3px">You get an email with the decision, and the status updates in My bookings.</span></li>
-<li style="display: flex; gap: 14px; align-items: flex-start"><span style="flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; background: #14214A; color: #E8ECF8; font-family: 'IBM Plex Mono', monospace; font-size: 13px; display: flex; align-items: center; justify-content: center">3</span><span style="font-size: 15px; line-height: 1.5; padding-top: 3px">On the day, check in at the lab desk with your ID. For borrowing, return the item by the return date.</span></li>
-</ol>
-</section>
-
-<div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center">
-<button type="button" style="height: 48px; padding: 0 20px; border: 1px solid #2C4699; border-radius: 6px; background: #0B1636; color: #E8ECF8; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer">Add to calendar</button>
-<a href="Booking.dc.html" style="display: flex; align-items: center; height: 48px; padding: 0 20px; border: 1px solid #2C4699; border-radius: 6px; background: #0B1636; color: #E8ECF8; text-decoration: none; font-size: 15px; font-weight: 500">New request</a>
-<a href="MyBookings.dc.html" style="display: flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 6px; background: linear-gradient(135deg, #2A6BFF, #0B33C9); color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600">View my bookings</a>
-</div>
+<div id="box"></div>
 
 </main>
-</div>
-</script>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1300}}'>
-class Component extends DCLogic {
-  renderVals() {
-    return {};
-  }
-}
+<footer><div class="in">ICE Lab · American University of Bahrain</div></footer>
+<script src="config.js"></script>
+<script src="booking.js"></script>
+<script>
+(function(){const box=document.getElementById('box');const ref=(/ref=([^&]+)/.exec(location.hash)||[])[1];const r=ref&&ICEBOOK.get(decodeURIComponent(ref));
+if(!r){box.innerHTML='<h1>No request to show</h1><p class="lede">This page shows a request right after it is submitted. Your earlier requests from this device are under <a href="MyBookings.dc.html">My requests</a>.</p><div class="btns"><a class="btn pri" href="Booking.dc.html">New request</a></div>';return;}
+const sent=r.status==='sent',draft=r.status==='email-draft';
+box.innerHTML=`<div style="display:flex;flex-direction:column;gap:10px"><h1>${sent?'Request submitted':'Almost done: send the email'}</h1>
+<p class="lede">${sent?`The lab team and your supervisor (${ICEBOOK.esc(r.supEmail)}) have your request. You get the decision by email at <b>${ICEBOOK.esc(r.email)}</b>.`:`Your email app opened with the request addressed to the lab${r.supEmail?' and your supervisor':''}. <b>Press Send there</b>, otherwise the lab does not receive it. If no email opened, use the button below.`}</p></div>
+<section class="card"><div class="hd"><div><div class="note">Request reference</div><div class="mono" style="font-size:20px">${ICEBOOK.esc(r.ref)}</div></div><span class="pill ${sent?'pend':'draft'}">${sent?'Waiting for approval':'Email not sent yet'}</span></div>
+<div class="bd">${ICEBOOK.dl(r)}</div></section>
+${draft?`<div class="btns"><a class="btn pri" href="${ICEBOOK.mailto(r)}">Open the email again</a><button class="btn" type="button" id="cp">Copy the request text</button></div>`:''}
+<section class="card"><div class="bd"><div class="k" style="margin-top:0">What happens next</div><ol class="next"><li>Your supervisor approves or declines the request.</li><li>The lab team confirms the slot (or the borrowing dates) by email.</li><li>On the day, bring your ID and the required PPE and check in at the lab desk.${r.type==='Borrow'?' Return the item by the return date.':''}</li></ol></div></section>
+<div class="btns"><a class="btn" href="Booking.dc.html">New request</a><a class="btn" href="MyBookings.dc.html">My requests</a></div>`;
+const cp=document.getElementById('cp');if(cp)cp.onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(ICEBOOK.text(r)).then(()=>{cp.textContent='Copied';});};})();
 </script>
 </body>
 </html>
