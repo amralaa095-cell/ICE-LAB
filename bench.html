@@ -256,6 +256,9 @@ input[type=range]{accent-color:#E5383B}
 .site-bar nav a{color:#B7C2E2;text-decoration:none;padding:10px 14px;font-size:15px}
 .site-bar nav a:hover{color:#fff}
 .site-bar nav a[aria-current]{color:#fff;font-weight:600;box-shadow:inset 0 -2px 0 #3A7BFF}
+@media (max-width:720px){.site-bar .in{padding:8px 12px;gap:8px}.site-bar nav{flex:1 1 100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.site-bar nav a{padding:9px 2px;font-size:13.5px;text-align:center;border-radius:6px;background:#0B1636;border:1px solid #16224A}.site-bar nav a[aria-current]{box-shadow:none;background:#1F55E0;border-color:#1F55E0}}
+@media (max-width:360px){.site-bar nav a{font-size:12.5px;padding:9px 0;letter-spacing:-.01em}}
+@media (max-width:720px){input:not([type=range]):not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px!important}}
 </style>
 <div class="site-bar"><div class="in">
 <a class="brand" href="Home.dc.html" aria-label="ICE Lab home"><img src="img/ice-mark.png" alt=""><img src="img/ice-wordmark.png" alt="ICE LAB"></a>
@@ -5536,7 +5539,7 @@ body.wbmode main{min-width:0}
 .wb-seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.wb-seg button{height:30px!important;padding:0 12px!important;font-size:13px!important;border:0!important;border-radius:0!important;background:transparent;color:var(--muted);cursor:pointer}.wb-seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:600}
 .wb-app:has(#dAna:not([hidden])) .wb-zoom,.wb-app:has(#dAna:not([hidden])) #d3bar{display:none}
 .wb-app #dLab[hidden]{display:none}.wb-app.wb-labmode .wb-zoom,.wb-app.wb-labmode #d3bar{display:none}
-.wb-seg{flex-wrap:wrap}
+.wb-seg{flex-wrap:wrap}@media (max-width:720px),(pointer:coarse){.wb-seg{display:flex;flex-wrap:nowrap;width:100%}.wb-seg button{flex:1 1 0;min-width:0;height:auto!important;min-height:42px;white-space:normal;line-height:1.2!important;padding:6px 6px!important;font-size:12.5px!important}.wb-zoom button{height:40px!important;min-width:42px}.wb-tools a,.wb-app a[href$="SimHub.dc.html"],.wb-app a[href$="Manufacturing.dc.html"]{display:inline-flex;align-items:center;min-height:40px}#d3bar button{min-height:40px}}
 .wb{min-width:0;max-width:100%}@media (max-width:720px){.wb>*{min-width:0;max-width:100%}}
 @media (min-width:721px){.wb.wb-labwide{grid-template-rows:auto calc(var(--apph,520px) + var(--bph,300px) + 10px)}.wb.wb-labwide .wb-bot{display:none}}
 @media (max-width:720px){.wb-app #dAna{height:52vh!important;min-height:340px;flex:none}.wb-app #dLab{max-height:none;overflow:visible}}
