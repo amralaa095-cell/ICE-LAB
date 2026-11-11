@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICE Lab Virtual Bench</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<div id="dc-root"></div>
+<script type="text/x-dc-tpl">
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#050A1A}
+a{color:#8FB3FF}a:hover{color:#C3D5FF}
+.vb-rail a:hover{background:#0E1A40}
+.vb-card{transition:border-color .2s ease,transform .2s ease}
+.vb-card:hover{transform:translateY(-2px)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</helmet>
+<div style="font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.5; color: #E8ECF8; background: #050A1A; min-height: 100vh; color-scheme: dark">
+
+<header style="position: sticky; top: 0; z-index: 10; background: rgba(5,10,26,.92); backdrop-filter: blur(10px); border-bottom: 1px solid #16224A">
+<div style="max-width: 1400px; margin: 0 auto; padding: 10px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 28px">
+<a href="Home.dc.html" aria-label="ICE Lab home" style="display: flex; align-items: center; gap: 12px; text-decoration: none">
+<img src="img/ice-mark.png" alt="" style="width: 30px; height: auto">
+<img src="img/ice-wordmark.png" alt="ICE LAB" style="height: 30px; width: auto">
+</a>
+<nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto; justify-content: flex-end">
+<a href="Home.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px">Home</a>
+<a href="SimHub.dc.html" aria-current="page" style="color: #FFFFFF; text-decoration: none; padding: 10px 14px; font-weight: 600; box-shadow: inset 0 -2px 0 #3A7BFF">Simulation</a>
+<a href="Manufacturing.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px">Manufacturing</a>
+<a href="Booking.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px">Book</a>
+</nav>
+</div>
+</header>
+
+<div style="max-width: 1400px; margin: 0 auto; padding: 0 24px 48px">
+<div style="padding: 26px 0 18px; display: grid; gap: 8px">
+<p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #8E9AC0">American University of Bahrain · ICE Lab · Virtual equipment</p>
+<h1 style="margin: 0; font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; font-size: 54px; line-height: 1; letter-spacing: .01em; text-transform: uppercase">ICE Lab Virtual Bench</h1>
+<p style="margin: 0; max-width: 72ch; color: #8E9AC0">Simulations of the lab’s own equipment, grouped by the section colours on the equipment tags. Each bench has the apparatus, live instrument readings, a logbook and the analysis students do in the lab.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding: 14px 18px; border-radius: 8px; border: 1px solid #2C4699; background: linear-gradient(135deg, rgba(42,107,255,.18), rgba(11,51,201,.06))">
+<p style="margin: 0; font-size: 14px; color: #AEB9DA"><b style="color: #FFFFFF; font-weight: 600">All 36 benches are live.</b> Pick any bench below to run the experiment right here.</p>
+<a href="bench.html" style="display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 18px; border-radius: 6px; background: linear-gradient(135deg, #2A6BFF, #0B33C9); color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 14px">Open the Virtual Bench</a>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start">
+
+<nav class="vb-rail" aria-label="Equipment" style="flex: 0 0 250px; max-width: 100%; display: grid; gap: 14px">
+<a href="SimHub.dc.html" aria-current="page" style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: #FFFFFF; text-decoration: none; padding: 4px 0">All equipment</a>
+<sc-for list="{{rail}}" as="sec" hint-placeholder-count="6">
+<div style="display: grid; grid-template-columns: 6px minmax(0, 1fr); gap: 10px">
+<div style="background: {{sec.color}}; border-radius: 2px"></div>
+<div>
+<h2 style="margin: 0 0 4px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; letter-spacing: .12em; text-transform: uppercase; color: {{sec.color}}">{{sec.name}}</h2>
+<ul style="list-style: none; margin: 0; padding: 0; display: grid; gap: 1px">
+<sc-for list="{{sec.items}}" as="b" hint-placeholder-count="4">
+<li><a href="{{b.href}}" style="display: flex; justify-content: space-between; gap: 8px; padding: 4px 8px; border-radius: 4px; color: #E8ECF8; text-decoration: none; font-size: 13.5px">{{b.short}}<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8E9AC0; white-space: nowrap">{{b.model}}</span></a></li>
+</sc-for>
+</ul>
+</div>
+</div>
+</sc-for>
+</nav>
+
+<main style="flex: 1 1 600px; min-width: 0; display: grid; gap: 22px">
+<sc-for list="{{rail}}" as="sec" hint-placeholder-count="6">
+<section style="display: grid; gap: 10px">
+<h2 style="margin: 0; display: flex; align-items: baseline; gap: 12px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 17px; letter-spacing: .07em; text-transform: uppercase; color: {{sec.color}}"><span aria-hidden="true" style="width: 22px; height: 8px; border-radius: 2px; background: {{sec.color}}; align-self: center"></span>{{sec.name}} <small style="font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: 11px; letter-spacing: .03em; text-transform: none; color: #8E9AC0">{{sec.count}}</small></h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px">
+<sc-for list="{{sec.items}}" as="b" hint-placeholder-count="4">
+<a href="{{b.href}}" class="vb-card" style="display: grid; grid-template-columns: 5px minmax(0, 1fr); gap: 12px; padding: 12px 14px 12px 0; border-radius: 6px; border: 1px solid #1D2C5E; background: #0B1636; color: #E8ECF8; text-decoration: none; overflow: hidden">
+<span style="background: {{sec.color}}"></span>
+<div>
+<sc-if value="{{b.img}}" hint-placeholder-val="{{true}}"><img src="{{b.img}}" alt="" loading="lazy" style="display: block; width: 100%; aspect-ratio: 640 / 420; object-fit: cover; border-radius: 4px; margin-bottom: 10px; background: #14214A"></sc-if>
+<b style="display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 21px; line-height: 1.05; text-transform: uppercase; letter-spacing: .02em">{{b.short}}</b>
+<span style="display: block; margin-top: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8E9AC0">{{b.model}}</span>
+<small style="display: block; margin-top: 6px; font-size: 12.5px; line-height: 1.4; color: #8E9AC0">{{b.full}}</small>
+</div>
+</a>
+</sc-for>
+</div>
+</section>
+</sc-for>
+</main>
+</div>
+
+<footer style="margin-top: 28px; padding-top: 18px; border-top: 1px solid #16224A; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; font-size: 12px; color: #8E9AC0">
+<span>Simulated readings include instrument noise. Specifications follow the manufacturers’ datasheets where published; other values are typical textbook figures for teaching.</span>
+<span style="display: inline-flex; align-items: center; padding: 5px 9px; border-radius: 6px; background: #FFFFFF"><img src="img/aub-logo.png" alt="American University of Bahrain" style="height: 26px; width: auto"></span>
+</footer>
+</div>
+</div>
+</script>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const SECS = [
+      ['mat', 'Materials Science', '#D9A05A'], ['solid', 'Solid Mechanics', '#9AABBF'], ['vib', 'Vibration', '#B48CF0'],
+      ['fluids', 'Fluids', '#6AA8EC'], ['thermo', 'Thermo', '#F0895A'], ['ctrl', 'Control', '#4FC2B6'], ['mfg', 'Manufacturing', '#8CC63F']
+    ];
+    const B = [["mat", "Tensile test", "MTS", "MTS universal testing machine, 100 kN load frame", "tensile"], ["mat", "Impact test", "Charpy / Izod", "Pendulum impact tester for Charpy and Izod specimens", "charpy"], ["mat", "Vickers hardness", "HV", "Vickers hardness tester with measuring microscope", "vickers"], ["mat", "Fatigue test", "HSM19D", "Rotating fatigue testing machine", "fatigue"], ["mat", "Metallography", "Microscope", "Grinding/polishing station, etch and metallurgical microscope", "metallography"], ["solid", "Torsion test", "Torsion", "Torsion testing machine with geared drive and torque meter", "torsion"], ["solid", "Pin-jointed frame", "Frameworks", "Truss frame with strain-gauged members and load hanger", "frameworks"], ["solid", "Beam deflection", "Beams", "Beam apparatus with knife-edge supports, clamp, dial gauge and load hangers", "beams"], ["solid", "Buckling of struts", "Struts", "Strut buckling apparatus with screw loading, load cell and dial gauge", "buckling"], ["solid", "ES kit: springs", "ES kits", "Engineering science kit: springs, hanger and slotted masses", "eskit"], ["vib", "Free & forced vibration", "TM1016V", "TecQuipment TM1016V: beam 1.65 kg × 0.815 m, spring 3800 N/m at 0.75 m, exciter 4.2 kg at 0.4 m", "tm1016v"], ["vib", "Rotor dynamics", "Rotor rig", "Rotor dynamics rig with variable-speed motor and guard rings", "whirling"], ["fluids", "Impact of a jet", "H8", "TecQuipment H8 on the H1F bench (jockey 600 g · nozzle Ø10 mm · vane/pivot 150 mm)", "h8"], ["fluids", "Bernoulli's theorem", "H5", "TecQuipment H5 venturi meter on the H1F bench · tappings A–L · throat Ø16.00 mm at D", "bernoulli"], ["fluids", "Losses in piping", "H16", "TecQuipment H16 losses in piping systems, supplied by the H1F bench", "h16"], ["fluids", "Osborne Reynolds", "H215", "TecQuipment H215 Osborne Reynolds apparatus, Ø10 mm glass test tube, fed from the H1F bench", "h215"], ["fluids", "Flow channel", "FC50", "TecQuipment FC50 flow channel, 2.5 m long × 53 mm wide, supplied by the H1F bench", "fc50"], ["fluids", "Series & parallel pumps", "H52", "TecQuipment H52 series and parallel pump test set: two identical pumps, valves V1–V5, gauges and flow meter", "h52"], ["fluids", "Centre of pressure", "H11", "TecQuipment H11 centre of pressure apparatus: quadrant tank B 75 mm, R₁ 100 mm, R₂ 200 mm", "h11"], ["fluids", "Hydrostatics bench", "H314", "TecQuipment H314 hydrostatics and properties of fluids apparatus", "h314"], ["fluids", "Wind tunnel", "Matrix", "Matrix TSL wind tunnel, 300 × 300 mm test section, three-component balance and 12-tube pressure manifold", "windtunnel"], ["thermo", "Heat exchangers", "TD360", "TecQuipment TD360 service module with concentric tube, plate or shell-and-tube exchanger", "td360"], ["thermo", "Linear conduction", "TD1002", "TecQuipment TD1002 base unit with TD1002a linear heat conduction experiment", "td1002"], ["thermo", "Free & forced convection", "TD1005V", "TecQuipment TD1005V free and forced convection", "td1005"], ["thermo", "Steam turbine", "TD1060V", "TecQuipment TD1060V: flash boiler, 30-blade turbine, air-cooled condenser and generator dynamometer", "td1060v"], ["thermo", "Turbojet", "GT100", "TecQuipment GT100 turbojet, control and instrument panel", "gt100"], ["thermo", "Air conditioning", "EC1501V", "TecQuipment EC1501V air conditioning trainer (R134a)", "ec1501"], ["thermo", "Wind energy", "GES-28001", "GES-28001 wind energy baseplate with GES-23001 wind energy module", "wind"], ["ctrl", "PLC trainer & process", "CE123 + CE111", "TecQuipment CE123 PLC trainer connected to the CE111 two-tank process", "plc"], ["ctrl", "Process trainer", "CE117", "TecQuipment CE117 process trainer", "ce117"], ["mfg", "Metal lathe", "UNIMAT ML", "UNIMAT ML lathe with power motor: centre height 50 mm", "mlathe"], ["mfg", "Milling & drilling", "UNIMAT ML", "UNIMAT ML vertical mill with vice, horizontal and 6-axis milling", "mmill"], ["mfg", "CNC mill", "UNIMAT CNC", "UNIMAT CNC 3-axis mill with speed-controlled spindle", "cncmill"], ["mfg", "CNC lathe", "UNIMAT CNC", "UNIMAT CNC lathe: X 50 mm, Z 145 mm, spindle 4000 rpm", "cnclathe"], ["mfg", "Laser cutter", "UNI-LASER", "UNI-LASER 3-axis, 11 W diode laser, 450 nm", "laser"], ["mfg", "Hot wire cutter", "UNIMAT CNC", "UNIMAT CNC hot wire cutter 3D with rotary table", "hotwire"]];
+    const IMGS = {"tensile": "ice-08", "charpy": "ice-09", "vickers": "ice-03", "fatigue": "ice-11", "metallography": "ice-01", "torsion": "ice-10", "frameworks": "ice-16", "beams": "ice-15", "buckling": "ice-14", "tm1016v": "ice-32", "whirling": "ice-31", "h16": "ice-27", "h52": "ice-26", "h11": "ice-29", "h314": "ice-28", "windtunnel": "ice-22", "td360": "ice-20", "td1002": "ice-21", "td1005": "ice-21", "td1060v": "ice-18", "gt100": "ice-17", "ec1501": "ice-19", "wind": "ice-24", "plc": "ice-23", "ce117": "ice-25", "mlathe": "M-06", "mmill": "M-04", "cncmill": "M-07", "cnclathe": "M-08", "laser": "M-10", "hotwire": "M-11"};
+    const rail = SECS.map(([id, name, color]) => {
+      const items = B.filter((b) => b[0] === id).map(([, short, model, full, id]) => ({ short, model, full, href: 'bench.html#' + id, img: IMGS[id] ? 'img/eq/' + IMGS[id] + '.jpg' : '' }));
+      return { name, color, items, count: items.length + ' benches' };
+    });
+    return { rail };
+  }
+}
+</script>
+</body>
+</html>

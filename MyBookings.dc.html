@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My bookings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<div id="dc-root"></div>
+<script type="text/x-dc-tpl">
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Montserrat:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#050A1A}
+a{color:#8FB3FF}a:hover{color:#C3D5FF}
+</style>
+</helmet>
+<div style="font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #E8ECF8; background: #050A1A; color-scheme: dark; min-height: 100vh">
+
+<header style="background: rgba(5,10,26,.92); border-bottom: 1px solid #16224A; color: #FFFFFF">
+<div style="max-width: 1280px; margin: 0 auto; padding: 12px 32px; min-height: 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 32px">
+<a href="Home.dc.html" aria-label="ICE Lab home" style="display: flex; align-items: center; gap: 12px; color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 15px">
+<img src="img/ice-mark.png" alt="" style="width: 30px; height: auto">
+<img src="img/ice-wordmark.png" alt="ICE LAB" style="height: 30px; width: auto">
+<span style="padding-left: 12px; border-left: 1px solid #2C4699; color: #B7C2E2">Booking</span>
+</a>
+<nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto">
+<a href="Main.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; border-radius: 6px; font-size: 15px">Equipment</a>
+<a href="MyBookings.dc.html" aria-current="page" style="color: #FFFFFF; text-decoration: none; padding: 10px 14px; border-radius: 6px; background: #12224F; font-size: 15px; font-weight: 500">My bookings</a>
+<a href="Admin.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; border-radius: 6px; font-size: 15px">Admin</a>
+</nav>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="width: 36px; height: 36px; border-radius: 50%; background: #1C2C5E; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600">SA</span>
+<span style="font-size: 14px; color: #B7C2E2">Sara A. · Student</span>
+</div>
+</div>
+</header>
+
+<main style="max-width: 1280px; margin: 0 auto; padding: 40px 32px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+
+<div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: flex-end">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-family: 'Montserrat', sans-serif; letter-spacing: -.01em; font-size: 34px; font-weight: 700">My bookings</h1>
+<p style="margin: 0; font-size: 16px; color: #8E9AC0">Track requests, reschedule or cancel up to 24 hours before your slot.</p>
+</div>
+<a href="Main.dc.html" style="display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px; border-radius: 6px; background: linear-gradient(135deg, #2A6BFF, #0B33C9); color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>New booking</a>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+<section style="flex: 999 1 640px; min-width: 0; background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; overflow: hidden">
+<div role="tablist" aria-label="Booking status" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 12px 0; border-bottom: 1px solid #1D2C5E">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+<sc-if value="{{t.active}}" hint-placeholder-val="{{false}}">
+<button type="button" role="tab" aria-selected="true" onClick="{{t.pick}}" style="height: 44px; padding: 0 14px; border: 0; border-bottom: 3px solid #5B8CFF; background: transparent; color: #E8ECF8; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{t.label}} <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 2px 6px; border-radius: 4px; background: #101B3D">{{t.count}}</span></button>
+</sc-if>
+<sc-if value="{{t.idle}}" hint-placeholder-val="{{true}}">
+<button type="button" role="tab" aria-selected="false" onClick="{{t.pick}}" style="height: 44px; padding: 0 14px; border: 0; border-bottom: 3px solid transparent; background: transparent; color: #8E9AC0; font: inherit; font-size: 15px; cursor: pointer">{{t.label}} <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 2px 6px; border-radius: 4px; background: #101B3D; color: #B7C2E2">{{t.count}}</span></button>
+</sc-if>
+</sc-for>
+</div>
+<div style="overflow-x: auto">
+<table style="width: 100%; min-width: 760px; border-collapse: collapse; font-size: 15px">
+<thead>
+<tr style="text-align: left; color: #8E9AC0; font-size: 13px">
+<th scope="col" style="padding: 12px 16px; font-weight: 500">Reference</th>
+<th scope="col" style="padding: 12px 16px; font-weight: 500">Equipment</th>
+<th scope="col" style="padding: 12px 16px; font-weight: 500">Date</th>
+<th scope="col" style="padding: 12px 16px; font-weight: 500">Time</th>
+<th scope="col" style="padding: 12px 16px; font-weight: 500">Status</th>
+<th scope="col" style="padding: 12px 16px; font-weight: 500; text-align: right">Actions</th>
+</tr>
+</thead>
+<tbody>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+<tr style="border-top: 1px solid #16224A">
+<td style="padding: 14px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 14px">{{r.ref}}</td>
+<td style="padding: 14px 16px"><div style="font-weight: 500">{{r.machine}}</div><div style="font-size: 13px; color: #8E9AC0">{{r.loc}}</div></td>
+<td style="padding: 14px 16px">{{r.date}}</td>
+<td style="padding: 14px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 14px">{{r.time}}</td>
+<td style="padding: 14px 16px">
+<sc-if value="{{r.isApproved}}" hint-placeholder-val="{{true}}"><span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: #0F2E22; color: #6EE7A8">Approved</span></sc-if>
+<sc-if value="{{r.isPending}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: #3A2A0B; color: #FCD34D">Pending</span></sc-if>
+<sc-if value="{{r.isDeclined}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: #3B1515; color: #FCA5A5">Declined</span></sc-if>
+<sc-if value="{{r.isDone}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: #14214A; color: #B7C2E2">Completed</span></sc-if>
+<sc-if value="{{r.isCancelled}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: #14214A; color: #B7C2E2">Cancelled</span></sc-if>
+</td>
+<td style="padding: 10px 16px; text-align: right; white-space: nowrap">
+<sc-if value="{{r.canEdit}}" hint-placeholder-val="{{true}}">
+<a href="Booking.dc.html" style="display: inline-flex; align-items: center; height: 40px; padding: 0 12px; font-size: 14px; font-weight: 500">Reschedule</a>
+<button type="button" onClick="{{r.cancel}}" style="height: 40px; padding: 0 12px; border: 1px solid #2C4699; border-radius: 6px; background: #0B1636; color: #E8ECF8; font: inherit; font-size: 14px; cursor: pointer">Cancel</button>
+</sc-if>
+<sc-if value="{{r.isDeclined}}" hint-placeholder-val="{{false}}">
+<a href="#" style="display: inline-flex; align-items: center; height: 40px; padding: 0 12px; font-size: 14px; font-weight: 500">See reason</a>
+</sc-if>
+<sc-if value="{{r.isDone}}" hint-placeholder-val="{{false}}">
+<a href="Booking.dc.html" style="display: inline-flex; align-items: center; height: 40px; padding: 0 12px; font-size: 14px; font-weight: 500">Book again</a>
+</sc-if>
+</td>
+</tr>
+</sc-for>
+<sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+<tr><td colspan="6" style="padding: 40px 16px; text-align: center; color: #8E9AC0">No bookings in this list.</td></tr>
+</sc-if>
+</tbody>
+</table>
+</div>
+</section>
+
+<aside style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 20px">
+<section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 18px; font-weight: 600">Next session</h2>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-weight: 600; font-size: 16px">UNIMAT CNC 3-axis mill</span>
+<span style="font-size: 14px; color: #8E9AC0">Tue, 10 Nov · <span style="font-family: 'IBM Plex Mono', monospace">09:00 – 11:00</span> · Manufacturing Lab</span>
+</div>
+<p style="margin: 0; font-size: 14px; color: #B7C2E2; line-height: 1.5">Bring your ID and PPE. Check in at the lab desk 10 minutes before.</p>
+</section>
+<section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 18px; font-weight: 600">My training</h2>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 14px">
+<li style="display: flex; justify-content: space-between; gap: 8px; align-items: center"><span>UNIMAT CNC machines</span><span style="font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: #0F2E22; color: #6EE7A8">Valid · Jun 2027</span></li>
+<li style="display: flex; justify-content: space-between; gap: 8px; align-items: center"><span>MTS Universal Testing</span><span style="font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: #0F2E22; color: #6EE7A8">Valid · Jan 2027</span></li>
+<li style="display: flex; justify-content: space-between; gap: 8px; align-items: center"><span>UNI-LASER</span><span style="font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: #3B1515; color: #FCA5A5">Expired</span></li>
+<li style="display: flex; justify-content: space-between; gap: 8px; align-items: center"><span>Laboratory Muffle Furnace</span><span style="font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: #14214A; color: #B7C2E2">Not taken</span></li>
+</ul>
+<a href="#" style="font-size: 14px; font-weight: 500">Request a training session</a>
+</section>
+</aside>
+
+</div>
+</main>
+</div>
+</script>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1300}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'upcoming', cancelled: {} };
+  }
+  renderVals() {
+    const base = [
+      { ref: 'BK-2026-0142', machine: 'UNIMAT CNC 3-axis mill', loc: 'Manufacturing Lab · M-07', date: 'Tue, 10 Nov 2026', time: '09:00 – 11:00', status: 'pending' },
+      { ref: 'BK-2026-0131', machine: 'MTS Universal Testing Machine', loc: 'ICE Lab · No. 08', date: 'Mon, 9 Nov 2026', time: '13:00 – 15:00', status: 'approved' },
+      { ref: 'BK-2026-0128', machine: 'Vickers / Microhardness Testing System', loc: 'ICE Lab · No. 03', date: 'Wed, 11 Nov 2026', time: '10:00 – 11:00', status: 'approved' },
+      { ref: 'BK-2026-0117', machine: 'UNI-LASER 3-axis laser', loc: 'Manufacturing Lab · M-10', date: 'Thu, 5 Nov 2026', time: '14:00 – 15:00', status: 'declined' },
+      { ref: 'BK-2026-0094', machine: 'Metal lathe with power motor', loc: 'Manufacturing Lab · M-06', date: 'Tue, 27 Oct 2026', time: '09:00 – 12:00', status: 'done' },
+      { ref: 'BK-2026-0088', machine: 'Matrix Wind Tunnel', loc: 'ICE Lab · No. 22', date: 'Sun, 25 Oct 2026', time: '10:00 – 12:00', status: 'done' },
+      { ref: 'BK-2026-0071', machine: 'UNIMAT CNC lathe', loc: 'Manufacturing Lab · M-08', date: 'Mon, 19 Oct 2026', time: '11:00 – 12:00', status: 'cancelled' }
+    ].map((r) => (this.state.cancelled[r.ref] ? { ...r, status: 'cancelled' } : r));
+    const groups = {
+      upcoming: (r) => r.status === 'approved' || r.status === 'pending',
+      pending: (r) => r.status === 'pending',
+      past: (r) => r.status === 'done',
+      declined: (r) => r.status === 'declined',
+      cancelled: (r) => r.status === 'cancelled'
+    };
+    const labels = [['upcoming', 'Upcoming'], ['pending', 'Pending'], ['past', 'Past'], ['declined', 'Declined'], ['cancelled', 'Cancelled']];
+    const tabs = labels.map(([k, label]) => ({ label, count: base.filter(groups[k]).length, active: this.state.tab === k, idle: this.state.tab !== k, pick: () => this.setState({ tab: k }) }));
+    const rows = base.filter(groups[this.state.tab]).map((r) => ({
+      ...r,
+      isApproved: r.status === 'approved', isPending: r.status === 'pending', isDeclined: r.status === 'declined',
+      isDone: r.status === 'done', isCancelled: r.status === 'cancelled',
+      canEdit: r.status === 'approved' || r.status === 'pending',
+      cancel: () => this.setState({ cancelled: { ...this.state.cancelled, [r.ref]: true } })
+    }));
+    return { tabs, rows, empty: rows.length === 0 };
+  }
+}
+</script>
+</body>
+</html>

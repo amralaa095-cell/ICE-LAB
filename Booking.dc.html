@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Booking form</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<div id="dc-root"></div>
+<script type="text/x-dc-tpl">
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Montserrat:wght@600;700;800&amp;display=swap">
+<style>
+body{margin:0;background:#050A1A}
+a{color:#8FB3FF}a:hover{color:#C3D5FF}
+</style>
+</helmet>
+<div style="font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #E8ECF8; background: #050A1A; color-scheme: dark; min-height: 100vh">
+
+<header style="background: rgba(5,10,26,.92); border-bottom: 1px solid #16224A; color: #FFFFFF">
+<div style="max-width: 1280px; margin: 0 auto; padding: 12px 32px; min-height: 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 32px">
+<a href="Home.dc.html" aria-label="ICE Lab home" style="display: flex; align-items: center; gap: 12px; color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 15px">
+<img src="img/ice-mark.png" alt="" style="width: 30px; height: auto">
+<img src="img/ice-wordmark.png" alt="ICE LAB" style="height: 30px; width: auto">
+<span style="padding-left: 12px; border-left: 1px solid #2C4699; color: #B7C2E2">Booking</span>
+</a>
+<nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto">
+<a href="Main.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; border-radius: 6px; font-size: 15px">Equipment</a>
+<a href="Booking.dc.html" aria-current="page" style="color: #FFFFFF; text-decoration: none; padding: 10px 14px; border-radius: 6px; background: #12224F; font-size: 15px; font-weight: 500">New booking</a>
+<a href="MyBookings.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; border-radius: 6px; font-size: 15px">My bookings</a>
+<a href="Admin.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; border-radius: 6px; font-size: 15px">Admin</a>
+</nav>
+</div>
+</header>
+
+<main style="max-width: 1280px; margin: 0 auto; padding: 32px 32px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-family: 'Montserrat', sans-serif; letter-spacing: -.01em; font-size: 34px; line-height: 1.2; font-weight: 700">New booking request</h1>
+<p style="margin: 0; font-size: 16px; color: #8E9AC0">Borrow equipment, use it in the lab, or book a classroom. Fields marked <span style="color: #FF8A8A">*</span> are required.</p>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+<form style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+
+<section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 28px; height: 28px; border-radius: 50%; background: #1C3A9E; color: #FFFFFF; display: flex; align-items: center; justify-content: center">1</span>Choose a lab <span style="color: #FF8A8A; font-size: 16px" aria-hidden="true">*</span></h2>
+<div role="radiogroup" aria-label="Lab" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px">
+<sc-for list="{{labs}}" as="l" hint-placeholder-count="2">
+<sc-if value="{{l.on}}" hint-placeholder-val="{{false}}">
+<button type="button" role="radio" aria-checked="true" onClick="{{l.pick}}" style="text-align: left; padding: 16px 18px; border: 2px solid #5B8CFF; border-radius: 10px; background: #10245A; color: #E8ECF8; font: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 17px; font-weight: 600">{{l.name}}</span>
+<span style="font-size: 14px; color: #8E9AC0">{{l.meta}}</span>
+</button>
+</sc-if>
+<sc-if value="{{l.off}}" hint-placeholder-val="{{true}}">
+<button type="button" role="radio" aria-checked="false" onClick="{{l.pick}}" style="text-align: left; padding: 16px 18px; border: 1px solid #2C4699; border-radius: 10px; background: #0B1636; color: #E8ECF8; font: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 17px; font-weight: 500">{{l.name}}</span>
+<span style="font-size: 14px; color: #8E9AC0">{{l.meta}}</span>
+</button>
+</sc-if>
+</sc-for>
+</div>
+</section>
+
+<section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 28px; height: 28px; border-radius: 50%; background: #1C3A9E; color: #FFFFFF; display: flex; align-items: center; justify-content: center">2</span>Your details</h2>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 500">I am <span style="color: #FF8A8A" aria-hidden="true">*</span></span>
+<div role="radiogroup" aria-label="I am" style="display: flex; flex-wrap: wrap; gap: 10px">
+<sc-for list="{{roles}}" as="r" hint-placeholder-count="2">
+<sc-if value="{{r.on}}" hint-placeholder-val="{{false}}">
+<button type="button" role="radio" aria-checked="true" onClick="{{r.pick}}" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border: 2px solid #5B8CFF; border-radius: 6px; background: #10245A; color: #E8ECF8; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer"><span style="width: 10px; height: 10px; border-radius: 50%; background: linear-gradient(135deg, #2A6BFF, #0B33C9)"></span>{{r.label}}</button>
+</sc-if>
+<sc-if value="{{r.off}}" hint-placeholder-val="{{true}}">
+<button type="button" role="radio" aria-checked="false" onClick="{{r.pick}}" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border: 1px solid #2C4699; border-radius: 6px; background: #0B1636; color: #E8ECF8; font: inherit; font-size: 15px; cursor: pointer"><span style="width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #8E9AC0"></span>{{r.label}}</button>
+</sc-if>
+</sc-for>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="fn" style="font-size: 14px; font-weight: 500">Full name <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<input id="fn" type="text" value="Sara Alharbi" style="height: 44px; padding: 0 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="sid" style="font-size: 14px; font-weight: 500">{{idLabel}} <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<input id="sid" type="text" placeholder="e.g. 202310457" style="height: 44px; padding: 0 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="dep" style="font-size: 14px; font-weight: 500">Department <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<select id="dep" style="height: 44px; padding: 0 10px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; background: #0B1636; color: #E8ECF8"><option>Select…</option><option>Mechanical Engineering</option><option>Civil Engineering</option><option>Electrical Engineering</option><option>Other</option></select>
+</div>
+</div>
+</section>
+
+<section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 28px; height: 28px; border-radius: 50%; background: #1C3A9E; color: #FFFFFF; display: flex; align-items: center; justify-content: center">3</span>What do you need? <span style="color: #FF8A8A; font-size: 16px" aria-hidden="true">*</span></h2>
+<div role="radiogroup" aria-label="Request type" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px">
+<sc-for list="{{types}}" as="t" hint-placeholder-count="3">
+<sc-if value="{{t.on}}" hint-placeholder-val="{{false}}">
+<button type="button" role="radio" aria-checked="true" onClick="{{t.pick}}" style="text-align: left; padding: 16px; border: 2px solid #5B8CFF; border-radius: 10px; background: #10245A; color: #E8ECF8; font: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 16px; font-weight: 600">{{t.label}}</span>
+<span style="font-size: 13px; color: #8E9AC0; line-height: 1.4">{{t.hint}}</span>
+</button>
+</sc-if>
+<sc-if value="{{t.off}}" hint-placeholder-val="{{true}}">
+<button type="button" role="radio" aria-checked="false" onClick="{{t.pick}}" style="text-align: left; padding: 16px; border: 1px solid #2C4699; border-radius: 10px; background: #0B1636; color: #E8ECF8; font: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 16px; font-weight: 500">{{t.label}}</span>
+<span style="font-size: 13px; color: #8E9AC0; line-height: 1.4">{{t.hint}}</span>
+</button>
+</sc-if>
+</sc-for>
+</div>
+</section>
+
+<section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 28px; height: 28px; border-radius: 50%; background: #1C3A9E; color: #FFFFFF; display: flex; align-items: center; justify-content: center">4</span>{{step4Title}}</h2>
+
+<sc-if value="{{needsEquipment}}" hint-placeholder-val="{{true}}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 6px; grid-column: 1 / -1">
+<label for="eq" style="font-size: 14px; font-weight: 500">Equipment <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<select id="eq" value="{{eqSel}}" onChange="{{pickEq}}" style="height: 44px; padding: 0 10px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; background: #0B1636; color: #E8ECF8">
+<sc-for list="{{equipment}}" as="e" hint-placeholder-count="5"><option>{{e}}</option></sc-for>
+</select>
+<span style="font-size: 13px; color: #8E9AC0">Showing {{equipmentCount}} available items in the {{labName}}. {{ruleNote}}</span>
+<sc-if value="{{eqImg}}" hint-placeholder-val="{{false}}"><img src="{{eqImg}}" alt="Photo of the selected equipment" style="margin-top: 8px; width: 100%; max-width: 420px; aspect-ratio: 640 / 420; object-fit: cover; border-radius: 10px; border: 1px solid #1D2C5E; background: #14214A; display: block"></sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isRoom}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 500">Classroom <span style="color: #FF8A8A" aria-hidden="true">*</span></span>
+<div role="radiogroup" aria-label="Classroom" style="display: flex; flex-wrap: wrap; gap: 10px">
+<sc-for list="{{rooms}}" as="c" hint-placeholder-count="2">
+<sc-if value="{{c.on}}" hint-placeholder-val="{{false}}">
+<button type="button" role="radio" aria-checked="true" onClick="{{c.pick}}" style="height: 48px; padding: 0 22px; border: 2px solid #5B8CFF; border-radius: 6px; background: #10245A; color: #E8ECF8; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{c.label}}</button>
+</sc-if>
+<sc-if value="{{c.off}}" hint-placeholder-val="{{true}}">
+<button type="button" role="radio" aria-checked="false" onClick="{{c.pick}}" style="height: 48px; padding: 0 22px; border: 1px solid #2C4699; border-radius: 6px; background: #0B1636; color: #E8ECF8; font: inherit; font-size: 15px; cursor: pointer">{{c.label}}</button>
+</sc-if>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isBorrow}}" hint-placeholder-val="{{false}}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="bd" style="font-size: 14px; font-weight: 500">Borrow date <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<input id="bd" type="date" value="2026-11-10" style="height: 44px; padding: 0 10px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="rd" style="font-size: 14px; font-weight: 500">Return date <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<input id="rd" type="date" value="2026-11-12" style="height: 44px; padding: 0 10px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
+<span style="font-size: 13px; color: #8E9AC0">Must be on or after the borrow date</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isTimed}}" hint-placeholder-val="{{true}}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="ud" style="font-size: 14px; font-weight: 500">Date <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<input id="ud" type="date" value="2026-11-10" style="height: 44px; padding: 0 10px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="ts" style="font-size: 14px; font-weight: 500">Start time <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<select id="ts" style="height: 44px; padding: 0 10px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; background: #0B1636; color: #E8ECF8"><option>08:00</option><option selected="">09:00</option><option>10:00</option><option>11:00</option><option>12:00</option><option>13:00</option><option>14:00</option><option>15:00</option><option>16:00</option></select>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="te" style="font-size: 14px; font-weight: 500">End time <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<select id="te" style="height: 44px; padding: 0 10px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; background: #0B1636; color: #E8ECF8"><option>10:00</option><option selected="">11:00</option><option>12:00</option><option>13:00</option><option>14:00</option><option>15:00</option><option>16:00</option><option>17:00</option></select>
+</div>
+<sc-if value="{{isRoom}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="att" style="font-size: 14px; font-weight: 500">Number of attendees <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<input id="att" type="number" min="1" value="20" style="height: 44px; padding: 0 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
+</div>
+</sc-if>
+</div>
+<p style="margin: 0; padding: 10px 12px; border-radius: 6px; background: #0F2E22; color: #6EE7A8; font-size: 14px">{{availability}}</p>
+</sc-if>
+</section>
+
+<sc-if value="{{isStaff}}" hint-placeholder-val="{{false}}">
+<section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 28px; height: 28px; border-radius: 50%; background: #1C3A9E; color: #FFFFFF; display: flex; align-items: center; justify-content: center">5</span>Course / purpose</h2>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="cc" style="font-size: 14px; font-weight: 500">Course code or purpose <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<input id="cc" type="text" placeholder="e.g. MECH 310, Research, Marketing" style="height: 44px; padding: 0 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
+<span style="font-size: 13px; color: #8E9AC0">Staff only. Write the course code, or what it’s for (research, marketing…).</span>
+</div>
+</section>
+</sc-if>
+
+<section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 28px; height: 28px; border-radius: 50%; background: #1C3A9E; color: #FFFFFF; display: flex; align-items: center; justify-content: center">{{descNo}}</span>Description</h2>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="desc" style="font-size: 14px; font-weight: 500">{{descLabel}} <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<textarea id="desc" rows="4" placeholder="{{descPh}}" style="padding: 10px 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636; resize: vertical"></textarea>
+<span style="font-size: 13px; color: #8E9AC0">0 / 500 characters</span>
+</div>
+</section>
+
+<section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 28px; height: 28px; border-radius: 50%; background: #1C3A9E; color: #FFFFFF; display: flex; align-items: center; justify-content: center">{{supNo}}</span>Supervisor approval</h2>
+<div style="display: flex; flex-direction: column; gap: 6px; max-width: 480px">
+<label for="sup" style="font-size: 14px; font-weight: 500">Supervisor <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<select id="sup" style="height: 44px; padding: 0 10px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; background: #0B1636; color: #E8ECF8"><option>Select supervisor…</option><option>[Supervisor 1]</option><option>[Supervisor 2]</option><option>[Supervisor 3]</option></select>
+<span style="font-size: 13px; color: #8E9AC0">The request is emailed to this supervisor to approve.</span>
+</div>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end">
+<a href="Main.dc.html" style="display: flex; align-items: center; height: 48px; padding: 0 20px; border-radius: 6px; color: #E8ECF8; text-decoration: none; font-size: 15px; font-weight: 500">Cancel</a>
+<a href="Confirm.dc.html" style="display: flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 6px; background: linear-gradient(135deg, #2A6BFF, #0B33C9); color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 600">Submit request</a>
+</div>
+</form>
+
+<aside style="flex: 1 1 320px; background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font-size: 18px; font-weight: 600">Booking information</h2>
+<dl style="margin: 0; display: grid; grid-template-columns: 100px 1fr; gap: 10px 12px; font-size: 15px">
+<dt style="color: #8E9AC0">Lab</dt><dd style="margin: 0; font-weight: 500">{{labName}}</dd>
+<dt style="color: #8E9AC0">Requester</dt><dd style="margin: 0">Sara Alharbi · {{roleLabel}}</dd>
+<dt style="color: #8E9AC0">Request</dt><dd style="margin: 0; font-weight: 500">{{typeLabel}}</dd>
+<dt style="color: #8E9AC0">{{itemKey}}</dt><dd style="margin: 0">{{itemVal}}</dd>
+<dt style="color: #8E9AC0">{{whenKey}}</dt><dd style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 14px">{{whenVal}}</dd>
+</dl>
+<div style="height: 1px; background: #1D2C5E"></div>
+<div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #B7C2E2; line-height: 1.5">
+<p style="margin: 0; font-weight: 600; color: #E8ECF8">After you submit</p>
+<p style="margin: 0">1. Your supervisor gets an email to approve.</p>
+<p style="margin: 0">2. You get the booking information by email and in My bookings.</p>
+<p style="margin: 0">3. The lab team prepares the equipment or room.</p>
+</div>
+</aside>
+
+</div>
+</main>
+</div>
+</script>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    let lab = 'mfg', eq = '';
+    try { const m = /eq=([^&]+)/.exec(decodeURIComponent(location.hash || '')); if (m) { eq = m[1]; lab = /^M-/.test(eq) ? 'mfg' : 'ice'; } const l = /lab=(ice|mfg)/.exec(location.hash || ''); if (l) lab = l[1]; } catch (e) {}
+    this.state = { lab, role: 'student', type: 'use', room: 1, eq };
+  }
+  renderVals() {
+    const { lab, role, room, eq } = this.state;
+    const MFG = ['M-01 · UNIMAT ML Technics', 'M-02 · Pearl / center drilling machine (Metal Line)', 'M-03 · Horizontal milling machine (Metal Line)', 'M-04 · Vertical mill ML with vice', 'M-05 · 6-axis mill ML', 'M-06 · Metal lathe with power motor', 'M-07 · UNIMAT CNC 3-axis mill (extended, SC spindle)', 'M-08 · UNIMAT CNC lathe', 'M-09 · UNIMAT CNC 4-axis turn-mill', 'M-10 · UNI-LASER 3-axis laser (enclosed)', 'M-11 · UNIMAT CNC hot wire cutter 3D'];
+    const ICE = ['01 · METCO Bainpol Auto — Automated Polishing Machine', '02 · METCO Bainmount Twin H Auto — Specimen Mounting Press', '03 · Vickers / Microhardness Testing System', '04 · METCO Metallographic Abrasive Cutting Machine', '06 · Haver EML Digital Plus Sieve Shaker', '07 · Direct Shear Testing Machine', '08 · MTS Universal Testing Machine', '09 · Pendulum Impact Testing Machine (Charpy / Izod)', '10 · Torsion Test Apparatus', '11 · Rotating Fatigue Testing Machine', '12 · Forces in a Truss Apparatus', '13 · Bending Stress in a Beam Apparatus', '14 · Buckling Test Apparatus', '15 · Beam Apparatus', '16 · Pin-Jointed Frameworks Apparatus', '18 · Thermal Power Plant with Steam Turbine', '19 · Refrigeration / Heat Pump Training System', '20 · Heat Exchanger Service Module', '21 · Heat Transfer Experiment Base Unit', '22 · Matrix Wind Tunnel', '23 · TecQuipment CE111 PLC Process Trainer', '25 · TecQuipment CE117 Process Trainer', '26 · Series and Parallel Pumps Apparatus', '27 · TecQuipment H16 — Losses in Pipe Systems', '28 · Hydrostatics and Properties of Fluids Apparatus', '29 · Centre of Pressure Apparatus', '30 · Flow Measurement / Multi-Tube Manometer Apparatus', '31 · Rotor Dynamics / Balancing Training Rig', '32 · Free and Forced Vibration Apparatus', 'ES1-1 · ES1 Work Panel (panel 1 of 3)', 'ES1-2 · ES1 Work Panel (panel 2 of 3)', 'ES1-3 · ES1 Work Panel (panel 3 of 3)', 'ES2 · ES2 Forces Kit', 'ES3 · ES3 Moments Kit', 'ES4 · ES4 Deflection of Beams and Cantilevers Kit', 'ES5 · ES5 Torsion of Circular Sections Kit', 'ES6 · ES6 Tensile Tester Kit', 'ES7 · ES7 Simple Harmonic Motion Kit', 'ES8 · ES8 Friction and Inclined Plane Kit', 'ES9 · ES9 Potential and Kinetic Energy Kit', 'ES10 · ES10 Pulley Kit', 'ES11 · ES11 Drive Systems Kit', 'ES12 · ES12 Cam, Crank and Toggle Kit', 'ES13 · ES13 Gear Trains Kit', 'ES14 · ES14 Simple Mechanisms Kit', 'ES15 · ES15 Bar Linkages Kit', 'ES16 · ES16 Centrifugal Force Kit', 'ES17 · ES17 Rotational Friction Kit', 'ES18 · ES18 Additional Mechanisms Kit', 'ES19 · ES19 Spring Tester Kit'];
+    const labsDef = [['mfg', 'Manufacturing Lab', '11 machines · manual & CNC'], ['ice', 'ICE Lab', '32 apparatus + 21 Engineering Science kits']];
+    const typesDef = [
+      ['borrow', 'Borrow equipment', 'Take it out of the lab and return it by a date'],
+      ['use', 'Use in the lab', 'Use a machine in the lab at a set date and time'],
+      ['room', 'Book a classroom', 'Classroom 1 or Classroom 2']
+    ];
+    const BORROW_MFG = ['M-01', 'M-02', 'M-03', 'M-04', 'M-05', 'M-06'];
+    const canBorrow = (item) => lab === 'mfg' ? BORROW_MFG.some((c) => item.startsWith(c + ' ')) : /^ES\d/.test(item);
+    const allowed = typesDef.filter(([k]) => !(lab === 'mfg' && k === 'room'));
+    const type = allowed.some(([k]) => k === this.state.type) ? this.state.type : 'use';
+    const isStaff = role === 'staff';
+    const isBorrow = type === 'borrow', isUse = type === 'use', isRoom = type === 'room';
+    const labName = lab === 'mfg' ? 'Manufacturing Lab' : 'ICE Lab';
+    const all = lab === 'mfg' ? MFG : ICE;
+    const list = type === 'borrow' ? all.filter(canBorrow) : all;
+    const equipment = ['Select equipment…'].concat(list);
+    const eqSel = list.find((x) => eq && x.startsWith(eq + ' ')) || 'Select equipment…';
+    const code = eqSel.split(' · ')[0];
+    const eqImg = eqSel === 'Select equipment…' ? '' : 'img/eq/' + (/^(M-|ES)/.test(code) ? code : 'ice-' + code) + '.jpg';
+    const ruleNote = lab === 'mfg'
+      ? (type === 'borrow' ? 'Only the manual machines (M-01 to M-06) can be borrowed. CNC machines are used in the lab only.' : 'Manual machines can also be borrowed. CNC machines (M-07 to M-11) are used in the lab only.')
+      : (type === 'borrow' ? 'Only the TecQuipment Engineering Science kits can be borrowed. All other ICE Lab apparatus is used in the lab only.' : 'All ICE Lab apparatus can be used in the lab. Only the Engineering Science kits can be borrowed.');
+    const roomLabel = 'Classroom ' + room;
+    const descLabel = isBorrow ? 'Why do you need to borrow it?' : isUse ? 'What will you use the equipment for?' : 'What is the classroom for?';
+    const descPh = isBorrow ? 'e.g. Measurements for my senior design prototype at the workshop' : isUse ? 'e.g. Machining an aluminium gear blank for MECH 342' : 'e.g. Lecture, workshop or exam — and any equipment you need in the room';
+    const extra = isStaff ? 1 : 0;
+    return {
+      labs: labsDef.map(([k, name, meta]) => ({ name, meta, on: k === lab, off: k !== lab, pick: () => this.setState({ lab: k, eq: '' }) })),
+      roles: [['student', 'Student'], ['staff', 'Staff']].map(([k, label]) => ({ label, on: k === role, off: k !== role, pick: () => this.setState({ role: k }) })),
+      types: allowed.map(([k, label, hint]) => ({ label, hint: k === 'borrow' ? (lab === 'mfg' ? 'Manual machines only. Take it out and return it by a date' : 'Engineering Science kits only. Take it out and return it by a date') : hint, on: k === type, off: k !== type, pick: () => this.setState({ type: k }) })),
+      rooms: [1, 2].map((n) => ({ label: 'Classroom ' + n, on: n === room, off: n !== room, pick: () => this.setState({ room: n }) })),
+      isStaff, isBorrow, isUse, isRoom,
+      isTimed: !isBorrow,
+      needsEquipment: !isRoom,
+      idLabel: isStaff ? 'Staff ID' : 'Student ID',
+      roleLabel: isStaff ? 'Staff' : 'Student',
+      step4Title: isBorrow ? 'Equipment & borrow dates' : isUse ? 'Equipment & time' : 'Classroom & time',
+      equipment, equipmentCount: equipment.length - 1, labName, eqSel, eqImg, ruleNote, pickEq: (e) => { const v = e.target.value; const m = /^(\S+) ·/.exec(v); this.setState({ eq: m ? m[1] : '' }); },
+      availability: isRoom ? roomLabel + ' is free on Tue, 10 Nov from 09:00 to 11:00.' : 'This equipment is free on Tue, 10 Nov from 09:00 to 11:00.',
+      descNo: 5 + extra, supNo: 6 + extra,
+      descLabel, descPh,
+      typeLabel: isBorrow ? 'Borrow' : isUse ? 'Use in lab' : 'Classroom booking',
+      itemKey: isRoom ? 'Room' : 'Equipment',
+      itemVal: isRoom ? roomLabel : (lab === 'mfg' ? 'UNIMAT CNC 3-axis mill' : 'MTS Universal Testing Machine'),
+      whenKey: isBorrow ? 'Dates' : 'When',
+      whenVal: isBorrow ? '10 Nov – 12 Nov 2026' : 'Tue 10 Nov · 09:00–11:00'
+    };
+  }
+}
+</script>
+</body>
+</html>
