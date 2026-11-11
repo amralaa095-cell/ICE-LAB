@@ -196,6 +196,11 @@ a{color:#8FB3FF}a:hover{color:#C3D5FF}
 
 <section style="background: #0B1636; border: 1px solid #1D2C5E; border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
 <h2 style="margin: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 28px; height: 28px; border-radius: 50%; background: #1C3A9E; color: #FFFFFF; display: flex; align-items: center; justify-content: center">{{descNo}}</span>Description</h2>
+<div style="display: flex; flex-direction: column; gap: 6px; max-width: 480px">
+<label for="crs" style="font-size: 14px; font-weight: 500">Course code <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
+<input id="crs" type="text" placeholder="e.g. MECH 342 (or Research / Senior project)" style="height: 44px; padding: 0 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636">
+<span style="font-size: 13px; color: #8E9AC0">The course this work is for. Write Research or Senior project if it is not for a course.</span>
+</div>
 <div style="display: flex; flex-direction: column; gap: 6px">
 <label for="desc" style="font-size: 14px; font-weight: 500">{{descLabel}} <span style="color: #FF8A8A" aria-hidden="true">*</span></label>
 <textarea id="desc" rows="4" placeholder="{{descPh}}" style="padding: 10px 12px; border: 1px solid #2C4699; border-radius: 6px; font: inherit; font-size: 15px; color: #E8ECF8; background: #0B1636; resize: vertical"></textarea>
@@ -324,17 +329,19 @@ function summary(){const st=state();const s=(id,t)=>{const e=$(id);if(e)e.textCo
   s('sum-req',(val('fn')||'Your name')+' · '+st.role);s('sum-item',item(st)||'Not chosen yet');s('sum-when',when(st));}
 function err(msg,el){const b=$('bk-err');b.textContent=msg;b.hidden=!msg;if(el&&el.focus){el.focus();el.scrollIntoView({block:'center'});}}
 async function submit(ev){ev.preventDefault();if(notReady())return;const st=state();
-  const need=[['fn','your full name'],['sid','your ID'],['em','your email'],['dep','your department'],['desc','a description'],['spn','your supervisor’s name'],['spe','your supervisor’s email']];
+  const need=[['fn','your full name'],['sid','your ID'],['crs','the course code (or Research)'],['em','your email'],['dep','your department'],['desc','a description'],['spn','your supervisor’s name'],['spe','your supervisor’s email']];
   for(const [id,lab] of need){const e=$(id);if(!e)continue;const v=val(id);if(!v||/^Select/.test(v))return err('Please enter '+lab+'.',e);}
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val('em')))return err('Please enter a valid email address.',$('em'));
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val('spe')))return err('Please enter a valid supervisor email.',$('spe'));
   if(!/^Book a classroom/.test(st.type)&&!item(st))return err('Please choose the equipment.',$('eq'));
+  {const m=await ICEBOOK.status();const e=m[(item(st).split(' · ')[0])];if(e&&e.status&&!/^operational/i.test(e.status))return err(item(st)+' is '+e.status.toLowerCase()+(e.note?' ('+e.note+')':'')+'. Please choose other equipment or contact the lab.',$('eq'));}
   if(!/^Borrow/.test(st.type)){if(val('te')<=val('ts'))return err('The end time must be after the start time.',$('te'));}
   else if(val('rd')<val('bd'))return err('The return date must be after the borrow date.',$('rd'));
   if($('ppe')&&!$('ppe').checked)return err('Please confirm that you will bring the required PPE.',$('ppe'));
   err('');const btn=$('bk-submit');btn.disabled=true;btn.textContent='Sending…';
-  const r={ref:ICEBOOK.newRef(),created:new Date().toISOString(),lab:st.lab,type:/^Borrow/.test(st.type)?'Borrow':/^Use/.test(st.type)?'Use in the lab':'Classroom',item:item(st),when:when(st),att:/^Book a classroom/.test(st.type)?val('att'):'',
-    name:val('fn'),role:st.role,sid:val('sid'),email:val('em'),dept:val('dep'),course:val('cc'),desc:val('desc'),sup:val('spn'),supEmail:val('spe'),ppe:$('ppe')&&$('ppe').checked?'Will bring the required PPE':''};
+  const isB=/^Borrow/.test(st.type),isR=/^Book a classroom/.test(st.type);const hrs=(a,b)=>{const f=t=>{const m=/(\d+):(\d+)/.exec(t||'');return m?+m[1]+m[2]/60:NaN;};const h=f(b)-f(a);return isFinite(h)&&h>0?Math.round(h*100)/100:'';};const days=(a,b)=>{const d=(new Date(b)-new Date(a))/864e5;return isFinite(d)?Math.max(1,Math.round(d)+1):'';};const crsRaw=val('crs');const codes=(crsRaw.toUpperCase().match(/[A-Z]{2,5}\s?-?\d{3}[A-Z]?/g)||[]).map(c=>c.replace(/\s?-?(\d)/,' $1'));
+  const r={ref:ICEBOOK.newRef(),created:new Date().toISOString(),lab:st.lab,code:isR?(st.room||'Classroom'):(item(st).split(' · ')[0]||''),date:isB?'':val('ud'),start:isB?'':val('ts'),end:isB?'':val('te'),from:isB?val('bd'):'',to:isB?val('rd'):'',hours:isB?'':hrs(val('ts'),val('te')),days:isB?days(val('bd'),val('rd')):'',courseCode:codes.length?codes.join(', '):(crsRaw?crsRaw.replace(/\b\w/g,c=>c.toUpperCase()):''),type:/^Borrow/.test(st.type)?'Borrow':/^Use/.test(st.type)?'Use in the lab':'Classroom',item:item(st),when:when(st),att:/^Book a classroom/.test(st.type)?val('att'):'',
+    name:val('fn'),role:st.role,sid:val('sid'),email:val('em'),dept:val('dep'),course:val('crs')+(val('cc')?' · '+val('cc'):''),desc:val('desc'),sup:val('spn'),supEmail:val('spe'),ppe:$('ppe')&&$('ppe').checked?'Will bring the required PPE':''};
   await ICEBOOK.send(r);if(r.status!=='sent')location.href=ICEBOOK.mailto(r);setTimeout(()=>{location.href='Confirm.dc.html#ref='+encodeURIComponent(r.ref);},r.status==='sent'?0:600);}
 function notReady(){const C=window.ICE_CONFIG||{};return !C.endpoint&&!C.labEmail;}
 function banner(){if(!notReady()||$('bk-soon'))return;const f=document.querySelector('form');if(!f)return;const d=document.createElement('p');d.id='bk-soon';d.setAttribute('role','status');d.style.cssText='margin:0;padding:14px 16px;border-radius:8px;border:1px solid #5A4512;background:rgba(252,211,77,.08);color:#FCD34D;font-size:15px;line-height:1.5';d.textContent='Online booking is being set up and is not accepting requests yet. For now, please contact the lab team in person to book equipment.';f.parentNode.insertBefore(d,f);const b=$('bk-submit');if(b){b.disabled=true;b.style.opacity='.5';b.style.cursor='not-allowed';b.title='Online booking is not open yet';}}

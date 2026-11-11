@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICE Lab dashboard</title>
+<style>
+:root{--bg:#070D1F;--panel:#0E1A3A;--panel2:#0B1530;--line:#22356F;--ink:#EEF1F8;--ink2:#C3CCE6;--muted:#8E9AC0;--acc:#4D86FF;--acc2:#CC8128;--acc3:#22A08D;--good:#3FB97B;--warn:#E0B23A;--bad:#E05A6B;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:#8FB3FF}
+header{position:sticky;top:0;z-index:5;background:rgba(7,13,31,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hd{max-width:1500px;margin:0 auto;padding:12px 20px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.brand{font:800 20px Montserrat,system-ui,sans-serif;letter-spacing:.02em}.brand span{color:var(--acc)}
+.who{font-size:13.5px;color:var(--muted)}.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;margin-left:6px}
+.b-admin{background:#3A1F0B;color:#FFC07A}.b-viewer{background:#0F2A4A;color:#9CC4FF}.b-demo{background:#3A2A0B;color:#FCD34D}
+.sp{flex:1}
+button,.btn,select,input{font:inherit;font-size:14px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:7px;height:34px;padding:0 10px}
+button,.btn{cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none}button:hover,.btn:hover{border-color:var(--acc)}
+.pri{background:linear-gradient(135deg,#2A6BFF,#0B33C9);border-color:transparent;color:#fff;font-weight:600}
+main{max-width:1500px;margin:0 auto;padding:16px 20px 60px;display:flex;flex-direction:column;gap:16px}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.filters label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted)}.filters select,.filters input{min-width:130px;max-width:220px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;border-radius:7px 7px 0 0;background:transparent;color:var(--muted);height:38px;padding:0 14px}
+.tabs button[aria-selected=true]{background:var(--panel);color:var(--ink);font-weight:600;box-shadow:inset 0 -2px 0 var(--acc)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}.kpi .l{font-size:12.5px;color:var(--muted)}
+.kpi .v{font:800 28px Montserrat,system-ui,sans-serif;margin-top:2px}.kpi .s{font-size:12.5px;color:var(--ink2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.card h3{margin:0 0 4px;font-size:16px}.card .sub{font-size:12.5px;color:var(--muted);margin:0 0 10px}
+.ch{display:flex;justify-content:space-between;gap:10px;align-items:start;flex-wrap:wrap}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.tw{overflow:auto;max-height:560px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+td{white-space:nowrap}td.w{white-space:normal;min-width:200px;max-width:300px}th,td{padding:7px 10px;border-bottom:1px solid #1A2A57;text-align:left;vertical-align:top}th{position:sticky;top:0;background:#101E44;color:var(--muted);font-weight:600;font-size:12.5px;cursor:pointer;white-space:nowrap}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}tr.click{cursor:pointer}tr.click:hover td{background:#12224C}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;white-space:nowrap}
+.st-pend{background:#3A2F0B;color:#FCD34D}.st-ok{background:#0F2E22;color:#7CE0A8}.st-no{background:#3A1220;color:#FF9CB0}.st-neu{background:#1A2A57;color:#C3CCE6}
+.muted{color:var(--muted)}.small{font-size:12.5px}
+#tip{position:fixed;pointer-events:none;z-index:50;background:#0B1530;border:1px solid var(--acc);border-radius:8px;padding:7px 10px;font-size:13px;max-width:280px;display:none;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--ink2);margin-top:8px}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+.note{background:#0F1F45;border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--ink2);font-size:14px}
+.err{background:#3A1220;border-color:#6B2033;color:#FFB3C1}
+@media (max-width:700px){.hd{padding:10px 12px}main{padding:12px}.filters select,.filters input{min-width:0;max-width:none;width:100%}.filters label{flex:1 1 45%}}
+</style>
+</head>
+<body>
+<header><div class="hd"><div class="brand">ICE<span>LAB</span> dashboard</div><div class="who" id="who">Loading…</div><div class="sp"></div>
+<span id="hdbtns"></span><button id="xall" class="pri" type="button">Export report (.csv)</button></div></header>
+<main>
+<div id="banner"></div>
+<section class="filters" aria-label="Filters">
+<label>From<input type="date" id="f-from"></label><label>To<input type="date" id="f-to"></label>
+<label>Lab<select id="f-lab"></select></label><label>Equipment<select id="f-eq"></select></label><label>Course code<select id="f-course"></select></label>
+<label>Supervisor<select id="f-sup"></select></label><label>Department<select id="f-dept"></select></label><label>Request type<select id="f-type"></select></label>
+<label>Status<select id="f-status"><option value="active">All except declined / cancelled</option><option value="all">All</option><option value="ok">Approved, confirmed, completed</option><option value="pend">Pending supervisor</option><option value="no">Declined, cancelled, no-show</option></select></label>
+<button type="button" id="f-reset">Reset</button>
+</section>
+<nav class="tabs" role="tablist" id="tabs"></nav>
+<div id="view"></div>
+</main>
+<div id="tip" role="tooltip"></div>
+<script>
+const DEMO_EQUIPMENT = [["M-01", "UNIMAT ML Technics", "Manufacturing Lab"], ["M-02", "Pearl / center drilling machine (Metal Line)", "Manufacturing Lab"], ["M-03", "Horizontal milling machine (Metal Line)", "Manufacturing Lab"], ["M-04", "Vertical mill ML with vice", "Manufacturing Lab"], ["M-05", "6-axis mill ML", "Manufacturing Lab"], ["M-06", "Metal lathe with power motor", "Manufacturing Lab"], ["M-07", "UNIMAT CNC 3-axis mill (extended, SC spindle)", "Manufacturing Lab"], ["M-08", "UNIMAT CNC lathe", "Manufacturing Lab"], ["M-09", "UNIMAT CNC 4-axis turn-mill", "Manufacturing Lab"], ["M-10", "UNI-LASER 3-axis laser (enclosed)", "Manufacturing Lab"], ["M-11", "UNIMAT CNC hot wire cutter 3D", "Manufacturing Lab"], ["01", "METCO Bainpol Auto — Automated Polishing Machine", "ICE Lab"], ["02", "METCO Bainmount Twin H Auto — Specimen Mounting Press", "ICE Lab"], ["03", "Vickers / Microhardness Testing System", "ICE Lab"], ["04", "METCO Metallographic Abrasive Cutting Machine", "ICE Lab"], ["06", "Haver EML Digital Plus Sieve Shaker", "ICE Lab"], ["07", "Direct Shear Testing Machine", "ICE Lab"], ["08", "MTS Universal Testing Machine", "ICE Lab"], ["09", "Pendulum Impact Testing Machine (Charpy / Izod)", "ICE Lab"], ["10", "Torsion Test Apparatus", "ICE Lab"], ["11", "Rotating Fatigue Testing Machine", "ICE Lab"], ["12", "Forces in a Truss Apparatus", "ICE Lab"], ["13", "Bending Stress in a Beam Apparatus", "ICE Lab"], ["14", "Buckling Test Apparatus", "ICE Lab"], ["15", "Beam Apparatus", "ICE Lab"], ["16", "Pin-Jointed Frameworks Apparatus", "ICE Lab"], ["18", "Thermal Power Plant with Steam Turbine", "ICE Lab"], ["19", "Refrigeration / Heat Pump Training System", "ICE Lab"], ["20", "Heat Exchanger Service Module", "ICE Lab"], ["21", "Heat Transfer Experiment Base Unit", "ICE Lab"], ["22", "Matrix Wind Tunnel", "ICE Lab"], ["23", "TecQuipment CE111 PLC Process Trainer", "ICE Lab"], ["25", "TecQuipment CE117 Process Trainer", "ICE Lab"], ["26", "Series and Parallel Pumps Apparatus", "ICE Lab"], ["27", "TecQuipment H16 — Losses in Pipe Systems", "ICE Lab"], ["28", "Hydrostatics and Properties of Fluids Apparatus", "ICE Lab"], ["29", "Centre of Pressure Apparatus", "ICE Lab"], ["30", "Flow Measurement / Multi-Tube Manometer Apparatus", "ICE Lab"], ["31", "Rotor Dynamics / Balancing Training Rig", "ICE Lab"], ["32", "Free and Forced Vibration Apparatus", "ICE Lab"], ["ES1-1", "ES1 Work Panel (panel 1 of 3)", "ICE Lab"], ["ES1-2", "ES1 Work Panel (panel 2 of 3)", "ICE Lab"], ["ES1-3", "ES1 Work Panel (panel 3 of 3)", "ICE Lab"], ["ES2", "ES2 Forces Kit", "ICE Lab"], ["ES3", "ES3 Moments Kit", "ICE Lab"], ["ES4", "ES4 Deflection of Beams and Cantilevers Kit", "ICE Lab"], ["ES5", "ES5 Torsion of Circular Sections Kit", "ICE Lab"], ["ES6", "ES6 Tensile Tester Kit", "ICE Lab"], ["ES7", "ES7 Simple Harmonic Motion Kit", "ICE Lab"], ["ES8", "ES8 Friction and Inclined Plane Kit", "ICE Lab"], ["ES9", "ES9 Potential and Kinetic Energy Kit", "ICE Lab"], ["ES10", "ES10 Pulley Kit", "ICE Lab"], ["ES11", "ES11 Drive Systems Kit", "ICE Lab"], ["ES12", "ES12 Cam, Crank and Toggle Kit", "ICE Lab"], ["ES13", "ES13 Gear Trains Kit", "ICE Lab"], ["ES14", "ES14 Simple Mechanisms Kit", "ICE Lab"], ["ES15", "ES15 Bar Linkages Kit", "ICE Lab"], ["ES16", "ES16 Centrifugal Force Kit", "ICE Lab"], ["ES17", "ES17 Rotational Friction Kit", "ICE Lab"], ["ES18", "ES18 Additional Mechanisms Kit", "ICE Lab"], ["ES19", "ES19 Spring Tester Kit", "ICE Lab"], ["Classroom 1", "Classroom 1", "ICE Lab"], ["Classroom 2", "Classroom 2", "ICE Lab"]];
+let D = null, ROWS = [], EQ = [], ROLE = 'viewer', TAB = 'overview', SORT = {};
+const $ = id => document.getElementById(id);
+const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const num = v => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
+const fmt = (v, d) => (Math.round(v * Math.pow(10, d || 0)) / Math.pow(10, d || 0)).toLocaleString('en-GB');
+const OK = ['Approved by supervisor', 'Confirmed by lab', 'Completed'], NO = ['Declined by supervisor', 'Cancelled', 'No-show'];
+const stClass = s => OK.includes(s) ? 'st-ok' : s === 'Pending supervisor' ? 'st-pend' : NO.includes(s) ? 'st-no' : 'st-neu';
+const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const COLORS = { 'Use in the lab': '#4D86FF', 'Borrow': '#CC8128', 'Classroom': '#22A08D' };
+
+/* ---------------- data ---------------- */
+function load() {
+  if (window.google && google.script && google.script.run) {
+    google.script.run.withSuccessHandler(init).withFailureHandler(e => fail(e && e.message || String(e))).getData();
+  } else init(demo());
+}
+function fail(m) { $('who').textContent = ''; $('view').innerHTML = '<div class="note err">' + esc(m) + '</div>'; }
+function init(d) {
+  D = d;
+  if (d.error === 'no-access') { $('who').textContent = d.me || ''; $('view').innerHTML = '<div class="note err">You do not have access to the ICE Lab booking data. Ask the lab admin to share the bookings sheet with ' + esc(d.me || 'your account') + '.</div>'; document.querySelector('.filters').hidden = true; return; }
+  ROLE = d.role; const H = d.head;
+  const k = { 'Reference': 'ref', 'Received': 'received', 'Status': 'status', 'Lab': 'lab', 'Request': 'type', 'Code': 'code', 'Equipment or room': 'item', 'Date': 'date', 'Start': 'start', 'End': 'end', 'Borrow from': 'from', 'Return by': 'to', 'Hours': 'hours', 'Days': 'days', 'Attendees': 'att', 'Name': 'name', 'Role': 'role', 'ID': 'sid', 'Email': 'email', 'Department': 'dept', 'Course code': 'courseCode', 'Course or project': 'course', 'Description': 'desc', 'Supervisor': 'sup', 'Supervisor email': 'supEmail', 'PPE': 'ppe', 'Decided': 'decided', 'Lab note': 'note' };
+  ROWS = d.rows.map(r => { const o = {}; H.forEach((h, i) => { if (k[h]) o[k[h]] = r[i]; }); o.hours = num(o.hours); o.days = num(o.days); o.day = String(o.date || o.from || o.received || '').slice(0, 10); o.courseCode = String(o.courseCode || '').trim() || '(none)'; o.sup = String(o.sup || '').trim() || '(none)'; return o; });
+  EQ = d.equipment.map(r => ({ code: String(r[0]), name: r[1], lab: r[2], status: r[3], note: r[4], updated: r[5] }));
+  $('who').innerHTML = esc(d.me) + '<span class="badge ' + (d.demo ? 'b-demo">Demo · sample data' : ROLE === 'admin' ? 'b-admin">Admin' : 'b-viewer">Viewer') + '</span>';
+  if (d.demo) $('banner').innerHTML = '<div class="note">This is a demo with <b>sample data</b> to show what the dashboard does. Once the booking system is live, the same page reads the real Google Sheet. Try the filters, click a machine or a course, and export.</div>';
+  if (d.demo) { $('hdbtns').innerHTML = '<label class="who">Preview as <select id="asrole"><option value="viewer">Viewer (dean, doctors)</option><option value="admin">Admin (you)</option></select></label>'; $('asrole').onchange = e => { ROLE = e.target.value; $('who').innerHTML = 'you (demo)<span class="badge b-demo">Demo · sample data</span><span class="badge ' + (ROLE === 'admin' ? 'b-admin">Admin' : 'b-viewer">Viewer') + '</span>'; render(); }; }
+  if (ROLE === 'admin' && d.sheetUrl) $('hdbtns').innerHTML = '<a class="btn" href="' + esc(d.sheetUrl) + '" target="_blank" rel="noopener">Open the sheet</a>';
+  fillFilters(); tabs(); render();
+}
+const opts = (id, vals, all) => { const el = $(id), cur = el.value; el.innerHTML = '<option value="">' + all + '</option>' + vals.map(v => '<option value="' + esc(v[0]) + '">' + esc(v[1]) + '</option>').join(''); if ([...el.options].some(o => o.value === cur)) el.value = cur; };
+function uniq(f) { const m = new Map(); ROWS.forEach(r => { const v = f(r); if (v && !m.has(v)) m.set(v, v); }); return [...m.keys()].sort((a, b) => String(a).localeCompare(String(b), 'en', { numeric: true })); }
+function fillFilters() {
+  opts('f-lab', uniq(r => r.lab).map(v => [v, v]), 'All labs');
+  const eqName = c => (EQ.find(e => e.code === c) || {}).name || '';
+  opts('f-eq', uniq(r => r.code).map(c => [c, c + (eqName(c) && eqName(c) !== c ? ' · ' + eqName(c) : '')]), 'All equipment');
+  opts('f-course', uniq(r => r.courseCode).map(v => [v, v]), 'All courses');
+  opts('f-sup', uniq(r => r.sup).map(v => [v, v]), 'All supervisors');
+  opts('f-dept', uniq(r => r.dept).map(v => [v, v]), 'All departments');
+  opts('f-type', uniq(r => r.type).map(v => [v, v]), 'All types');
+  ['f-from', 'f-to', 'f-lab', 'f-eq', 'f-course', 'f-sup', 'f-dept', 'f-type', 'f-status'].forEach(id => $(id).onchange = render);
+  $('f-reset').onclick = () => { ['f-from', 'f-to', 'f-lab', 'f-eq', 'f-course', 'f-sup', 'f-dept', 'f-type'].forEach(id => $(id).value = ''); $('f-status').value = 'active'; render(); };
+}
+function filtered(anyStatus) {
+  const f = id => $(id).value, st = anyStatus ? 'all' : f('f-status');
+  return ROWS.filter(r => (!f('f-from') || r.day >= f('f-from')) && (!f('f-to') || r.day <= f('f-to')) && (!f('f-lab') || r.lab === f('f-lab')) && (!f('f-eq') || r.code === f('f-eq')) &&
+    (!f('f-course') || r.courseCode === f('f-course')) && (!f('f-sup') || r.sup === f('f-sup')) && (!f('f-dept') || r.dept === f('f-dept')) && (!f('f-type') || r.type === f('f-type')) &&
+    (st === 'all' || (st === 'active' && !NO.includes(r.status)) || (st === 'ok' && OK.includes(r.status)) || (st === 'pend' && r.status === 'Pending supervisor') || (st === 'no' && NO.includes(r.status))));
+}
+function setFilter(id, v) { $(id).value = v; TAB = 'overview'; tabs(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+/* ---------------- aggregation ---------------- */
+function group(rows, key, extra) {
+  const m = new Map();
+  rows.forEach(r => { const k = key(r); if (k == null || k === '') return; if (!m.has(k)) m.set(k, { key: k, n: 0, ok: 0, hours: 0, days: 0, students: new Set(), courses: new Set(), sups: new Set(), machines: new Set(), last: '' }); const g = m.get(k);
+    g.n++; if (OK.includes(r.status)) g.ok++; g.hours += r.hours; g.days += r.days; if (r.sid || r.email) g.students.add(r.sid || r.email); if (r.courseCode && r.courseCode !== '(none)') g.courses.add(r.courseCode); if (r.sup && r.sup !== '(none)') g.sups.add(r.sup); if (r.code) g.machines.add(r.code); if (r.day > g.last) g.last = r.day; if (extra) extra(g, r); });
+  return [...m.values()];
+}
+function weekStart(d) { const t = new Date(d + 'T00:00:00'); if (isNaN(t)) return ''; const w = (t.getDay() + 6) % 7; t.setDate(t.getDate() - w); return iso(t); }
+
+/* ---------------- views ---------------- */
+const TABS = [['overview', 'Overview'], ['machines', 'Machines'], ['courses', 'Courses'], ['sups', 'Supervisors'], ['depts', 'Departments'], ['requests', 'Requests'], ['equipment', 'Equipment']];
+function tabs() { $('tabs').innerHTML = TABS.map(([k, l]) => '<button role="tab" type="button" aria-selected="' + (k === TAB) + '" data-t="' + k + '">' + l + '</button>').join(''); $('tabs').querySelectorAll('button').forEach(b => b.onclick = () => { TAB = b.dataset.t; tabs(); render(); }); }
+function render() { const rows = filtered(); ({ overview, machines, courses, sups, depts, requests, equipment })[TAB](rows); }
+
+function kpis(rows) {
+  const all = filtered(true), ok = all.filter(r => OK.includes(r.status) || r.status === 'No-show').length, decided = all.filter(r => r.status !== 'Pending supervisor' && r.status !== 'Cancelled').length;
+  const K = [['Requests', fmt(rows.length), rows.length ? 'in the selection' : 'no requests match'], ['Approved', decided ? fmt(ok / decided * 100) + ' %' : '–', 'of ' + decided + ' decided by supervisors'],
+    ['Lab hours booked', fmt(rows.reduce((t, r) => t + r.hours, 0), 1), 'sessions in the lab'], ['Borrow days', fmt(rows.reduce((t, r) => t + r.days, 0)), 'equipment out on loan'],
+    ['Students', fmt(new Set(rows.map(r => r.sid || r.email)).size), 'different requesters'], ['Courses', fmt(new Set(rows.map(r => r.courseCode).filter(c => c !== '(none)')).size), 'course codes served'],
+    ['Supervisors', fmt(new Set(rows.map(r => r.sup).filter(c => c !== '(none)')).size), 'faculty involved']];
+  return '<div class="kpis">' + K.map(k => '<div class="kpi"><div class="l">' + k[0] + '</div><div class="v">' + k[1] + '</div><div class="s">' + k[2] + '</div></div>').join('') + '</div>';
+}
+function overview(rows) {
+  if (!rows.length) { $('view').innerHTML = kpis(rows) + '<div class="empty">No requests match the filters.</div>'; return; }
+  const wk = group(rows, r => weekStart(r.day)).sort((a, b) => a.key < b.key ? -1 : 1);
+  const mach = group(rows, r => r.code).map(g => (g.name = (EQ.find(e => e.code === g.key) || {}).name || g.key, g)).sort((a, b) => b.hours - a.hours).filter(g => g.hours > 0).slice(0, 10);
+  const totH = rows.reduce((t, r) => t + r.hours, 0) || 1;
+  const types = group(rows, r => r.type).sort((a, b) => b.n - a.n);
+  const dep = group(rows, r => r.dept).sort((a, b) => b.n - a.n).slice(0, 8);
+  const crs = group(rows, r => r.courseCode).filter(g => g.key !== '(none)').sort((a, b) => b.n - a.n).slice(0, 10);
+  $('view').innerHTML = kpis(rows) + '<div class="grid">' +
+    card('Requests per week', 'Week starting Monday · hover a bar', barsV(wk.map(g => [g.key.slice(5), g.n, g.key + ': ' + g.n + ' requests, ' + fmt(g.hours, 1) + ' h']))) +
+    card('Lab hours by machine', 'Top 10 · share of all lab hours in the selection · click to filter', barsH(mach.map(g => [g.key + ' · ' + g.name, g.hours, fmt(g.hours, 1) + ' h · ' + fmt(g.hours / totH * 100) + ' %', g.key + ' · ' + g.name + '\n' + g.n + ' requests, ' + fmt(g.hours, 1) + ' h, ' + g.days + ' borrow days\n' + g.courses.size + ' courses', g.key]), 'f-eq')) +
+    card('Request type', 'Share of requests', stack(types.map(g => [g.key, g.n, COLORS[g.key] || '#8E9AC0']), rows.length)) +
+    card('When the lab is busy', 'Booked hours by weekday and start time', heat(rows)) +
+    card('Top courses', 'Requests per course code · click to filter', barsH(crs.map(g => [g.key, g.n, g.n + ' · ' + g.machines.size + ' machines', g.key + '\n' + g.n + ' requests, ' + fmt(g.hours, 1) + ' h\nMachines: ' + [...g.machines].join(', '), g.key]), 'f-course')) +
+    card('Departments', 'Requests per department · click to filter', barsH(dep.map(g => [g.key, g.n, g.n + ' (' + fmt(g.n / rows.length * 100) + ' %)', g.key + ': ' + g.n + ' requests', g.key]), 'f-dept')) +
+    '</div>';
+  wire();
+}
+function card(t, s, body, extra) { return '<div class="card"><div class="ch"><div><h3>' + esc(t) + '</h3><p class="sub">' + esc(s) + '</p></div>' + (extra || '') + '</div>' + body + '</div>'; }
+
+/* charts: thin marks, rounded data-ends, recessive grid, hover tips */
+function barsV(data) {
+  if (!data.length) return '<div class="empty">No data</div>';
+  const W = 640, H = 230, L = 34, B = 26, T = 10, mx = Math.max(...data.map(d => d[1])) || 1, n = data.length, bw = Math.max(4, Math.min(30, (W - L) / n - 6)), step = (W - L) / n;
+  const nice = Math.ceil(mx / 5) * 5 || 5, y = v => T + (H - T - B) * (1 - v / nice);
+  let g = ''; for (let i = 0; i <= 5; i++) { const v = nice * i / 5; g += '<line x1="' + L + '" x2="' + W + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="#1D2C5E"/><text x="' + (L - 6) + '" y="' + (y(v) + 4) + '" fill="#8E9AC0" font-size="11" text-anchor="end">' + fmt(v) + '</text>'; }
+  const lab = Math.ceil(n / 8);
+  data.forEach((d, i) => { const x = L + i * step + (step - bw) / 2, h = Math.max(0, y(0) - y(d[1])); g += '<path d="M' + x + ',' + y(0) + 'v' + (-Math.max(0, h - 4)) + 'q0,-4 4,-4h' + (bw - 8) + 'q4,0 4,4v' + Math.max(0, h - 4) + 'z" fill="#4D86FF" data-tip="' + esc(d[2]) + '"/><rect x="' + (L + i * step) + '" y="' + T + '" width="' + step + '" height="' + (H - T - B) + '" fill="transparent" data-tip="' + esc(d[2]) + '"/>'; if (i % lab === 0) g += '<text x="' + (x + bw / 2) + '" y="' + (H - 8) + '" fill="#8E9AC0" font-size="11" text-anchor="middle">' + esc(d[0]) + '</text>'; });
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Requests per week">' + g + '</svg>';
+}
+function barsH(data, filterId) {
+  if (!data.length) return '<div class="empty">No data</div>';
+  const mx = Math.max(...data.map(d => d[1])) || 1;
+  return '<div style="display:flex;flex-direction:column;gap:6px">' + data.map(d => '<div class="click" data-tip="' + esc(d[3]) + '"' + (filterId ? ' data-f="' + filterId + '" data-v="' + esc(d[4]) + '"' : '') + ' style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:10px;align-items:center;cursor:' + (filterId ? 'pointer' : 'default') + '"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;color:#C3CCE6">' + esc(d[0]) + '</span><span style="height:14px;background:#13224D;border-radius:0 4px 4px 0"><span style="display:block;height:14px;width:' + (d[1] / mx * 100) + '%;background:#4D86FF;border-radius:0 4px 4px 0"></span></span><span style="font-size:12.5px;color:#EEF1F8;white-space:nowrap;font-variant-numeric:tabular-nums">' + esc(d[2]) + '</span></div>').join('') + '</div>';
+}
+function stack(data, tot) {
+  return '<div style="display:flex;gap:2px;height:22px;margin:6px 0">' + data.map(d => '<span data-tip="' + esc(d[0] + ': ' + d[1] + ' (' + fmt(d[1] / tot * 100) + ' %)') + '" style="flex:' + d[1] + ';background:' + d[2] + ';border-radius:3px"></span>').join('') + '</div><div class="legend">' + data.map(d => '<span><i style="background:' + d[2] + '"></i>' + esc(d[0]) + ' <b>' + fmt(d[1] / tot * 100) + ' %</b> <span class="muted">(' + d[1] + ')</span></span>').join('') + '</div>';
+}
+function heat(rows) {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu'], hrs = [8, 9, 10, 11, 12, 13, 14, 15, 16], M = {}; let mx = 0;
+  rows.forEach(r => { if (!r.date || !r.start) return; const d = new Date(r.date + 'T00:00:00').getDay(); const h = parseInt(r.start, 10); if (d > 4 || h < 8 || h > 16) return; const k = d + '|' + h; M[k] = (M[k] || 0) + r.hours; mx = Math.max(mx, M[k]); });
+  if (!mx) return '<div class="empty">No timed sessions</div>';
+  const ramp = ['#13224D', '#1B3577', '#25499F', '#3462CC', '#4D86FF', '#8FB3FF'];
+  let h = '<div style="display:grid;grid-template-columns:42px repeat(' + hrs.length + ',1fr);gap:3px;font-size:11.5px;color:#8E9AC0"><span></span>' + hrs.map(x => '<span style="text-align:center">' + x + ':00</span>').join('');
+  days.forEach((dn, di) => { h += '<span style="align-self:center">' + dn + '</span>' + hrs.map(x => { const v = M[di + '|' + x] || 0; const c = v ? ramp[Math.min(5, 1 + Math.floor(v / mx * 4.999))] : ramp[0]; return '<span data-tip="' + dn + ' ' + x + ':00 · ' + fmt(v, 1) + ' h booked" style="height:26px;border-radius:4px;background:' + c + '"></span>'; }).join(''); });
+  return h + '</div><div class="legend"><span>less</span>' + ramp.map(c => '<i style="background:' + c + ';margin:0"></i>').join('') + '<span>more booked hours</span></div>';
+}
+
+/* tables */
+function table(id, cols, rows, opt) {
+  opt = opt || {}; const s = SORT[id] || opt.sort || [cols[0][0], 1];
+  const val = (r, c) => typeof c[2] === 'function' ? c[2](r) : r[c[0]];
+  rows = rows.slice().sort((a, b) => { const c = cols.find(c => c[0] === s[0]); const x = val(a, c), y = val(b, c); return (typeof x === 'number' && typeof y === 'number' ? x - y : String(x).localeCompare(String(y), 'en', { numeric: true })) * s[1]; });
+  const head = '<tr>' + cols.map(c => '<th data-k="' + c[0] + '" class="' + (c[3] || '') + '">' + esc(c[1]) + (s[0] === c[0] ? (s[1] > 0 ? ' ▲' : ' ▼') : '') + '</th>').join('') + '</tr>';
+  const body = rows.map(r => '<tr' + (opt.click ? ' class="click" data-f="' + opt.click[0] + '" data-v="' + esc(r[opt.click[1]]) + '"' : '') + '>' + cols.map(c => '<td class="' + (c[3] || '') + '">' + (c[4] ? c[4](r) : esc(fmtCell(val(r, c)))) + '</td>').join('') + '</tr>').join('');
+  TBL[id] = { cols, rows, val };
+  return '<div class="tw"><table data-id="' + id + '">' + head + (body || '<tr><td colspan="' + cols.length + '" class="muted">Nothing matches the filters.</td></tr>') + '</table></div>';
+}
+const TBL = {};
+const fmtCell = v => typeof v === 'number' ? fmt(v, v % 1 ? 1 : 0) : v;
+function xbtn(id, name) { return '<button type="button" data-x="' + id + '" data-n="' + name + '">Export .csv</button>'; }
+function machines(rows) {
+  const g = group(rows, r => r.code).map(x => Object.assign(x, { name: (EQ.find(e => e.code === x.key) || {}).name || x.key, lab: (EQ.find(e => e.code === x.key) || {}).lab || '', status: (EQ.find(e => e.code === x.key) || {}).status || '', nc: x.courses.size, ns: x.students.size, nsup: x.sups.size, cl: [...x.courses].sort().join(', ') }));
+  $('view').innerHTML = card('Usage per machine', 'How much each machine is used and which courses it serves · click a row to filter the whole dashboard', table('mach', [['key', 'Code'], ['name', 'Machine', null, 'w'], ['lab', 'Lab'], ['n', 'Requests', null, 'n'], ['hours', 'Lab hours', null, 'n'], ['days', 'Borrow days', null, 'n'], ['nc', 'Courses served', null, 'n'], ['cl', 'Courses', null, 'w'], ['ns', 'Students', null, 'n'], ['nsup', 'Supervisors', null, 'n'], ['last', 'Last used'], ['status', 'Status']], g, { sort: ['hours', -1], click: ['f-eq', 'key'] }), xbtn('mach', 'machines'));
+  wire();
+}
+function courses(rows) {
+  const g = group(rows, r => r.courseCode).map(x => Object.assign(x, { nm: x.machines.size, ml: [...x.machines].sort().join(', '), ns: x.students.size, sl: [...x.sups].sort().join(', ') }));
+  $('view').innerHTML = card('Usage per course', 'Which machines each course uses and how much · click a row to filter', table('crs', [['key', 'Course code'], ['n', 'Requests', null, 'n'], ['hours', 'Lab hours', null, 'n'], ['days', 'Borrow days', null, 'n'], ['ns', 'Students', null, 'n'], ['nm', 'Machines used', null, 'n'], ['ml', 'Machines', null, 'w'], ['sl', 'Supervisors', null, 'w'], ['last', 'Last used']], g, { sort: ['n', -1], click: ['f-course', 'key'] }), xbtn('crs', 'courses'));
+  wire();
+}
+function sups(rows) {
+  const own = {}; rows.forEach(r => { if (r.role === 'Staff') own[r.email] = (own[r.email] || 0) + 1; });
+  const g = group(rows, r => r.sup, (x, r) => { x.email = x.email || r.supEmail; }).map(x => Object.assign(x, { rate: x.n ? x.ok / x.n * 100 : 0, ns: x.students.size, nc: x.courses.size, nm: x.machines.size, cl: [...x.courses].sort().join(', '), own: own[x.email] || 0 }));
+  $('view').innerHTML = card('Usage per supervisor (faculty)', 'How often each doctor’s students use the lab, and their own bookings as staff · click a row to filter', table('sup', [['key', 'Supervisor'], ['email', 'Email'], ['n', 'Requests supervised', null, 'n'], ['rate', 'Approved %', null, 'n'], ['hours', 'Lab hours', null, 'n'], ['ns', 'Students', null, 'n'], ['nc', 'Courses', null, 'n'], ['cl', 'Course codes', null, 'w'], ['nm', 'Machines', null, 'n'], ['own', 'Own bookings', null, 'n'], ['last', 'Last request']], g, { sort: ['n', -1], click: ['f-sup', 'key'] }), xbtn('sup', 'supervisors'));
+  wire();
+}
+function depts(rows) {
+  const g = group(rows, r => r.dept).map(x => Object.assign(x, { share: rows.length ? x.n / rows.length * 100 : 0, ns: x.students.size, nc: x.courses.size, nm: x.machines.size }));
+  $('view').innerHTML = card('Usage per department', 'Click a row to filter', table('dep', [['key', 'Department'], ['n', 'Requests', null, 'n'], ['share', 'Share %', null, 'n'], ['hours', 'Lab hours', null, 'n'], ['days', 'Borrow days', null, 'n'], ['ns', 'Students', null, 'n'], ['nc', 'Courses', null, 'n'], ['nm', 'Machines', null, 'n']], g, { sort: ['n', -1], click: ['f-dept', 'key'] }), xbtn('dep', 'departments'));
+  wire();
+}
+function requests(rows) {
+  const q = (window._q || '').toLowerCase();
+  const R = rows.filter(r => !q || Object.values(r).join(' ').toLowerCase().includes(q)).map(r => Object.assign({}, r, { when: r.date ? r.date + ' ' + r.start + '–' + r.end : (r.from ? r.from + ' → ' + r.to : '') }));
+  const admin = ROLE === 'admin';
+  const stCell = r => admin ? '<select data-ref="' + esc(r.ref) + '" class="rs">' + D.statuses.map(s => '<option' + (s === r.status ? ' selected' : '') + '>' + esc(s) + '</option>').join('') + '</select>' : '<span class="pill ' + stClass(r.status) + '">' + esc(r.status) + '</span>';
+  const noteCell = r => admin ? '<input data-ref="' + esc(r.ref) + '" class="rn" value="' + esc(r.note || '') + '" placeholder="note" style="width:160px">' : esc(r.note || '');
+  $('view').innerHTML = card('Requests', R.length + ' requests' + (admin ? ' · change the status or add a note; it saves straight to the sheet' : ''), table('req', [['ref', 'Reference'], ['received', 'Received'], ['status', 'Status', null, '', stCell], ['code', 'Code'], ['item', 'Equipment or room', null, 'w'], ['when', 'When'], ['hours', 'Hours', null, 'n'], ['days', 'Days', null, 'n'], ['name', 'Name'], ['sid', 'ID'], ['dept', 'Department'], ['courseCode', 'Course'], ['sup', 'Supervisor'], ['note', 'Lab note', null, '', noteCell]], R, { sort: ['received', -1] }),
+    '<span style="display:flex;gap:8px"><input id="q" placeholder="Search" value="' + esc(window._q || '') + '" style="width:180px">' + xbtn('req', 'requests') + '</span>');
+  $('q').oninput = e => { window._q = e.target.value; clearTimeout(window._qt); window._qt = setTimeout(() => { render(); const el = $('q'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); }, 250); };
+  if (admin) document.querySelectorAll('.rs,.rn').forEach(el => el.onchange = () => { const ref = el.dataset.ref, row = ROWS.find(r => r.ref === ref); const st = document.querySelector('.rs[data-ref="' + CSS.escape(ref) + '"]').value, nt = document.querySelector('.rn[data-ref="' + CSS.escape(ref) + '"]').value; el.disabled = true;
+    call('setRequest', [ref, st, nt], () => { row.status = st; row.note = nt; el.disabled = false; el.style.borderColor = '#3FB97B'; }, e => { el.disabled = false; el.style.borderColor = '#E05A6B'; alertBox(e.message); }); });
+  wire();
+}
+function equipment() {
+  const admin = ROLE === 'admin';
+  const stCell = e => admin ? '<select data-code="' + esc(e.code) + '" class="es">' + D.eqStatuses.map(s => '<option' + (s === e.status ? ' selected' : '') + '>' + esc(s) + '</option>').join('') + '</select>' : '<span class="pill ' + (e.status === 'Operational' ? 'st-ok' : e.status === 'Out of service' ? 'st-no' : 'st-pend') + '">' + esc(e.status) + '</span>';
+  const noteCell = e => admin ? '<input data-code="' + esc(e.code) + '" class="en" value="' + esc(e.note || '') + '" style="width:220px">' : esc(e.note || '');
+  $('view').innerHTML = card('Equipment status', admin ? 'Set a machine to Under maintenance or Out of service and the website stops taking bookings for it' : 'Current status of every item', table('eq', [['code', 'Code'], ['name', 'Name', null, 'w'], ['lab', 'Lab'], ['status', 'Status', null, '', stCell], ['note', 'Note', null, '', noteCell], ['updated', 'Updated']], EQ, { sort: ['code', 1] }), xbtn('eq', 'equipment')) +
+    (ROLE === 'admin' ? '<div class="note"><b>Who can see this dashboard.</b> Anyone the bookings sheet is shared with as <b>Viewer</b> can open this page, filter and export. To add the dean or a doctor, open the sheet, press Share and add their email as Viewer. Admins (can change data): ' + esc(D.admins.join(', ')) + ' (Config sheet, cell B2; they must also be Editors of the sheet).</div>' : '');
+  if (admin) document.querySelectorAll('.es,.en').forEach(el => el.onchange = () => { const code = el.dataset.code, e = EQ.find(x => x.code === code); const st = document.querySelector('.es[data-code="' + CSS.escape(code) + '"]').value, nt = document.querySelector('.en[data-code="' + CSS.escape(code) + '"]').value; el.disabled = true;
+    call('setEquipment', [code, st, nt], () => { e.status = st; e.note = nt; el.disabled = false; el.style.borderColor = '#3FB97B'; }, x => { el.disabled = false; el.style.borderColor = '#E05A6B'; alertBox(x.message); }); });
+  wire();
+}
+function call(fn, args, ok, bad) { if (D.demo || !(window.google && google.script)) { setTimeout(ok, 150); return; } google.script.run.withSuccessHandler(ok).withFailureHandler(bad)[fn].apply(null, args); }
+function alertBox(m) { $('banner').innerHTML = '<div class="note err">' + esc(m) + '</div>'; }
+
+/* interaction */
+function wire() {
+  document.querySelectorAll('th[data-k]').forEach(th => th.onclick = () => { const id = th.closest('table').dataset.id, k = th.dataset.k, s = SORT[id]; SORT[id] = [k, s && s[0] === k ? -s[1] : -1]; render(); });
+  document.querySelectorAll('[data-f]').forEach(el => el.onclick = e => { if (e.target.closest('select,input')) return; setFilter(el.dataset.f, el.dataset.v); });
+  document.querySelectorAll('[data-x]').forEach(b => b.onclick = () => { const t = TBL[b.dataset.x]; download('icelab-' + b.dataset.n + '.csv', csv(t.cols.map(c => c[1]), t.rows.map(r => t.cols.map(c => t.val(r, c))))); });
+}
+const tip = $('tip');
+document.addEventListener('mousemove', e => { const el = e.target.closest('[data-tip]'); if (!el) { tip.style.display = 'none'; return; } tip.innerHTML = esc(el.dataset.tip).replace(/\n/g, '<br>'); tip.style.display = 'block'; const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8), y = Math.min(e.clientY + 14, innerHeight - tip.offsetHeight - 8); tip.style.left = x + 'px'; tip.style.top = y + 'px'; });
+
+/* export */
+function csv(head, rows) { const q = v => { v = v == null ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }; return [head.map(q).join(',')].concat(rows.map(r => r.map(q).join(','))).join('\n'); }
+async function download(name, text) { try { if (window.claude && claude.use) { const dl = await claude.use('downloads'); if (dl) { await dl.save({ filename: name, data: '\ufeff' + text }); return; } } } catch (e) { if (e && (e.code === 'declined' || e.code === 'dismissed')) return; } const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + text], { type: 'text/csv' })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+$('xall').onclick = () => {
+  const rows = filtered(), f = ['f-from', 'f-to', 'f-lab', 'f-eq', 'f-course', 'f-sup', 'f-dept', 'f-type', 'f-status'].map(id => id.slice(2) + '=' + ($(id).value || 'all')).join('; ');
+  const sec = (title, head, data) => '\n' + title + '\n' + csv(head, data);
+  const G = (k) => group(rows, k);
+  let out = 'ICE Lab usage report,' + new Date().toISOString().slice(0, 10) + '\nFilters,' + f + (D.demo ? '\nNOTE,Demo with sample data' : '') + '\n';
+  out += sec('Summary', ['Requests', 'Approved', 'Lab hours', 'Borrow days', 'Students', 'Courses', 'Supervisors'], [[rows.length, rows.filter(r => OK.includes(r.status)).length, fmt(rows.reduce((t, r) => t + r.hours, 0), 1), rows.reduce((t, r) => t + r.days, 0), new Set(rows.map(r => r.sid || r.email)).size, new Set(rows.map(r => r.courseCode)).size, new Set(rows.map(r => r.sup)).size]]);
+  out += sec('By machine', ['Code', 'Machine', 'Requests', 'Lab hours', 'Borrow days', 'Courses served', 'Courses', 'Students'], G(r => r.code).map(g => [g.key, (EQ.find(e => e.code === g.key) || {}).name || '', g.n, g.hours, g.days, g.courses.size, [...g.courses].join(' '), g.students.size]));
+  out += sec('By course', ['Course', 'Requests', 'Lab hours', 'Students', 'Machines used', 'Machines'], G(r => r.courseCode).map(g => [g.key, g.n, g.hours, g.students.size, g.machines.size, [...g.machines].join(' ')]));
+  out += sec('By supervisor', ['Supervisor', 'Requests', 'Approved', 'Lab hours', 'Students', 'Courses'], G(r => r.sup).map(g => [g.key, g.n, g.ok, g.hours, g.students.size, [...g.courses].join(' ')]));
+  out += sec('By department', ['Department', 'Requests', 'Lab hours', 'Students'], G(r => r.dept).map(g => [g.key, g.n, g.hours, g.students.size]));
+  out += sec('Requests', ['Reference', 'Received', 'Status', 'Lab', 'Type', 'Code', 'Equipment', 'Date', 'Start', 'End', 'From', 'To', 'Hours', 'Days', 'Name', 'ID', 'Department', 'Course', 'Supervisor'], rows.map(r => [r.ref, r.received, r.status, r.lab, r.type, r.code, r.item, r.date, r.start, r.end, r.from, r.to, r.hours, r.days, r.name, r.sid, r.dept, r.courseCode, r.sup]));
+  download('icelab-usage-report.csv', out);
+};
+
+/* ---------------- demo data (sample, clearly labelled) ---------------- */
+function demo() {
+  let s = 7; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647, pick = a => a[Math.floor(rnd() * a.length)];
+  const wpick = a => { const t = a.reduce((x, y) => x + y[1], 0); let r = rnd() * t; for (const x of a) { if ((r -= x[1]) <= 0) return x[0]; } return a[0][0]; };
+  const C = { 'MECH 241L': ['08', '09', '03', '01', '02', '04'], 'MECH 310': ['13', '15', '10', '14', '12', '16', 'ES4', 'ES5'], 'MECH 330': ['22', '27', '26', '28', '29'], 'MECH 342': ['M-01', 'M-04', 'M-06', 'M-07', 'M-08', 'M-10'],
+    'MECH 450': ['32', '31', 'ES2'], 'MECH 490L': ['20', '21', '18', '17', '19'], 'MECH 360': ['23', '25'], 'Senior Project': ['M-07', 'M-09', 'M-10', 'M-11', '08', '22'], 'Research': ['08', '03', '22', '20', '11'] };
+  const CW = [['MECH 241L', 14], ['MECH 310', 12], ['MECH 330', 10], ['MECH 342', 16], ['MECH 450', 5], ['MECH 490L', 9], ['MECH 360', 4], ['Senior Project', 18], ['Research', 8]];
+  const SUP = { 'MECH 241L': 'Dr Example A', 'MECH 310': 'Dr Example B', 'MECH 330': 'Dr Example C', 'MECH 342': 'Dr Example D', 'MECH 450': 'Dr Example B', 'MECH 490L': 'Dr Example E', 'MECH 360': 'Dr Example F', 'Senior Project': 'Dr Example D', 'Research': 'Dr Example C' };
+  const DEP = [['Mechanical Engineering', 70], ['Civil Engineering', 12], ['Industrial Engineering', 10], ['Electrical Engineering', 5], ['Architecture', 3]];
+  const eq = c => DEMO_EQUIPMENT.find(e => e[0] === c) || [c, c, /^M-/.test(c) ? 'Manufacturing Lab' : 'ICE Lab'];
+  const rows = [], start = new Date('2026-09-06T00:00:00');
+  for (let i = 0; i < 360; i++) {
+    const course = wpick(CW), code = pick(C[course]), e = eq(code), borrow = /^ES|^M-0[1-6]$/.test(code) && rnd() < 0.25;
+    const d = new Date(start); d.setDate(d.getDate() + Math.floor(Math.pow(rnd(), 0.8) * 64)); while (d.getDay() > 4) d.setDate(d.getDate() + 1);
+    const ds = iso(d), h0 = wpick([[8, 2], [9, 5], [10, 7], [11, 6], [12, 3], [13, 6], [14, 5], [15, 3], [16, 1]]), dur = wpick([[1, 3], [2, 6], [3, 2]]);
+    const st = wpick([['Completed', 55], ['Confirmed by lab', 10], ['Approved by supervisor', 12], ['Pending supervisor', 8], ['Declined by supervisor', 7], ['Cancelled', 4], ['No-show', 3]]);
+    const stu = 1 + Math.floor(rnd() * 140), rec = new Date(d); rec.setDate(rec.getDate() - 1 - Math.floor(rnd() * 6));
+    const sup = SUP[course], staff = rnd() < 0.06;
+    rows.push(['ICE-' + ds.replace(/-/g, '') + '-' + (1000 + i), iso(rec) + ' 0' + (8 + Math.floor(rnd() * 2)) + ':' + String(Math.floor(rnd() * 60)).padStart(2, '0'), st, e[2], borrow ? 'Borrow' : 'Use in the lab', code, code + ' · ' + e[1],
+      borrow ? '' : ds, borrow ? '' : String(h0).padStart(2, '0') + ':00', borrow ? '' : String(h0 + dur).padStart(2, '0') + ':00', borrow ? ds : '', borrow ? iso(new Date(d.getTime() + 4 * 864e5)) : '', borrow ? '' : dur, borrow ? 5 : '', '',
+      staff ? sup : 'Example Student ' + String(stu).padStart(3, '0'), staff ? 'Staff' : 'Student', staff ? 'S-' + (100 + stu) : '20' + (21 + stu % 4) + String(stu).padStart(5, '0'), staff ? sup.toLowerCase().replace(/\W+/g, '.') + '@example.edu' : 'student' + stu + '@example.edu', wpick(DEP), course, course, 'Sample request', sup, sup.toLowerCase().replace(/\W+/g, '.') + '@example.edu', 'Yes', '', '']);
+  }
+  for (let i = 0; i < 12; i++) { const ds = new Date(start.getTime() + (3 + i * 5) * 864e5); while (ds.getDay() > 4) ds.setDate(ds.getDate() + 1); const d = iso(ds); rows.push(['ICE-' + d.replace(/-/g, '') + '-R' + i, d + ' 08:30', 'Completed', 'ICE Lab', 'Classroom', 'Classroom ' + (1 + i % 2), 'Classroom ' + (1 + i % 2), d, '10:00', '12:00', '', '', 2, '', 25, 'Dr Example ' + 'ABCDEF'[i % 6], 'Staff', 'S-1' + i, 'staff' + i + '@example.edu', 'Mechanical Engineering', 'MECH 310', 'MECH 310', 'Lecture', 'Dr Example ' + 'ABCDEF'[i % 6], '', 'Yes', '', '']); }
+  const head = ['Reference', 'Received', 'Status', 'Lab', 'Request', 'Code', 'Equipment or room', 'Date', 'Start', 'End', 'Borrow from', 'Return by', 'Hours', 'Days', 'Attendees', 'Name', 'Role', 'ID', 'Email', 'Department', 'Course code', 'Course or project', 'Description', 'Supervisor', 'Supervisor email', 'PPE', 'Decided', 'Lab note'];
+  const eqRows = DEMO_EQUIPMENT.map(e => [e[0], e[1], e[2], e[0] === '04' ? 'Under maintenance' : e[0] === 'M-11' ? 'Out of service' : 'Operational', e[0] === '04' ? 'Blade replacement' : e[0] === 'M-11' ? 'Waiting for wire' : '', '2026-11-01']);
+  return { demo: true, me: 'you (demo)', role: 'viewer', head, rows, equipment: eqRows, admins: ['you@aubh.edu.bh'], sheetUrl: '', statuses: ['Pending supervisor', 'Approved by supervisor', 'Declined by supervisor', 'Confirmed by lab', 'Completed', 'No-show', 'Cancelled'], eqStatuses: ['Operational', 'Under maintenance', 'Out of service'] };
+}
+load();
+</script>
+</body>
+</html>

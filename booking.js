@@ -13,4 +13,5 @@ function text(r){return FIELDS.filter(([,k])=>r[k]).map(([l,k])=>l+': '+r[k]).jo
 function dl(r){return '<dl>'+FIELDS.filter(([,k])=>r[k]&&k!=='ref').map(([l,k])=>`<dt>${esc(l)}</dt><dd>${esc(r[k])}</dd>`).join('')+'</dl>';}
 function mailto(r){const to=C.labEmail||'';const cc=r.supEmail?'&cc='+encodeURIComponent(r.supEmail):'';return 'mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent('Lab request '+r.ref+' · '+r.item)+cc+'&body='+encodeURIComponent('Hello,\n\nPlease review this lab request.\n\n'+text(r)+'\n\nThank you.');}
 async function send(r){if(C.endpoint){try{await fetch(C.endpoint,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(r)});r.status='sent';}catch(e){r.status='email-draft';}}else r.status='email-draft';put(r);return r;}
-return {all,get,put,remove,newRef,text,dl,mailto,send,esc,config:C};})();
+let _st=null;function status(){if(_st)return _st;_st=C.endpoint?fetch(C.endpoint+(C.endpoint.includes('?')?'&':'?')+'api=equipment').then(r=>r.json()).then(L=>{const m={};(L||[]).forEach(e=>{m[e.code]=e;});return m;}).catch(()=>({})):Promise.resolve({});return _st;}
+return {all,get,put,remove,newRef,text,dl,mailto,send,esc,status,config:C};})();
