@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 30 virtual benches with data analysis and calibration, and the Manufacturing Lab with its own machine simulations.">
 <meta name="theme-color" content="#050A1A">
@@ -13,7 +13,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Raleway:wght@400;500;600;700&family=Changa:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="katex/katex.min.css">
 <script src="katex/katex.min.js"></script>
 <style>
@@ -167,84 +167,32 @@ footer{margin-top:28px;font-size:12px;color:var(--muted)}
 .v3lab:empty{display:none}
 </style>
 
-<style>
-:root[data-theme="dark"]{--bg:#050A1A;--panel:#0B1636;--panel-2:#0E1A40;--ink:#E8ECF8;--muted:#8E9AC0;--line:#1D2C5E;--steel:#8FA3C8;--steel-2:#3A4E7A;--glass:#16244D;--trace:#6FA4FF;--control:#6FA4FF;--cold:#4D8DFF}
-body{background:var(--bg)}
-button.primary,.actions button.primary{background:linear-gradient(135deg,#2A6BFF,#0B33C9)!important;color:#fff!important;border-color:transparent!important}
-.seg input:checked+span{background:#2A6BFF!important;color:#fff!important}
-input[type=range]{accent-color:#3A7BFF}
-.panel{box-shadow:none}
-.site-bar{border-bottom:1px solid #16224A}
-</style>
-<style>/* Obsidian: instrument-grade dark UI, hairline glass panels, crimson signal colour */
-:root[data-theme="dark"]{--bg:#06080B;--panel:#11151A;--panel-2:#0C1014;--ink:#EEF1F5;--muted:#A7B1BF;--line:#232A33;--steel:#9AA6B4;--steel-2:#3A434F;--glass:#18202A;--trace:#8FB8FF;--control:#8FB8FF;--fit:#E5383B;--accent-ink:#F2C14E}
-body{background-color:#06080B;background-image:radial-gradient(1100px 520px at 78% -12%,rgba(193,18,31,.16),transparent 62%),radial-gradient(900px 600px at -10% 110%,rgba(70,110,180,.10),transparent 60%),radial-gradient(rgba(255,255,255,.045) 1px,transparent 1.2px);background-size:auto,auto,26px 26px;background-attachment:fixed}
-.site-bar{background:rgba(6,8,11,.82)!important;backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid rgba(255,255,255,.06)!important;position:relative}
-.site-bar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(229,56,59,.7) 30%,rgba(229,56,59,.7) 70%,transparent)}
-.site-bar nav a[aria-current]{box-shadow:inset 0 -2px 0 #E5383B!important}
-/* panels */
-.wb{counter-reset:pn}
-.wb .panel{position:relative;background:linear-gradient(180deg,rgba(23,28,34,.94),rgba(13,16,20,.94))!important;border:1px solid rgba(255,255,255,.07)!important;border-radius:12px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 24px 48px -28px rgba(0,0,0,.9)!important}
-.wb .panel::before{content:"";position:absolute;left:14px;top:-1px;width:64px;height:2px;border-radius:2px;background:linear-gradient(90deg,#E5383B,rgba(229,56,59,0));pointer-events:none}
-.wb .panel::after{content:"";position:absolute;inset:6px;pointer-events:none;border-radius:8px;
-  background:linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)) top left/10px 1px no-repeat,linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)) top left/1px 10px no-repeat,
-  linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)) top right/10px 1px no-repeat,linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)) top right/1px 10px no-repeat,
-  linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)) bottom left/10px 1px no-repeat,linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)) bottom left/1px 10px no-repeat,
-  linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)) bottom right/10px 1px no-repeat,linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)) bottom right/1px 10px no-repeat}
-.wb .panel h3{font-family:var(--mono)!important;font-size:11.5px!important;font-weight:500!important;letter-spacing:.22em!important;color:#AEB7C3!important;text-transform:uppercase;display:flex!important;justify-content:flex-start!important;align-items:center;gap:0 10px;flex-wrap:wrap}
-.wb .panel>h3::before,.wb .wb-apphead>h3::before,.wb .wb-thin>h3::before{counter-increment:pn;content:counter(pn,decimal-leading-zero);color:#E5383B;letter-spacing:.05em}
-.wb h3 small,.wb h3 span[id]{letter-spacing:.06em}
-#dStatus{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.14)}
-/* header */
-.wb-head .dev-head .bar{background:linear-gradient(180deg,var(--sc),transparent)!important;width:3px}
-.wb-head .dev-head h2{font-weight:700;letter-spacing:.01em;color:#F5F7FA;text-shadow:0 1px 0 rgba(0,0,0,.6)}
-.wb-head .eyebrow{letter-spacing:.2em}
-.wb-tools select,.wb-tools button{background:rgba(255,255,255,.03)!important;border:1px solid rgba(255,255,255,.12)!important;border-radius:8px!important;color:#E6EAF0!important}
-.wb-tools a{color:#C9D1DB}
+<style>/* University brand theme for the Virtual Bench: light, brand blue, red as the signal colour */
+:root[data-theme="light"]{--bg:#ffffff;--panel:#f5f6f8;--panel-2:#e9edf5;--ink:#1b2433;--muted:#5c6f7c;--line:#dfe3ea;
+  --steel:#5c6f7c;--steel-2:#a9b6c2;--accent:#0039a6;--accent-ink:#0039a6;--on-accent:#ffffff;
+  --trace:#0039a6;--control:#0039a6;--fit:#cc092f;--cold:#2472a7;--water:#2472a7;--glass:#dfe8f1;
+  --display:"Playfair Display",Georgia,serif;--body:"Raleway","Changa",system-ui,-apple-system,"Segoe UI",sans-serif}
+body{background:#ffffff;font-variant-numeric:lining-nums tabular-nums;-webkit-font-smoothing:antialiased}
+/* site bar on brand blue */
+.site-bar{background:#0039a6!important;border-bottom:1px solid #002f8a!important;font-family:var(--body)!important}
+.site-bar nav a{color:#e3e9f6!important}.site-bar nav a:hover{color:#fff!important}
+.site-bar nav a[aria-current]{color:#fff!important;box-shadow:inset 0 -2px 0 #fff!important}
+/* headings: Playfair for titles, Raleway for labels */
+h1,h2,.card b{text-transform:none!important;letter-spacing:0!important;color:#0039a6}
+h1,h2{line-height:1.1!important}
+.card b{font-size:19px!important;line-height:1.15!important;color:#1b2433}
+h3,details.theory summary,.navsec h4{font-family:var(--body)!important;font-weight:700!important;font-size:13px!important;letter-spacing:.12em!important}
+h3{color:#0039a6}
 /* controls */
-button{border-radius:8px!important}
-.wb .actions button:not(.primary){background:rgba(255,255,255,.03)!important;border:1px solid rgba(255,255,255,.13)!important;color:#E6EAF0!important}
-.wb .actions button:not(.primary):hover{border-color:rgba(255,255,255,.3)!important;background:rgba(255,255,255,.06)!important}
-button.primary,.actions button.primary{background:linear-gradient(180deg,#D7263D,#8E0E1A)!important;color:#fff!important;border:1px solid rgba(255,120,130,.35)!important;box-shadow:0 10px 28px -10px rgba(215,38,61,.75),inset 0 1px 0 rgba(255,255,255,.18)!important;letter-spacing:.02em}
-.seg{border-color:rgba(255,255,255,.12)!important;border-radius:8px!important;overflow:hidden}
-.seg input:checked+span{background:linear-gradient(180deg,#C81F33,#8E0E1A)!important;color:#fff!important}
-select{background-color:rgba(255,255,255,.03)!important;border-color:rgba(255,255,255,.12)!important;border-radius:8px!important}
-input[type=range]{accent-color:#E5383B}
-.ctl-top output{color:#F2F4F7!important}
-/* readings */
-.wb-ro .ro dt{color:#8B95A3;letter-spacing:.04em}
-.wb-ro .ro dd{font-size:16.5px!important;color:#F4F6F9;text-shadow:0 0 14px rgba(160,190,255,.12)}
-.wb-ro .ro{padding:2px 8px;border-left:1px solid rgba(255,255,255,.08)}
-/* tables */
-.tbl-wrap{border-color:rgba(255,255,255,.08)!important;border-radius:8px}
-.tbl-wrap th{position:sticky;top:0;background:#141920!important;color:#9AA4B2;letter-spacing:.08em;font-weight:500}
-.tbl-wrap tbody tr:nth-child(even) td{background:rgba(255,255,255,.02)}
-.result{background:rgba(255,255,255,.03)!important;border:1px solid rgba(255,255,255,.07);border-radius:8px}
-/* apparatus well */
-.rig-cv,.v3{border-radius:8px!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
-.man{background:rgba(229,56,59,.06)!important;border-left-color:#E5383B!important;border-radius:0 8px 8px 0}
-.man b{color:#FF6B6E!important}
-.eq{background:rgba(255,255,255,.03)!important;border:1px solid rgba(255,255,255,.06);border-radius:8px}
-::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:8px}::-webkit-scrollbar-track{background:transparent}
-.site-bar .in{max-width:none!important;padding-left:max(16px,env(safe-area-inset-left,0px))!important;padding-right:max(16px,env(safe-area-inset-right,0px))!important}
-/* theory column: brighter, easier to read text */
-.wb-th,.wb-th p,.wb-th li,.wb-th .theory-body p,.wb-th .theory-body ol{color:#DCE2EA!important;font-size:14px!important;line-height:1.6}
-.wb-th .lede{color:#C8D0DA!important}
-.wb-th h4{color:#F0F3F7!important;letter-spacing:.14em}
-.wb-th .man .mnote{color:#C8D0DA!important}
-.wb-th .man .mref{color:#F4F6F9}
-.wb-th .eq,.wb-th .eq .katex,.wb-th .man .katex{color:#F5F7FA!important}
-.wb-th li::marker{color:#E5383B}
-
-/* logbook and data: high-contrast text */
-.tbl-wrap td{color:#F2F5F8!important}
-.tbl-wrap th{color:#D3DAE3!important}
-.tbl-wrap td.empty{color:#B4BDC9!important}
-.tbl-wrap tr.off td{color:#8C96A4!important}
-.result,.result *{color:#E9EDF2!important}
-.wb-ro .ro dt,.ctl-top span,.wb-bot h3 small{color:#B4BDC9!important}
-.wb-ro .ro dd small,.wb-ro .ro dd span{color:#C3CBD6!important}
-.v3bar button.on{color:#fff!important;background:#8E0E1A!important;border-color:#C81F33!important}
+button{border-radius:8px}
+button.primary,.actions button.primary{background:#0039a6!important;border-color:#0039a6!important;color:#fff!important}
+button.primary:hover{background:#002f8a!important}
+.seg input:checked+span{background:#0039a6!important;color:#fff!important}
+input[type=range]{accent-color:#0039a6}
+a{color:#0039a6}
+.panel{box-shadow:none;border-radius:12px}
+@media (max-width:720px){.site-bar nav a{background:rgba(255,255,255,.12)!important;border-color:rgba(255,255,255,.28)!important}
+.site-bar nav a[aria-current]{background:#fff!important;border-color:#fff!important;color:#0039a6!important;box-shadow:none!important}}
 </style></head>
 <body>
 <style>

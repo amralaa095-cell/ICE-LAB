@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 30 virtual benches with data analysis and calibration, and the Manufacturing Lab with its own machine simulations.">
-<meta name="theme-color" content="#050A1A">
+<meta name="theme-color" content="#0039a6">
 <link rel="icon" type="image/png" href="img/ice-mark.png">
 <meta property="og:title" content="ICE Lab · American University of Bahrain">
 <meta property="og:description" content="Book lab equipment, run the virtual benches and analyse your data.">
@@ -11,15 +11,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ICE Lab — Home</title>
 <script src="./support.js"></script>
-<style>@media (pointer:coarse){button[role=tab]{position:relative}button[role=tab]::after{content:"";position:absolute;inset:-16px -5px}a[href="Main.dc.html"]:not(nav a),footer a{display:inline-block;padding:8px 0}}</style><script>(function(){var done=0;function skip(){if(done)return;var e=document.querySelector('.ice-intro');if(!e)return;done=1;e.style.animation='none';void e.offsetWidth;e.style.animation='introOut .45s cubic-bezier(.7,0,.2,1) forwards';e.style.pointerEvents='none';}['pointerdown','touchstart','wheel','keydown'].forEach(function(t){addEventListener(t,skip,{passive:true,capture:true})});})();</script></head>
+<style>@media (pointer:coarse){button[role=tab]{position:relative}button[role=tab]::after{content:"";position:absolute;inset:-16px -5px}a[href="Main.dc.html"]:not(nav a),footer a{display:inline-block;padding:8px 0}}</style><script>(function(){var done=0;function skip(){if(done)return;var e=document.querySelector('.ice-intro');if(!e)return;done=1;e.style.animation='none';void e.offsetWidth;e.style.animation='introOut .45s cubic-bezier(.7,0,.2,1) forwards';e.style.pointerEvents='none';}['pointerdown','touchstart','wheel','keydown'].forEach(function(t){addEventListener(t,skip,{passive:true,capture:true})});})();</script><style>body{font-variant-numeric:lining-nums tabular-nums;-webkit-font-smoothing:antialiased}h1,h2,h3{font-variant-numeric:lining-nums}h1,h2{color:#0039a6!important}header h1,header h2,footer[style*="background"] h2{color:#fff!important}footer[style*="background"] a,footer[style*="background"] a:visited{color:#fff!important}</style></head>
 <body>
 <div id="dc-root"></div>
 <script type="text/x-dc-tpl">
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=Montserrat:wght@300;500;700;800&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&amp;family=Raleway:wght@400;500;600;700&amp;family=Changa:wght@400;500;600&amp;display=swap">
 <style>
-body{margin:0;background:#050A1A}
-a{color:#8FB3FF}a:hover{color:#C3D5FF}
+body{margin:0;background:#ffffff}
+a{color:#0039a6}a:hover{color:#3d4757}
 @keyframes introMark{0%{opacity:0;transform:scale(.55) rotate(-60deg);filter:blur(10px)}55%{opacity:1;filter:blur(0)}100%{opacity:1;transform:scale(1) rotate(0)}}
 @keyframes introWipe{0%{clip-path:inset(0 100% 0 0)}100%{clip-path:inset(0 0 0 0)}}
 @keyframes introFade{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:none}}
@@ -33,14 +33,14 @@ a{color:#8FB3FF}a:hover{color:#C3D5FF}
 @keyframes scan{0%{transform:translateY(-120%)}100%{transform:translateY(120%)}}
 @keyframes draw{from{stroke-dashoffset:600}to{stroke-dashoffset:0}}
 @keyframes heroSlide{0%{opacity:0;transform:scale(1.04) translate(0,0)}4%{opacity:1}17%{opacity:1}21%{opacity:0;transform:scale(1.16) translate(-2%,-1.5%)}100%{opacity:0;transform:scale(1.16) translate(-2%,-1.5%)}}
-.sec-slider{scrollbar-width:thin;scrollbar-color:#22356F transparent;cursor:grab}
+.sec-slider{scrollbar-width:thin;scrollbar-color:#c5cddd transparent;cursor:grab}
 .sec-slider.dragging{cursor:grabbing;scroll-snap-type:none!important;scroll-behavior:auto!important}
 .sec-slider.dragging *{user-select:none}
-.sec-slider::-webkit-scrollbar{height:6px}.sec-slider::-webkit-scrollbar-thumb{background:#22356F;border-radius:6px}
+.sec-slider::-webkit-scrollbar{height:6px}.sec-slider::-webkit-scrollbar-thumb{background:#d5dcec;border-radius:6px}
 @media (prefers-reduced-motion: reduce){.sec-slider{scroll-behavior:auto!important}}
-.sim-feat{transition:border-color .2s ease,transform .2s ease}.sim-feat:hover{border-color:#2C4699;transform:translateY(-1px)}
+.sim-feat{transition:border-color .2s ease,transform .2s ease}.sim-feat:hover{border-color:#c5cddd;transform:translateY(-1px)}
 @keyframes panelIn{0%{opacity:0;transform:translateY(16px) scale(.98)}100%{opacity:1;transform:none}}
-@keyframes hexGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(42,107,255,.45))}50%{filter:drop-shadow(0 0 24px rgba(42,107,255,.85))}}
+@keyframes hexGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(0,57,166,.25))}50%{filter:drop-shadow(0 0 24px rgba(0,57,166,.4))}}
 @keyframes hexOut{0%{opacity:0;transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(.62)}12%{opacity:1;transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(.62)}45%{opacity:1;transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(.62)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @keyframes coreIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @keyframes labelIn{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:none}}
@@ -48,30 +48,30 @@ a{color:#8FB3FF}a:hover{color:#C3D5FF}
 @keyframes hiveFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(0,-9px)}}
 @keyframes hiveSheen{0%,70%,100%{opacity:0}35%{opacity:.55}}
 .hive{position:absolute;width:132px;height:152px;transform:translate(-50%,-50%);animation:hexOut 2.4s cubic-bezier(.65,0,.25,1) both;z-index:2}
-.hive-float{width:100%;height:100%;animation:hiveFloat 6s ease-in-out infinite;filter:drop-shadow(0 10px 22px rgba(30,91,255,.45))}
-.hive-cell{position:relative;width:100%;height:100%;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:linear-gradient(90deg,#2E74FF,#0B33C9)}
+.hive-float{width:100%;height:100%;animation:hiveFloat 6s ease-in-out infinite;filter:drop-shadow(0 10px 22px rgba(0,57,166,.25))}
+.hive-cell{position:relative;width:100%;height:100%;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:linear-gradient(90deg,#0039a6,#0039a6)}
 .hive-cell::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.5),rgba(255,255,255,0) 55%);opacity:0;animation:hiveSheen 7s ease-in-out infinite;animation-delay:inherit}
 .hive-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:0 16px;text-align:center;animation:labelIn .6s ease both}
-.hive-name{font-family:'Montserrat',sans-serif;font-weight:700;font-size:13px;line-height:1.15;letter-spacing:.01em;color:#FFFFFF}
+.hive-name{font-family:'Playfair Display', Georgia, serif;font-weight:700;font-size:13px;line-height:1.15;color:#1b2433}
 .hive-core{position:absolute;left:50%;top:50%;width:30%;transform:translate(-50%,-50%);animation:coreIn .7s cubic-bezier(.2,.8,.2,1) both;z-index:3}
 .hive-links{position:absolute;inset:0;width:100%;height:100%;z-index:1;animation:linkIn 1s ease both}
 .ice-hex{transition:transform .25s ease}
 .ice-hex:hover{transform:scale(1.06);z-index:2}
 .ice-hex.is-active{z-index:3;animation:hexGlow 2.6s ease-in-out infinite}
 .ice-row{transition:border-color .2s ease,background-color .2s ease}
-.ice-row:hover{border-color:#3A6BFF;background-color:rgba(30,91,255,.12)}
+.ice-row:hover{border-color:#0039a6;background-color:rgba(0,57,166,.07)}
 .hero-slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;animation:heroSlide 36s linear infinite;will-change:transform,opacity}
 .ice-tile{transition:transform .25s ease,border-color .25s ease,background-color .25s ease}
-.ice-tile:hover{transform:translateY(-4px);border-color:#3A6BFF;background-color:#0E1A40}
+.ice-tile:hover{transform:translateY(-4px);border-color:#0039a6;background-color:#ffffff}
 .ice-path{transition:transform .25s ease,border-color .25s ease}
-.ice-path:hover{transform:translateY(-6px);border-color:#5B8CFF}
+.ice-path:hover{transform:translateY(-6px);border-color:#0039a6}
 .ice-path:hover .ice-arrow{transform:translateX(6px)}
 .ice-arrow{transition:transform .25s ease}
-input[type=range]{accent-color:#3A7BFF}
+input[type=range]{accent-color:#0039a6}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}.ice-intro{display:none!important}}
 </style>
 </helmet>
-<div style="font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #E8ECF8; background: #050A1A; min-height: 100vh; position: relative; overflow: hidden">
+<div style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; color: #1b2433; background: #ffffff; min-height: 100vh; position: relative; overflow: hidden">
 
 <div aria-hidden="true" style="position: fixed; inset: 0; z-index: 0; pointer-events: none">
 <img class="hero-slide" src="img/a1b4374d.jpg" alt="" data-section="Solid mechanics" style="animation-delay: -1s">
@@ -80,16 +80,16 @@ input[type=range]{accent-color:#3A7BFF}
 <img class="hero-slide" src="img/c1ac7adf.jpg" alt="" data-section="Fluid mechanics" style="animation-delay: 17s">
 <img class="hero-slide" src="img/422efd01.jpg" alt="" data-section="Control" style="animation-delay: 23s">
 <img class="hero-slide" src="img/7bf24101.jpg" alt="" data-section="Vibration" style="animation-delay: 29s">
-<div style="position: absolute; inset: 0; background: rgba(5,10,26,.78)"></div>
-<div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, rgba(5,10,26,0) 0%, rgba(5,10,26,.6) 100%)"></div>
+<div style="position: absolute; inset: 0; background: rgba(255,255,255,.9)"></div>
+<div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0) 0%, rgba(255,255,255,.6) 100%)"></div>
 </div>
 <sc-if value="{{showIntro}}" hint-placeholder-val="{{false}}">
-<div class="ice-intro" aria-hidden="true" style="position: fixed; inset: 0; z-index: 50; background: radial-gradient(circle at 50% 40%, #0F2A7A 0%, #050A1A 55%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; animation: introOut .9s cubic-bezier(.7,0,.2,1) 3.4s forwards">
+<div class="ice-intro" aria-hidden="true" style="position: fixed; inset: 0; z-index: 50; background: radial-gradient(circle at 50% 40%, #ffffff 0%, #0039a6 55%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; animation: introOut .9s cubic-bezier(.7,0,.2,1) 3.4s forwards">
 <img src="img/ice-mark.png" alt="" style="width: 190px; height: auto; animation: introMark 1.2s cubic-bezier(.2,.8,.2,1) both">
 <img src="img/ice-wordmark.png" alt="" style="width: 360px; max-width: 80vw; height: auto; animation: introWipe .9s cubic-bezier(.6,0,.2,1) .9s both">
-<div style="width: 220px; height: 1px; background: #22356F; transform-origin: center; animation: introLine .6s ease 1.8s both"></div>
+<div style="width: 220px; height: 1px; background: rgba(255,255,255,.12); transform-origin: center; animation: introLine .6s ease 1.8s both"></div>
 <div style="display: flex; align-items: center; gap: 12px; animation: introFade .6s ease 2.1s both">
-<span style="display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 10px; background: #FFFFFF"><img src="img/aub-logo.png" alt="American University of Bahrain" style="height: 56px; width: auto"></span>
+<span style="display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 10px; background: #ffffff"><img src="img/aub-logo.png" alt="American University of Bahrain" style="height: 56px; width: auto"></span>
 </div>
 </div>
 </sc-if>
@@ -97,52 +97,52 @@ input[type=range]{accent-color:#3A7BFF}
 <svg aria-hidden="true" width="100%" height="100%" style="position: absolute; inset: 0; pointer-events: none; opacity: .5">
 <defs>
 <pattern id="hexgrid" width="56" height="97" patternUnits="userSpaceOnUse" patternTransform="scale(1)">
-<path d="M28 0 L56 16 L56 48 L28 64 L0 48 L0 16 Z M28 64 L28 97" fill="none" stroke="#14214A" stroke-width="1"></path>
+<path d="M28 0 L56 16 L56 48 L28 64 L0 48 L0 16 Z M28 64 L28 97" fill="none" stroke="#dde3ef" stroke-width="1"></path>
 </pattern>
 <radialGradient id="glow" cx="72%" cy="14%" r="40%">
-<stop offset="0" stop-color="#1E5BFF" stop-opacity=".35"></stop>
-<stop offset="1" stop-color="#1E5BFF" stop-opacity="0"></stop>
+<stop offset="0" stop-color="#0039a6" stop-opacity=".35"></stop>
+<stop offset="1" stop-color="#0039a6" stop-opacity="0"></stop>
 </radialGradient>
 </defs>
 <rect width="100%" height="100%" fill="url(#hexgrid)"></rect>
 <rect width="100%" height="100%" fill="url(#glow)"></rect>
 </svg>
 
-<header style="position: sticky; top: 0; z-index: 10; background: rgba(5,10,26,.82); backdrop-filter: blur(10px); border-bottom: 1px solid #16224A">
+<header style="position: sticky; top: 0; z-index: 10; background: #0039a6; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,.28)">
 <div style="max-width: 1280px; margin: 0 auto; padding: 12px 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px">
 <a href="Home.dc.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none" aria-label="ICE Lab home">
 <img src="img/ice-mark.png" alt="" style="width: 34px; height: auto">
 <img src="img/ice-wordmark.png" alt="ICE LAB — Interdisciplinary Collaborative Engineering" style="height: 34px; width: auto">
 </a>
 <nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto; justify-content: flex-end">
-<a href="#about" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; font-size: 15px">About</a>
-<a href="#inside" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; font-size: 15px">What’s inside</a>
-<a href="Main.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; font-size: 15px">Equipment</a>
-<a href="SimHub.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; font-size: 15px">Simulation</a>
-<a href="Manufacturing.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; font-size: 15px">Manufacturing</a>
-<a href="Booking.dc.html" style="color: #B7C2E2; text-decoration: none; padding: 10px 14px; font-size: 15px">Book</a>
+<a href="#about" style="color: #e3e9f6; text-decoration: none; padding: 10px 14px; font-size: 15px">About</a>
+<a href="#inside" style="color: #e3e9f6; text-decoration: none; padding: 10px 14px; font-size: 15px">What’s inside</a>
+<a href="Main.dc.html" style="color: #e3e9f6; text-decoration: none; padding: 10px 14px; font-size: 15px">Equipment</a>
+<a href="SimHub.dc.html" style="color: #e3e9f6; text-decoration: none; padding: 10px 14px; font-size: 15px">Simulation</a>
+<a href="Manufacturing.dc.html" style="color: #e3e9f6; text-decoration: none; padding: 10px 14px; font-size: 15px">Manufacturing</a>
+<a href="Booking.dc.html" style="color: #e3e9f6; text-decoration: none; padding: 10px 14px; font-size: 15px">Book</a>
 </nav>
-<a href="Booking.dc.html" style="display: inline-flex; align-items: center; height: 42px; padding: 0 18px; border-radius: 6px; border: 1px solid #2C4699; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 500">Sign in</a>
+<a href="Booking.dc.html" style="display: inline-flex; align-items: center; height: 42px; padding: 0 18px; border-radius: 6px; border: 1px solid rgba(255,255,255,.28); color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 500">Sign in</a>
 </div>
 </header>
 
 <main style="position: relative; z-index: 1">
 
-<div style="position: relative; overflow: hidden; border-bottom: 1px solid #16224A">
+<div style="position: relative; overflow: hidden; border-bottom: 1px solid #e3e6ec">
 <section id="top" style="position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 88px 32px 72px; display: flex; flex-wrap: wrap; align-items: center; gap: 48px">
 <div style="flex: 0 1 760px; min-width: 0; display: flex; flex-direction: column; gap: 22px">
-<p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #6E95FF; animation: rise .7s ease 3.5s both">American University of Bahrain · ICE Lab</p>
-<h1 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 60px; line-height: 1.05; letter-spacing: -.02em; text-wrap: balance; animation: rise .8s ease 3.65s both">Test it. Measure it. <span style="font-weight: 300; color: #7FA4FF">Make it.</span></h1>
-<p style="margin: 0; font-size: 19px; line-height: 1.6; color: #AEB9DA; max-width: 600px; animation: rise .8s ease 3.8s both">ICE Lab brings the American University of Bahrain’s engineering laboratories together under one roof, serving Industrial, Civil and Mechanical Engineering. Six test sections and a Manufacturing Lab, 43 machines and rigs: learn the theory, rehearse it on a virtual bench, then book the real rig and measure it.</p>
+<p style="margin: 0; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #0039a6; animation: rise .7s ease 3.5s both">American University of Bahrain · ICE Lab</p>
+<h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 60px; line-height: 1.05; text-wrap: balance; animation: rise .8s ease 3.65s both">Test it. Measure it. <span style="font-weight: 300; color: #0039a6">Make it.</span></h1>
+<p style="margin: 0; font-size: 19px; line-height: 1.6; color: #3d4757; max-width: 600px; animation: rise .8s ease 3.8s both">ICE Lab brings the American University of Bahrain’s engineering laboratories together under one roof, serving Industrial, Civil and Mechanical Engineering. Six test sections and a Manufacturing Lab, 43 machines and rigs: learn the theory, rehearse it on a virtual bench, then book the real rig and measure it.</p>
 <div style="display: flex; flex-wrap: wrap; gap: 12px; animation: rise .8s ease 3.95s both">
-<a href="Booking.dc.html" style="display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; border-radius: 8px; background: linear-gradient(135deg, #2A6BFF, #0B33C9); color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 16px; box-shadow: 0 8px 30px rgba(30,91,255,.35)">Book equipment</a>
-<a href="SimHub.dc.html" style="display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; border-radius: 8px; border: 1px solid #2C4699; color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 16px">Try a simulation</a>
+<a href="Booking.dc.html" style="display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; border-radius: 8px; background: linear-gradient(135deg, #0039a6, #0039a6); color: #ffffff; text-decoration: none; font-weight: 600; font-size: 16px; box-shadow: 0 8px 30px rgba(0,57,166,.18)">Book equipment</a>
+<a href="SimHub.dc.html" style="display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; border-radius: 8px; border: 1px solid #c5cddd; color: #1b2433; text-decoration: none; font-weight: 500; font-size: 16px">Try a simulation</a>
 </div>
-<dl style="margin: 12px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 18px; border-top: 1px solid #1A2752; padding-top: 22px; animation: rise .8s ease 4.1s both">
-<div><dt style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #7E8BB3">Apparatus</dt><dd style="margin: 4px 0 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 34px">43</dd></div>
-<div><dt style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #7E8BB3">Test sections</dt><dd style="margin: 4px 0 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 34px">6</dd></div>
-<div><dt style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #7E8BB3">Virtual benches</dt><dd style="margin: 4px 0 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 34px">30</dd></div>
-<div><dt style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #7E8BB3">Classrooms</dt><dd style="margin: 4px 0 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 34px">2</dd></div>
+<dl style="margin: 12px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 18px; border-top: 1px solid #dfe3ea; padding-top: 22px; animation: rise .8s ease 4.1s both">
+<div><dt style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #5c6f7c">Apparatus</dt><dd style="margin: 4px 0 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 34px">43</dd></div>
+<div><dt style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #5c6f7c">Test sections</dt><dd style="margin: 4px 0 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 34px">6</dd></div>
+<div><dt style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #5c6f7c">Virtual benches</dt><dd style="margin: 4px 0 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 34px">30</dd></div>
+<div><dt style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #5c6f7c">Classrooms</dt><dd style="margin: 4px 0 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 34px">2</dd></div>
 </dl>
 </div>
 
@@ -152,97 +152,97 @@ input[type=range]{accent-color:#3A7BFF}
 <section id="about" aria-labelledby="about-h" style="max-width: 1280px; margin: 0 auto; padding: 96px 32px 24px; display: flex; flex-direction: column; gap: 40px">
 <div style="display: flex; flex-wrap: wrap; gap: 32px 64px; align-items: flex-start">
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
-<p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #6E95FF">About the lab</p>
-<h2 id="about-h" style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 40px; line-height: 1.12; letter-spacing: -.01em; text-wrap: balance">Where engineering theory meets measured data</h2>
+<p style="margin: 0; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #0039a6">About the lab</p>
+<h2 id="about-h" style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 40px; line-height: 1.12; text-wrap: balance">Where engineering theory meets measured data</h2>
 </div>
-<div style="flex: 1.3 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 16px; font-size: 17px; line-height: 1.7; color: #AEB9DA">
+<div style="flex: 1.3 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 16px; font-size: 17px; line-height: 1.7; color: #3d4757">
 <p style="margin: 0">ICE Lab is not a single room but a group of laboratories working side by side: Solid Mechanics, Materials Science, Thermodynamics, Fluid Mechanics, Control and Vibration. Together they hold 32 pieces of teaching and research apparatus, and the Manufacturing Lab next door adds 11 manual and CNC machines for making parts. The labs serve three programmes at the American University of Bahrain: Industrial, Civil and Mechanical Engineering.</p>
 <p style="margin: 0">In the lab, the equations from lectures are tested against real measurements. Students load a specimen until it fails, measure how beams, trusses and struts carry load, run a turbojet and a steam turbine, study open-channel and pipe flow, find the natural frequency of a beam and automate a live process with a PLC. Along the way they learn to plan an experiment, record clean data, judge its uncertainty and report the result as practising engineers do.</p>
 </div>
 </div>
 <div style="display: flex; flex-direction: column; gap: 14px">
-<p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #8E9AC0">Three programmes, one lab</p>
+<p style="margin: 0; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #5c6f7c">Three programmes, one lab</p>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px">
-<article style="display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 12px; border: 1px solid #2C4699; background: linear-gradient(160deg, rgba(42,107,255,.22), rgba(11,51,201,.06))">
-<h3 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 22px">Mechanical Engineering</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #AEB9DA">Thermodynamics, fluid mechanics, vibration and solid mechanics: engines, turbines, heat exchangers, pumps, the wind tunnel and rotor dynamics.</p>
+<article style="display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 12px; border: 1px solid #c5cddd; background: linear-gradient(160deg, rgba(0,57,166,.10), rgba(11,51,201,.06))">
+<h3 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 22px">Mechanical Engineering</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #3d4757">Thermodynamics, fluid mechanics, vibration and solid mechanics: engines, turbines, heat exchangers, pumps, the wind tunnel and rotor dynamics.</p>
 </article>
-<article style="display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 12px; border: 1px solid #2C4699; background: linear-gradient(160deg, rgba(42,107,255,.22), rgba(11,51,201,.06))">
-<h3 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 22px">Civil Engineering</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #AEB9DA">Materials testing and structures: tension, compression and shear tests, beams, trusses and struts, plus hydraulics in the flow channel and pipe rigs.</p>
+<article style="display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 12px; border: 1px solid #c5cddd; background: linear-gradient(160deg, rgba(0,57,166,.10), rgba(11,51,201,.06))">
+<h3 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 22px">Civil Engineering</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #3d4757">Materials testing and structures: tension, compression and shear tests, beams, trusses and struts, plus hydraulics in the flow channel and pipe rigs.</p>
 </article>
-<article style="display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 12px; border: 1px solid #2C4699; background: linear-gradient(160deg, rgba(42,107,255,.22), rgba(11,51,201,.06))">
-<h3 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 22px">Industrial Engineering</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #AEB9DA">Materials science, measurement and control: hardness, impact and fatigue testing, PLC automation and process trainers.</p>
+<article style="display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 12px; border: 1px solid #c5cddd; background: linear-gradient(160deg, rgba(0,57,166,.10), rgba(11,51,201,.06))">
+<h3 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 22px">Industrial Engineering</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #3d4757">Materials science, measurement and control: hardness, impact and fatigue testing, PLC automation and process trainers.</p>
 </article>
 </div>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px">
-<article style="display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 12px; border: 1px solid #1D2C5E; background: linear-gradient(180deg, #0B1636, #08112B)">
-<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .1em; color: #6E95FF">01</span>
-<h3 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 20px">Teaching</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #AEB9DA">Laboratory sessions for engineering courses run on industry-standard apparatus from TecQuipment, MTS and Matrix, so every group works on the same rigs used at universities worldwide.</p>
+<article style="display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 12px; border: 1px solid #dfe3ea; background: linear-gradient(180deg, #f5f6f8, #f5f6f8)">
+<span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; letter-spacing: .1em; color: #0039a6">01</span>
+<h3 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 20px">Teaching</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #3d4757">Laboratory sessions for engineering courses run on industry-standard apparatus from TecQuipment, MTS and Matrix, so every group works on the same rigs used at universities worldwide.</p>
 </article>
-<article style="display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 12px; border: 1px solid #1D2C5E; background: linear-gradient(180deg, #0B1636, #08112B)">
-<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .1em; color: #6E95FF">02</span>
-<h3 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 20px">Projects &amp; research</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #AEB9DA">Faculty, senior-design teams and research students can reserve rigs for longer studies, use the lab’s two classrooms, or borrow portable equipment with a supervisor’s approval.</p>
+<article style="display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 12px; border: 1px solid #dfe3ea; background: linear-gradient(180deg, #f5f6f8, #f5f6f8)">
+<span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; letter-spacing: .1em; color: #0039a6">02</span>
+<h3 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 20px">Projects &amp; research</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #3d4757">Faculty, senior-design teams and research students can reserve rigs for longer studies, use the lab’s two classrooms, or borrow portable equipment with a supervisor’s approval.</p>
 </article>
-<article style="display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 12px; border: 1px solid #1D2C5E; background: linear-gradient(180deg, #0B1636, #08112B)">
-<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .1em; color: #6E95FF">03</span>
-<h3 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 20px">Virtual benches</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #AEB9DA">30 of the rigs have a simulation that mirrors the real apparatus. Students rehearse the procedure and check their analysis before they spend time on the real machine.</p>
+<article style="display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 12px; border: 1px solid #dfe3ea; background: linear-gradient(180deg, #f5f6f8, #f5f6f8)">
+<span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; letter-spacing: .1em; color: #0039a6">03</span>
+<h3 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 20px">Virtual benches</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #3d4757">30 of the rigs have a simulation that mirrors the real apparatus. Students rehearse the procedure and check their analysis before they spend time on the real machine.</p>
 </article>
 </div>
 </section>
 
 <section aria-labelledby="paths-h" style="max-width: 1280px; margin: 0 auto; padding: 72px 32px 96px; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 8px">
-<p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #6E95FF">Start here</p>
-<h2 id="paths-h" style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 38px; letter-spacing: -.01em">What do you want to do?</h2>
+<p style="margin: 0; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #0039a6">Start here</p>
+<h2 id="paths-h" style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 38px; ">What do you want to do?</h2>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px">
 
-<a href="Booking.dc.html" class="ice-path" style="position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 28px; border-radius: 14px; border: 1px solid #22356F; background: linear-gradient(160deg, #10204F, #0A1330 60%); color: #E8ECF8; text-decoration: none; min-height: 300px">
-<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#7FA4FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4M8 14h3M8 17h6"></path></svg>
-<h3 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 24px">Book the lab</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.55; color: #AEB9DA">Borrow equipment, use a machine in the lab, or reserve Classroom 1 or 2. Your supervisor approves it online.</p>
-<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #B7C2E2">
-<li style="padding: 4px 10px; border: 1px solid #2C4699; border-radius: 999px">Borrow</li><li style="padding: 4px 10px; border: 1px solid #2C4699; border-radius: 999px">Use in lab</li><li style="padding: 4px 10px; border: 1px solid #2C4699; border-radius: 999px">Classroom</li>
+<a href="Booking.dc.html" class="ice-path" style="position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 28px; border-radius: 14px; border: 1px solid #c5cddd; background: linear-gradient(160deg, #e8edf7, #f5f6f8 60%); color: #1b2433; text-decoration: none; min-height: 300px">
+<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#0039a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4M8 14h3M8 17h6"></path></svg>
+<h3 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 24px">Book the lab</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.55; color: #3d4757">Borrow equipment, use a machine in the lab, or reserve Classroom 1 or 2. Your supervisor approves it online.</p>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; color: #3d4757">
+<li style="padding: 4px 10px; border: 1px solid #c5cddd; border-radius: 999px">Borrow</li><li style="padding: 4px 10px; border: 1px solid #c5cddd; border-radius: 999px">Use in lab</li><li style="padding: 4px 10px; border: 1px solid #c5cddd; border-radius: 999px">Classroom</li>
 </ul>
-<span style="margin-top: auto; display: flex; align-items: center; gap: 8px; font-weight: 600; color: #FFFFFF">Start a booking</span>
+<span style="margin-top: auto; display: flex; align-items: center; gap: 8px; font-weight: 600; color: #1b2433">Start a booking</span>
 </a>
 
-<a href="SimHub.dc.html" class="ice-path" style="position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 28px; border-radius: 14px; border: 1px solid #22356F; background: linear-gradient(160deg, #10204F, #0A1330 60%); color: #E8ECF8; text-decoration: none; min-height: 300px">
-<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#7FA4FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17c3 0 4-10 9-10s6 10 9 10"></path><path d="M3 21h18M3 3v18"></path><circle cx="12" cy="7" r="1.5"></circle></svg>
-<h3 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 24px">Try a simulation</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.55; color: #AEB9DA">Run a virtual version of a lab experiment first. Change the inputs, see the result, then book the real rig.</p>
-<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #B7C2E2">
-<li style="padding: 4px 10px; border: 1px solid #2C4699; border-radius: 999px">Beam deflection</li><li style="padding: 4px 10px; border: 1px solid #2C4699; border-radius: 999px">Buckling</li><li style="padding: 4px 10px; border: 1px solid #2C4699; border-radius: 999px">Vibration</li>
+<a href="SimHub.dc.html" class="ice-path" style="position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 28px; border-radius: 14px; border: 1px solid #c5cddd; background: linear-gradient(160deg, #e8edf7, #f5f6f8 60%); color: #1b2433; text-decoration: none; min-height: 300px">
+<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#0039a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17c3 0 4-10 9-10s6 10 9 10"></path><path d="M3 21h18M3 3v18"></path><circle cx="12" cy="7" r="1.5"></circle></svg>
+<h3 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 24px">Try a simulation</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.55; color: #3d4757">Run a virtual version of a lab experiment first. Change the inputs, see the result, then book the real rig.</p>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; color: #3d4757">
+<li style="padding: 4px 10px; border: 1px solid #c5cddd; border-radius: 999px">Beam deflection</li><li style="padding: 4px 10px; border: 1px solid #c5cddd; border-radius: 999px">Buckling</li><li style="padding: 4px 10px; border: 1px solid #c5cddd; border-radius: 999px">Vibration</li>
 </ul>
-<span style="margin-top: auto; display: flex; align-items: center; gap: 8px; font-weight: 600; color: #FFFFFF">Open simulations</span>
+<span style="margin-top: auto; display: flex; align-items: center; gap: 8px; font-weight: 600; color: #1b2433">Open simulations</span>
 </a>
 
-<a href="Main.dc.html" class="ice-path" style="position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 28px; border-radius: 14px; border: 1px solid #22356F; background: linear-gradient(160deg, #10204F, #0A1330 60%); color: #E8ECF8; text-decoration: none; min-height: 300px">
-<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#7FA4FF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l8.5 5v10L12 22l-8.5-5V7z"></path><path d="M12 22V12M20.5 7L12 12 3.5 7"></path></svg>
-<h3 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 24px">Explore equipment</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.55; color: #AEB9DA">See every machine and rig, what it’s used for, its accessories and whether it’s available today.</p>
-<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #B7C2E2">
-<li style="padding: 4px 10px; border: 1px solid #2C4699; border-radius: 999px">43 machines and rigs</li><li style="padding: 4px 10px; border: 1px solid #2C4699; border-radius: 999px">6 sections</li>
+<a href="Main.dc.html" class="ice-path" style="position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 28px; border-radius: 14px; border: 1px solid #c5cddd; background: linear-gradient(160deg, #e8edf7, #f5f6f8 60%); color: #1b2433; text-decoration: none; min-height: 300px">
+<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#0039a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l8.5 5v10L12 22l-8.5-5V7z"></path><path d="M12 22V12M20.5 7L12 12 3.5 7"></path></svg>
+<h3 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 24px">Explore equipment</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.55; color: #3d4757">See every machine and rig, what it’s used for, its accessories and whether it’s available today.</p>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; color: #3d4757">
+<li style="padding: 4px 10px; border: 1px solid #c5cddd; border-radius: 999px">43 machines and rigs</li><li style="padding: 4px 10px; border: 1px solid #c5cddd; border-radius: 999px">6 sections</li>
 </ul>
-<span style="margin-top: auto; display: flex; align-items: center; gap: 8px; font-weight: 600; color: #FFFFFF">Browse the catalog</span>
+<span style="margin-top: auto; display: flex; align-items: center; gap: 8px; font-weight: 600; color: #1b2433">Browse the catalog</span>
 </a>
 
 </div>
 </section>
 
-<section id="inside" aria-labelledby="inside-h" style="border-top: 1px solid #16224A; border-bottom: 1px solid #16224A; background: rgba(8,15,38,.75)">
+<section id="inside" aria-labelledby="inside-h" style="border-top: 1px solid #e3e6ec; border-bottom: 1px solid #e3e6ec; background: #f5f6f8">
 <div style="max-width: 1280px; margin: 0 auto; padding: 96px 32px; display: flex; flex-direction: column; gap: 40px">
 <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px">
 <div style="display: flex; flex-direction: column; gap: 8px; max-width: 680px">
-<p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #6E95FF">What’s inside</p>
-<h2 id="inside-h" style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 38px; letter-spacing: -.01em">Six test sections, one honeycomb</h2>
-<p style="margin: 0; font-size: 17px; line-height: 1.6; color: #AEB9DA">Like the ICE Lab mark, the lab is a honeycomb of six test sections. Pick a cell or slide through the sections, then explore one to see its rigs.</p>
+<p style="margin: 0; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #0039a6">What’s inside</p>
+<h2 id="inside-h" style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 38px; ">Six test sections, one honeycomb</h2>
+<p style="margin: 0; font-size: 17px; line-height: 1.6; color: #3d4757">Like the ICE Lab mark, the lab is a honeycomb of six test sections. Pick a cell or slide through the sections, then explore one to see its rigs.</p>
 </div>
 <a href="Main.dc.html" style="font-weight: 600; text-decoration: none">See the full catalog</a>
 </div>
@@ -253,51 +253,51 @@ input[type=range]{accent-color:#3A7BFF}
 <div role="tablist" aria-label="Lab sections" style="position: relative; width: 100%; max-width: 340px; aspect-ratio: 480 / 450">
 <sc-for list="{{sections}}" as="s" hint-placeholder-count="7">
 <sc-if value="{{s.active}}" hint-placeholder-val="{{false}}">
-<div class="ice-hex is-active" style="position: absolute; left: {{s.left}}; top: {{s.top}}; width: 31.25%; height: 38.44%; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: #9DBBFF">
-<button type="button" role="tab" aria-selected="true" onClick="{{s.pick}}" style="position: absolute; inset: 2px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); border: 0; background: linear-gradient(150deg, #2A6BFF, #0B33C9); color: #FFFFFF; font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 0 5%; text-align: center">
-<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s.icon}}"></path></svg>
-<span style="font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 12px; line-height: 1.2; hyphens: manual">{{s.hexName}}</span>
-<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #DCE6FF">{{s.count}}</span>
+<div class="ice-hex is-active" style="position: absolute; left: {{s.left}}; top: {{s.top}}; width: 31.25%; height: 38.44%; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: #0039a6">
+<button type="button" role="tab" aria-selected="true" onClick="{{s.pick}}" style="position: absolute; inset: 2px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); border: 0; background: linear-gradient(150deg, #0039a6, #0039a6); color: #ffffff; font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 0 5%; text-align: center">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s.icon}}"></path></svg>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 12px; line-height: 1.2; hyphens: manual">{{s.hexName}}</span>
+<span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 11px; color: #1b2433">{{s.count}}</span>
 </button>
 </div>
 </sc-if>
 <sc-if value="{{s.idle}}" hint-placeholder-val="{{true}}">
-<div class="ice-hex" style="position: absolute; left: {{s.left}}; top: {{s.top}}; width: 31.25%; height: 38.44%; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: #263C80">
-<button type="button" role="tab" aria-selected="false" onClick="{{s.pick}}" style="position: absolute; inset: 1.5px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); border: 0; background: #0B1636; color: #D3DAEE; font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 0 5%; text-align: center">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7FA4FF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s.icon}}"></path></svg>
-<span style="font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 12px; line-height: 1.2; hyphens: manual">{{s.hexName}}</span>
-<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #8E9AC0">{{s.count}}</span>
+<div class="ice-hex" style="position: absolute; left: {{s.left}}; top: {{s.top}}; width: 31.25%; height: 38.44%; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: #d5dcec">
+<button type="button" role="tab" aria-selected="false" onClick="{{s.pick}}" style="position: absolute; inset: 1.5px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); border: 0; background: #f5f6f8; color: #1b2433; font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 0 5%; text-align: center">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0039a6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s.icon}}"></path></svg>
+<span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 600; font-size: 12px; line-height: 1.2; hyphens: manual">{{s.hexName}}</span>
+<span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 11px; color: #5c6f7c">{{s.count}}</span>
 </button>
 </div>
 </sc-if>
 </sc-for>
-<div aria-hidden="true" style="position: absolute; left: 34.375%; top: 30.78%; width: 31.25%; height: 38.44%; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: #16224A">
-<div style="position: absolute; inset: 1.5px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: radial-gradient(circle, #10245A, #060C22 75%); display: flex; align-items: center; justify-content: center">
-<img src="img/ice-mark.png" alt="" style="width: 52%; height: auto; animation: float 6s ease-in-out infinite; filter: drop-shadow(0 8px 20px rgba(30,91,255,.5))">
+<div aria-hidden="true" style="position: absolute; left: 34.375%; top: 30.78%; width: 31.25%; height: 38.44%; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: #e6e9ef">
+<div style="position: absolute; inset: 1.5px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: radial-gradient(circle, #e8edf7, #ffffff 75%); display: flex; align-items: center; justify-content: center">
+<img src="img/ice-mark.png" alt="" style="width: 52%; height: auto; animation: float 6s ease-in-out infinite; filter: drop-shadow(0 8px 20px rgba(0,57,166,.25))">
 </div>
 </div>
 </div>
-<p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #7E8BB3">{{totalLabel}}</p>
+<p style="margin: 0; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; color: #5c6f7c">{{totalLabel}}</p>
 </div>
 
 <div style="flex: 1 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
 <div id="sec-slider" class="sec-slider" role="tabpanel" aria-label="Lab sections" tabindex="0" style="display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 2px 14px; overscroll-behavior-x: contain">
 <sc-for list="{{sections}}" as="s" hint-placeholder-count="3">
-<article id="{{s.cardId}}" style="flex: 0 0 min(330px, 86%); min-height: 270px; scroll-snap-align: start; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 22px; border-radius: 14px; border: 1px solid {{s.border}}; background: linear-gradient(160deg, #0F1E4C, #081128 70%); box-shadow: {{s.shadow}}; transition: border-color .3s ease, box-shadow .3s ease">
-<svg aria-hidden="true" width="170" height="170" viewBox="0 0 24 24" fill="none" stroke="#1C2E66" stroke-width=".5" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; right: -34px; top: -34px"><path d="{{s.icon}}"></path></svg>
+<article id="{{s.cardId}}" style="flex: 0 0 min(330px, 86%); min-height: 270px; scroll-snap-align: start; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 14px; padding: 22px; border-radius: 14px; border: 1px solid {{s.border}}; background: linear-gradient(160deg, #ffffff, #ffffff 70%); box-shadow: {{s.shadow}}; transition: border-color .3s ease, box-shadow .3s ease">
+<svg aria-hidden="true" width="170" height="170" viewBox="0 0 24 24" fill="none" stroke="#e3e8f2" stroke-width=".5" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; right: -34px; top: -34px"><path d="{{s.icon}}"></path></svg>
 <div style="position: relative; display: flex; align-items: center; gap: 12px">
-<span style="width: 42px; height: 48px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: linear-gradient(150deg, #2A6BFF, #0B33C9); display: flex; align-items: center; justify-content: center; flex: 0 0 auto">
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s.icon}}"></path></svg>
+<span style="width: 42px; height: 48px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: linear-gradient(150deg, #0039a6, #0039a6); display: flex; align-items: center; justify-content: center; flex: 0 0 auto">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{s.icon}}"></path></svg>
 </span>
 <div style="display: flex; flex-direction: column; gap: 1px; flex: 1 1 auto; min-width: 0">
-<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .1em; color: #6E95FF">{{s.code}}</span>
-<h3 style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 21px; letter-spacing: -.01em; line-height: 1.15">{{s.name}}</h3>
+<span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 11px; letter-spacing: .1em; color: #0039a6">{{s.code}}</span>
+<h3 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 21px; line-height: 1.15">{{s.name}}</h3>
 </div>
-<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2C4699; color: #DCE6FF; white-space: nowrap">{{s.count}}</span>
+<span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid #c5cddd; color: #1b2433; white-space: nowrap">{{s.count}}</span>
 </div>
-<p style="position: relative; margin: 0; font-size: 15px; line-height: 1.6; color: #C3CCE6">{{s.what}}</p>
+<p style="position: relative; margin: 0; font-size: 15px; line-height: 1.6; color: #3d4757">{{s.what}}</p>
 <div style="position: relative; margin-top: auto; padding-top: 4px">
-<a href="Section.dc.html#sec={{s.key}}" style="display: flex; align-items: center; justify-content: center; height: 44px; border-radius: 8px; background: linear-gradient(135deg, #2A6BFF, #0B33C9); color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 15px">Explore</a>
+<a href="Section.dc.html#sec={{s.key}}" style="display: flex; align-items: center; justify-content: center; height: 44px; border-radius: 8px; background: linear-gradient(135deg, #0039a6, #0039a6); color: #ffffff; text-decoration: none; font-weight: 600; font-size: 15px">Explore</a>
 </div>
 </article>
 </sc-for>
@@ -315,90 +315,90 @@ input[type=range]{accent-color:#3A7BFF}
 
 <section id="simulation" aria-labelledby="sim-h" style="max-width: 1280px; margin: 0 auto; padding: 96px 32px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center">
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
-<p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #6E95FF">Simulation</p>
-<h2 id="sim-h" style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 38px; letter-spacing: -.01em">Try it virtually before you book</h2>
-<p style="margin: 0; font-size: 17px; line-height: 1.6; color: #AEB9DA">Each of the 30 benches on the Virtual Bench mirrors a real rig in the lab, with live readings, a logbook and the analysis. Predict the result there, then measure it on the apparatus and compare.</p>
+<p style="margin: 0; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #0039a6">Simulation</p>
+<h2 id="sim-h" style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 38px; ">Try it virtually before you book</h2>
+<p style="margin: 0; font-size: 17px; line-height: 1.6; color: #3d4757">Each of the 30 benches on the Virtual Bench mirrors a real rig in the lab, with live readings, a logbook and the analysis. Predict the result there, then measure it on the apparatus and compare.</p>
 <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 10px">
-<li><a href="bench.html#beams" class="sim-feat" style="display: flex; gap: 14px; align-items: center; padding: 8px; border-radius: 10px; border: 1px solid #1D2C5E; background: rgba(11,22,54,.7); color: #E8ECF8; text-decoration: none"><img src="img/eq/ice-15.jpg" alt="" loading="lazy" style="width: 84px; height: 56px; object-fit: cover; border-radius: 6px; flex: 0 0 auto; background: #14214A"><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #6E95FF">No. 15</span><span style="font-size: 15px; font-weight: 600">Beam deflection</span><span style="font-size: 13px; color: #8E9AC0">Beam Apparatus</span></span></a></li>
-<li><a href="bench.html#buckling" class="sim-feat" style="display: flex; gap: 14px; align-items: center; padding: 8px; border-radius: 10px; border: 1px solid #1D2C5E; background: rgba(11,22,54,.7); color: #E8ECF8; text-decoration: none"><img src="img/eq/ice-14.jpg" alt="" loading="lazy" style="width: 84px; height: 56px; object-fit: cover; border-radius: 6px; flex: 0 0 auto; background: #14214A"><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #6E95FF">No. 14</span><span style="font-size: 15px; font-weight: 600">Euler buckling</span><span style="font-size: 13px; color: #8E9AC0">Buckling Test Apparatus</span></span></a></li>
-<li><a href="bench.html#h16" class="sim-feat" style="display: flex; gap: 14px; align-items: center; padding: 8px; border-radius: 10px; border: 1px solid #1D2C5E; background: rgba(11,22,54,.7); color: #E8ECF8; text-decoration: none"><img src="img/eq/ice-27.jpg" alt="" loading="lazy" style="width: 84px; height: 56px; object-fit: cover; border-radius: 6px; flex: 0 0 auto; background: #14214A"><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #6E95FF">No. 27</span><span style="font-size: 15px; font-weight: 600">Head loss in pipes</span><span style="font-size: 13px; color: #8E9AC0">H16 Losses in Pipe Systems</span></span></a></li>
-<li><a href="bench.html#tm1016v" class="sim-feat" style="display: flex; gap: 14px; align-items: center; padding: 8px; border-radius: 10px; border: 1px solid #1D2C5E; background: rgba(11,22,54,.7); color: #E8ECF8; text-decoration: none"><img src="img/eq/ice-32.jpg" alt="" loading="lazy" style="width: 84px; height: 56px; object-fit: cover; border-radius: 6px; flex: 0 0 auto; background: #14214A"><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #6E95FF">No. 32</span><span style="font-size: 15px; font-weight: 600">Resonance</span><span style="font-size: 13px; color: #8E9AC0">Free and Forced Vibration</span></span></a></li>
+<li><a href="bench.html#beams" class="sim-feat" style="display: flex; gap: 14px; align-items: center; padding: 8px; border-radius: 10px; border: 1px solid #dfe3ea; background: rgba(255,255,255,.85); color: #1b2433; text-decoration: none"><img src="img/eq/ice-15.jpg" alt="" loading="lazy" style="width: 84px; height: 56px; object-fit: cover; border-radius: 6px; flex: 0 0 auto; background: #e8edf7"><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 11.5px; color: #0039a6">No. 15</span><span style="font-size: 15px; font-weight: 600">Beam deflection</span><span style="font-size: 13px; color: #5c6f7c">Beam Apparatus</span></span></a></li>
+<li><a href="bench.html#buckling" class="sim-feat" style="display: flex; gap: 14px; align-items: center; padding: 8px; border-radius: 10px; border: 1px solid #dfe3ea; background: rgba(255,255,255,.85); color: #1b2433; text-decoration: none"><img src="img/eq/ice-14.jpg" alt="" loading="lazy" style="width: 84px; height: 56px; object-fit: cover; border-radius: 6px; flex: 0 0 auto; background: #e8edf7"><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 11.5px; color: #0039a6">No. 14</span><span style="font-size: 15px; font-weight: 600">Euler buckling</span><span style="font-size: 13px; color: #5c6f7c">Buckling Test Apparatus</span></span></a></li>
+<li><a href="bench.html#h16" class="sim-feat" style="display: flex; gap: 14px; align-items: center; padding: 8px; border-radius: 10px; border: 1px solid #dfe3ea; background: rgba(255,255,255,.85); color: #1b2433; text-decoration: none"><img src="img/eq/ice-27.jpg" alt="" loading="lazy" style="width: 84px; height: 56px; object-fit: cover; border-radius: 6px; flex: 0 0 auto; background: #e8edf7"><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 11.5px; color: #0039a6">No. 27</span><span style="font-size: 15px; font-weight: 600">Head loss in pipes</span><span style="font-size: 13px; color: #5c6f7c">H16 Losses in Pipe Systems</span></span></a></li>
+<li><a href="bench.html#tm1016v" class="sim-feat" style="display: flex; gap: 14px; align-items: center; padding: 8px; border-radius: 10px; border: 1px solid #dfe3ea; background: rgba(255,255,255,.85); color: #1b2433; text-decoration: none"><img src="img/eq/ice-32.jpg" alt="" loading="lazy" style="width: 84px; height: 56px; object-fit: cover; border-radius: 6px; flex: 0 0 auto; background: #e8edf7"><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 11.5px; color: #0039a6">No. 32</span><span style="font-size: 15px; font-weight: 600">Resonance</span><span style="font-size: 13px; color: #5c6f7c">Free and Forced Vibration</span></span></a></li>
 </ul>
-<a href="SimHub.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; height: 50px; padding: 0 22px; border-radius: 8px; border: 1px solid #2C4699; color: #FFFFFF; text-decoration: none; font-weight: 600">All 30 simulations</a>
+<a href="SimHub.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; height: 50px; padding: 0 22px; border-radius: 8px; border: 1px solid #c5cddd; color: #1b2433; text-decoration: none; font-weight: 600">All 30 simulations</a>
 </div>
 
-<div style="flex: 1 1 560px; min-width: 0; border-radius: 14px; border: 1px solid #22356F; background: #08112B; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.45)">
-<div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #1A2752; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #7E8BB3">
-<span style="width: 10px; height: 10px; border-radius: 50%; background: #2A3A6E"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #2A3A6E"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #2A3A6E"></span>
+<div style="flex: 1 1 560px; min-width: 0; border-radius: 14px; border: 1px solid #c5cddd; background: #f5f6f8; overflow: hidden; box-shadow: 0 30px 80px rgba(16,24,40,.14)">
+<div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #dfe3ea; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; color: #5c6f7c">
+<span style="width: 10px; height: 10px; border-radius: 50%; background: #d5dcec"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #d5dcec"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #d5dcec"></span>
 <span style="margin-left: 8px">Virtual Bench / Beam deflection · simply supported, centre load</span>
 </div>
 <div style="padding: 20px 20px 8px; position: relative">
 <svg viewBox="0 0 600 220" width="100%" role="img" aria-label="{{beamLabel}}">
-<line x1="40" y1="200" x2="560" y2="200" stroke="#1A2752" stroke-width="1"></line>
-<path d="M60 120 L45 150 L75 150 Z" fill="none" stroke="#5B8CFF" stroke-width="2"></path>
-<path d="M540 120 L525 150 L555 150 Z" fill="none" stroke="#5B8CFF" stroke-width="2"></path>
-<circle cx="540" cy="156" r="5" fill="none" stroke="#5B8CFF" stroke-width="2"></circle>
-<line x1="60" y1="120" x2="540" y2="120" stroke="#2A3A6E" stroke-width="2" stroke-dasharray="6 6"></line>
+<line x1="40" y1="200" x2="560" y2="200" stroke="#dde3ef" stroke-width="1"></line>
+<path d="M60 120 L45 150 L75 150 Z" fill="none" stroke="#0039a6" stroke-width="2"></path>
+<path d="M540 120 L525 150 L555 150 Z" fill="none" stroke="#0039a6" stroke-width="2"></path>
+<circle cx="540" cy="156" r="5" fill="none" stroke="#0039a6" stroke-width="2"></circle>
+<line x1="60" y1="120" x2="540" y2="120" stroke="#c5cddd" stroke-width="2" stroke-dasharray="6 6"></line>
 <path d="{{curve}}" fill="none" stroke="#4C83FF" stroke-width="6" stroke-linecap="round"></path>
 <line x1="300" y1="30" x2="300" y2="{{arrowEnd}}" stroke="#FF8A4C" stroke-width="3"></line>
 <path d="{{arrowHead}}" fill="#FF8A4C"></path>
 <text x="312" y="44" fill="#FFB38A" font-family="IBM Plex Mono, monospace" font-size="14">P = {{load}} N</text>
-<text x="312" y="{{deltaY}}" fill="#8FB3FF" font-family="IBM Plex Mono, monospace" font-size="14">δ = {{delta}} mm</text>
-<text x="60" y="190" fill="#7E8BB3" font-family="IBM Plex Mono, monospace" font-size="12">L = 1000 mm · steel bar 25 × 6 mm · E = 200 GPa</text>
+<text x="312" y="{{deltaY}}" fill="#0039a6" font-family="IBM Plex Mono, monospace" font-size="14">δ = {{delta}} mm</text>
+<text x="60" y="190" fill="#5c6f7c" font-family="IBM Plex Mono, monospace" font-size="12">L = 1000 mm · steel bar 25 × 6 mm · E = 200 GPa</text>
 </svg>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; padding: 8px 20px 20px">
-<label for="loadSlider" style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #B7C2E2; flex: 0 0 auto">Load P</label>
+<label for="loadSlider" style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 13px; color: #3d4757; flex: 0 0 auto">Load P</label>
 <input id="loadSlider" type="range" min="0" max="100" step="5" value="{{load}}" onInput="{{setLoad}}" style="flex: 1 1 220px">
-<div style="display: flex; gap: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 13px">
-<div><div style="color: #7E8BB3">Max deflection</div><div style="color: #FFFFFF; font-size: 20px">{{delta}} mm</div></div>
-<div><div style="color: #7E8BB3">Max stress</div><div style="color: #FFFFFF; font-size: 20px">{{stress}} MPa</div></div>
+<div style="display: flex; gap: 20px; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 13px">
+<div><div style="color: #5c6f7c">Max deflection</div><div style="color: #1b2433; font-size: 20px">{{delta}} mm</div></div>
+<div><div style="color: #5c6f7c">Max stress</div><div style="color: #1b2433; font-size: 20px">{{stress}} MPa</div></div>
 </div>
-<div style="flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; padding-top: 6px; border-top: 1px solid #1A2752"><span style="font-size: 13px; color: #8E9AC0">Same beam, supports and load as the Beam deflection bench.</span><a href="bench.html#beams" style="display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 8px; background: linear-gradient(135deg, #2A6BFF, #0B33C9); color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 14px">Run the full bench</a></div>
+<div style="flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; padding-top: 6px; border-top: 1px solid #dfe3ea"><span style="font-size: 13px; color: #5c6f7c">Same beam, supports and load as the Beam deflection bench.</span><a href="bench.html#beams" style="display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 8px; background: linear-gradient(135deg, #0039a6, #0039a6); color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px">Run the full bench</a></div>
 </div>
 </div>
 </section>
 
-<section aria-labelledby="how-h" style="border-top: 1px solid #16224A; background: rgba(8,15,38,.75)">
+<section aria-labelledby="how-h" style="border-top: 1px solid #e3e6ec; background: #f5f6f8">
 <div style="max-width: 1280px; margin: 0 auto; padding: 88px 32px; display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; gap: 8px">
-<p style="margin: 0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #6E95FF">How booking works</p>
-<h2 id="how-h" style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 38px; letter-spacing: -.01em">From request to the bench in five steps</h2>
+<p style="margin: 0; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: #0039a6">How booking works</p>
+<h2 id="how-h" style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 38px; ">From request to the bench in five steps</h2>
 </div>
 <ol style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
-<li style="display: flex; flex-direction: column; gap: 10px; padding: 22px; border-radius: 12px; border: 1px solid #1D2C5E; background: #0A1330"><span style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 34px; color: #2F5BDB">01</span><b style="font-size: 17px">Choose what you need</b><span style="color: #AEB9DA; font-size: 15px; line-height: 1.5">Borrow equipment, use a rig in the lab, or book a classroom.</span></li>
-<li style="display: flex; flex-direction: column; gap: 10px; padding: 22px; border-radius: 12px; border: 1px solid #1D2C5E; background: #0A1330"><span style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 34px; color: #2F5BDB">02</span><b style="font-size: 17px">Pick your dates</b><span style="color: #AEB9DA; font-size: 15px; line-height: 1.5">The system only offers times that are free, so nothing gets double-booked.</span></li>
-<li style="display: flex; flex-direction: column; gap: 10px; padding: 22px; border-radius: 12px; border: 1px solid #1D2C5E; background: #0A1330"><span style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 34px; color: #2F5BDB">03</span><b style="font-size: 17px">Supervisor approves</b><span style="color: #AEB9DA; font-size: 15px; line-height: 1.5">Your supervisor gets an email and approves or declines online.</span></li>
-<li style="display: flex; flex-direction: column; gap: 10px; padding: 22px; border-radius: 12px; border: 1px solid #5A4512; background: linear-gradient(160deg, rgba(252,211,77,.10), #0A1330 60%)"><span style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 34px; color: #E0B23A">04</span><b style="font-size: 17px">Bring the right PPE</b><span style="color: #AEB9DA; font-size: 15px; line-height: 1.5">Every machine in the catalog lists its required PPE to the usual ANSI / OSHA and EN standards. Closed-toe shoes always, safety shoes in the Manufacturing Lab. No PPE, no session.</span><a href="Main.dc.html" style="margin-top: auto; font-size: 14px; font-weight: 600">See PPE in the catalog</a></li>
-<li style="display: flex; flex-direction: column; gap: 10px; padding: 22px; border-radius: 12px; border: 1px solid #1D2C5E; background: #0A1330"><span style="font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 34px; color: #2F5BDB">05</span><b style="font-size: 17px">Come to the lab</b><span style="color: #AEB9DA; font-size: 15px; line-height: 1.5">Check in at the lab desk with your ID. The team has everything ready.</span></li>
+<li style="display: flex; flex-direction: column; gap: 10px; padding: 22px; border-radius: 12px; border: 1px solid #dfe3ea; background: #f5f6f8"><span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 34px; color: #0039a6">01</span><b style="font-size: 17px">Choose what you need</b><span style="color: #3d4757; font-size: 15px; line-height: 1.5">Borrow equipment, use a rig in the lab, or book a classroom.</span></li>
+<li style="display: flex; flex-direction: column; gap: 10px; padding: 22px; border-radius: 12px; border: 1px solid #dfe3ea; background: #f5f6f8"><span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 34px; color: #0039a6">02</span><b style="font-size: 17px">Pick your dates</b><span style="color: #3d4757; font-size: 15px; line-height: 1.5">The system only offers times that are free, so nothing gets double-booked.</span></li>
+<li style="display: flex; flex-direction: column; gap: 10px; padding: 22px; border-radius: 12px; border: 1px solid #dfe3ea; background: #f5f6f8"><span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 34px; color: #0039a6">03</span><b style="font-size: 17px">Supervisor approves</b><span style="color: #3d4757; font-size: 15px; line-height: 1.5">Your supervisor gets an email and approves or declines online.</span></li>
+<li style="display: flex; flex-direction: column; gap: 10px; padding: 22px; border-radius: 12px; border: 1px solid #dcc06a; background: linear-gradient(160deg, #fff3d1, #f5f6f8 60%)"><span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 34px; color: #8a5a00">04</span><b style="font-size: 17px">Bring the right PPE</b><span style="color: #3d4757; font-size: 15px; line-height: 1.5">Every machine in the catalog lists its required PPE to the usual ANSI / OSHA and EN standards. Closed-toe shoes always, safety shoes in the Manufacturing Lab. No PPE, no session.</span><a href="Main.dc.html" style="margin-top: auto; font-size: 14px; font-weight: 600">See PPE in the catalog</a></li>
+<li style="display: flex; flex-direction: column; gap: 10px; padding: 22px; border-radius: 12px; border: 1px solid #dfe3ea; background: #f5f6f8"><span style="font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 34px; color: #0039a6">05</span><b style="font-size: 17px">Come to the lab</b><span style="color: #3d4757; font-size: 15px; line-height: 1.5">Check in at the lab desk with your ID. The team has everything ready.</span></li>
 </ol>
 </div>
 </section>
 
 </main>
 
-<footer style="position: relative; z-index: 1; border-top: 1px solid #16224A; background: #040816">
+<footer style="position: relative; z-index: 1; border-top: 1px solid rgba(255,255,255,.28); background: #0039a6">
 <div style="max-width: 1280px; margin: 0 auto; padding: 48px 32px; display: flex; flex-wrap: wrap; gap: 32px 64px; justify-content: space-between">
 <div style="display: flex; flex-direction: column; gap: 18px; flex: 1 1 320px">
 <div style="display: flex; align-items: center; gap: 18px">
 <img src="img/ice-mark.png" alt="" style="width: 44px; height: auto">
 <img src="img/ice-wordmark.png" alt="ICE LAB — Interdisciplinary Collaborative Engineering" style="height: 44px; width: auto">
-<span style="width: 1px; height: 40px; background: #22356F"></span>
-<span style="display: inline-flex; align-items: center; padding: 8px 12px; border-radius: 8px; background: #FFFFFF"><img src="img/aub-logo.png" alt="American University of Bahrain" style="height: 40px; width: auto"></span>
+<span style="width: 1px; height: 40px; background: rgba(255,255,255,.12)"></span>
+<span style="display: inline-flex; align-items: center; padding: 8px 12px; border-radius: 8px; background: #ffffff"><img src="img/aub-logo.png" alt="American University of Bahrain" style="height: 40px; width: auto"></span>
 </div>
-<p style="margin: 0; color: #8E9AC0; font-size: 14px; line-height: 1.6">ICE Lab · American University of Bahrain</p>
-</div>
-<div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px">
-<b style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #7E8BB3">Visit</b>
-<span style="color: #D3DAEE">American University of Bahrain</span>
-<span style="color: #D3DAEE">Kingdom of Bahrain</span>
+<p style="margin: 0; color: #c9d4ee; font-size: 14px; line-height: 1.6">ICE Lab · American University of Bahrain</p>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px">
-<b style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #7E8BB3">Contact</b>
+<b style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #c9d4ee">Visit</b>
+<span style="color: #ffffff">American University of Bahrain</span>
+<span style="color: #ffffff">Kingdom of Bahrain</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+<b style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #c9d4ee">Contact</b>
 <a href="Booking.dc.html" style="text-decoration: none">Send a request</a>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px">
-<b style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #7E8BB3">Go to</b>
+<b style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #c9d4ee">Go to</b>
 <a href="Booking.dc.html" style="text-decoration: none">Book equipment</a>
 <a href="SimHub.dc.html" style="text-decoration: none">Simulations</a>
 <a href="Main.dc.html" style="text-decoration: none">Equipment catalog</a>
@@ -534,9 +534,9 @@ class Component extends DCLogic {
       active: this.state.sec === s.key, idle: this.state.sec !== s.key,
       pick: () => { this.setState({ sec: s.key }); this.slideTo(s.key); },
       cardId: 'sec-card-' + s.key, hexName: s.name.replace('Thermodynamics', 'Thermo­dynamics'), activeStr: String(this.state.sec === s.key),
-      border: this.state.sec === s.key ? '#5B8CFF' : '#22356F',
+      border: this.state.sec === s.key ? '#0039a6' : '#c5cddd',
       shadow: this.state.sec === s.key ? '0 24px 60px rgba(30,91,255,.22)' : '0 18px 40px rgba(0,0,0,.35)',
-      dotW: this.state.sec === s.key ? '26px' : '8px', dotBg: this.state.sec === s.key ? '#5B8CFF' : '#2C4699'
+      dotW: this.state.sec === s.key ? '26px' : '8px', dotBg: this.state.sec === s.key ? '#0039a6' : '#b3b3b3'
     }));
     return {
       showIntro: this.props.showIntro ?? true,

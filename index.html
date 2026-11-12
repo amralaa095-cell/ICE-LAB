@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 30 virtual benches with data analysis and calibration, and the Manufacturing Lab with its own machine simulations.">
-<meta name="theme-color" content="#050A1A">
+<meta name="theme-color" content="#0039a6">
 <link rel="icon" type="image/png" href="img/ice-mark.png">
 <meta property="og:title" content="ICE Lab · American University of Bahrain">
 <meta property="og:description" content="Book lab equipment, run the virtual benches and analyse your data.">
@@ -11,15 +11,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ICE Lab</title>
 <script src="./support.js"></script>
-</head>
+<style>body{font-variant-numeric:lining-nums tabular-nums;-webkit-font-smoothing:antialiased}h1,h2,h3{font-variant-numeric:lining-nums}h1,h2{color:#0039a6!important}header h1,header h2,footer[style*="background"] h2{color:#fff!important}footer[style*="background"] a,footer[style*="background"] a:visited{color:#fff!important}</style></head>
 <body>
 <div id="dc-root"></div>
 <script type="text/x-dc-tpl">
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=Montserrat:wght@500;600&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&amp;family=Raleway:wght@400;500;600;700&amp;family=Changa:wght@400;500;600&amp;display=swap">
 <style>
 body{margin:0}
-a{color:#0B33C9}a:hover{color:#1E5BFF}
+a{color:#0039a6}a:hover{color:#0039a6}
 @keyframes introMark{0%{opacity:0;transform:scale(.55) rotate(-60deg);filter:blur(10px)}55%{opacity:1;filter:blur(0)}100%{opacity:1;transform:scale(1) rotate(0)}}
 @keyframes introWipe{0%{clip-path:inset(0 100% 0 0)}100%{clip-path:inset(0 0 0 0)}}
 @keyframes introFade{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:none}}
@@ -28,11 +28,11 @@ a{color:#0B33C9}a:hover{color:#1E5BFF}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important}}
 </style>
 </helmet>
-<div style="width: 100%; min-height: 100vh; min-height: 100svh; box-sizing: border-box; padding: 24px 16px; background: #050A1A; font-family: 'Montserrat', system-ui, sans-serif; color: #E8ECF8; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<div style="width: 100%; min-height: 100vh; min-height: 100svh; box-sizing: border-box; padding: 24px 16px; background: #ffffff; font-family: 'Playfair Display', Georgia, serif; color: #1b2433; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center">
 <svg aria-hidden="true" width="100%" height="100%" style="position: absolute; inset: 0; pointer-events: none">
 <defs>
-<pattern id="introHex" width="56" height="97" patternUnits="userSpaceOnUse"><path d="M28 0 L56 16 L56 48 L28 64 L0 48 L0 16 Z M28 64 L28 97" fill="none" stroke="#14214A" stroke-width="1"></path></pattern>
-<radialGradient id="introGlow" cx="50%" cy="40%" r="45%"><stop offset="0" stop-color="#1E5BFF" stop-opacity=".35"></stop><stop offset="1" stop-color="#1E5BFF" stop-opacity="0"></stop></radialGradient>
+<pattern id="introHex" width="56" height="97" patternUnits="userSpaceOnUse"><path d="M28 0 L56 16 L56 48 L28 64 L0 48 L0 16 Z M28 64 L28 97" fill="none" stroke="#dde3ef" stroke-width="1"></path></pattern>
+<radialGradient id="introGlow" cx="50%" cy="40%" r="45%"><stop offset="0" stop-color="#0039a6" stop-opacity=".35"></stop><stop offset="1" stop-color="#0039a6" stop-opacity="0"></stop></radialGradient>
 </defs>
 <rect width="100%" height="100%" fill="url(#introHex)" opacity=".6"></rect>
 <rect width="100%" height="100%" fill="url(#introGlow)"></rect>
@@ -40,16 +40,16 @@ a{color:#0B33C9}a:hover{color:#1E5BFF}
 <sc-if value="{{show}}" hint-placeholder-val="{{true}}">
 <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 30px">
 <div style="position: relative; width: min(240px, 52vw); height: auto; aspect-ratio: 240 / 274; display: flex; align-items: center; justify-content: center">
-<div aria-hidden="true" style="position: absolute; inset: 10px; border-radius: 50%; border: 2px solid #1E5BFF; animation: ring 1.4s ease-out .6s both"></div>
-<img src="img/ice-mark.png" alt="ICE Lab mark" style="width: 100%; height: auto; animation: introMark 1.2s cubic-bezier(.2,.8,.2,1) both; filter: drop-shadow(0 20px 40px rgba(30,91,255,.45))">
+<div aria-hidden="true" style="position: absolute; inset: 10px; border-radius: 50%; border: 2px solid #0039a6; animation: ring 1.4s ease-out .6s both"></div>
+<img src="img/ice-mark.png" alt="ICE Lab mark" style="width: 100%; height: auto; animation: introMark 1.2s cubic-bezier(.2,.8,.2,1) both; filter: drop-shadow(0 20px 40px rgba(0,57,166,.25))">
 </div>
 <img src="img/ice-wordmark.png" alt="ICE LAB — Interdisciplinary Collaborative Engineering" style="width: min(460px, 86vw); height: auto; animation: introWipe .9s cubic-bezier(.6,0,.2,1) .9s both">
-<div aria-hidden="true" style="width: min(280px, 70vw); height: 1px; background: #22356F; animation: introLine .6s ease 1.8s both"></div>
+<div aria-hidden="true" style="width: min(280px, 70vw); height: 1px; background: #d5dcec; animation: introLine .6s ease 1.8s both"></div>
 <div style="display: flex; align-items: center; gap: 14px; animation: introFade .6s ease 2.1s both">
 <span style="display: inline-flex; align-items: center; padding: 10px 16px; border-radius: 10px; background: #FFFFFF"><img src="img/aub-logo.png" alt="American University of Bahrain" style="height: clamp(44px, 12vw, 64px); width: auto"></span>
 </div>
 <div style="display: flex; gap: 12px; margin-top: 10px; animation: introFade .6s ease 2.6s both">
-<a href="Home.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 8px; background: linear-gradient(135deg, #2A6BFF, #0B33C9); color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 15px; box-shadow: 0 8px 30px rgba(30,91,255,.35)">Enter site</a>
+<a href="Home.dc.html" style="display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 8px; background: linear-gradient(135deg, #0039a6, #0039a6); color: #ffffff; text-decoration: none; font-weight: 600; font-size: 15px; box-shadow: 0 8px 30px rgba(0,57,166,.18)">Enter site</a>
 </div>
 </div>
 </sc-if>
