@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ICE Lab — Home</title>
 <script src="./support.js"></script>
-<style>@media (pointer:coarse){button[role=tab]{position:relative}button[role=tab]::after{content:"";position:absolute;inset:-16px -5px}a[href="Main.dc.html"]:not(nav a),footer a{display:inline-block;padding:8px 0}}</style><script>(function(){var done=0;function skip(){if(done)return;var e=document.querySelector('.ice-intro');if(!e)return;done=1;e.style.animation='none';void e.offsetWidth;e.style.animation='introOut .45s cubic-bezier(.7,0,.2,1) forwards';e.style.pointerEvents='none';}['pointerdown','touchstart','wheel','keydown'].forEach(function(t){addEventListener(t,skip,{passive:true,capture:true})});})();</script><style>body{font-variant-numeric:lining-nums tabular-nums;-webkit-font-smoothing:antialiased}h1,h2,h3{font-variant-numeric:lining-nums}h1,h2{color:#0039a6!important}header h1,header h2,footer[style*="background"] h2{color:#fff!important}footer[style*="background"] a,footer[style*="background"] a:visited{color:#fff!important}</style></head>
+<style>@media (pointer:coarse){button[role=tab]{position:relative}button[role=tab]::after{content:"";position:absolute;inset:-16px -5px}a[href="Main.dc.html"]:not(nav a),footer a{display:inline-block;padding:8px 0}}</style><script>(function(){var done=0;function skip(){if(done)return;var e=document.querySelector('.ice-intro');if(!e)return;done=1;e.style.animation='none';void e.offsetWidth;e.style.animation='introOut .45s cubic-bezier(.7,0,.2,1) forwards';e.style.pointerEvents='none';}['pointerdown','touchstart','wheel','keydown'].forEach(function(t){addEventListener(t,skip,{passive:true,capture:true})});})();</script><style>body,input,select,button,table{font-feature-settings:"lnum" 1,"tnum" 1}body{font-variant-numeric:lining-nums tabular-nums;-webkit-font-smoothing:antialiased}h1,h2,h3{font-variant-numeric:lining-nums}h1,h2{color:#0039a6!important}header h1,header h2,footer[style*="background"] h2{color:#fff!important}footer[style*="background"] a,footer[style*="background"] a:visited{color:#fff!important}</style></head>
 <body>
 <div id="dc-root"></div>
 <script type="text/x-dc-tpl">
@@ -342,9 +342,9 @@ input[type=range]{accent-color:#0039a6}
 <path d="{{curve}}" fill="none" stroke="#4C83FF" stroke-width="6" stroke-linecap="round"></path>
 <line x1="300" y1="30" x2="300" y2="{{arrowEnd}}" stroke="#FF8A4C" stroke-width="3"></line>
 <path d="{{arrowHead}}" fill="#FF8A4C"></path>
-<text x="312" y="44" fill="#FFB38A" font-family="IBM Plex Mono, monospace" font-size="14">P = {{load}} N</text>
-<text x="312" y="{{deltaY}}" fill="#0039a6" font-family="IBM Plex Mono, monospace" font-size="14">δ = {{delta}} mm</text>
-<text x="60" y="190" fill="#5c6f7c" font-family="IBM Plex Mono, monospace" font-size="12">L = 1000 mm · steel bar 25 × 6 mm · E = 200 GPa</text>
+<text x="312" y="44" fill="#cc092f" font-family="Raleway, sans-serif" style="font-variant-numeric:lining-nums tabular-nums" font-size="14">P = {{load}} N</text>
+<text x="312" y="{{deltaY}}" fill="#0039a6" font-family="Raleway, sans-serif" style="font-variant-numeric:lining-nums tabular-nums" font-size="14">δ = {{delta}} mm</text>
+<text x="60" y="190" fill="#5c6f7c" font-family="Raleway, sans-serif" style="font-variant-numeric:lining-nums tabular-nums" font-size="12">L = 1000 mm · steel bar 25 × 6 mm · E = 200 GPa</text>
 </svg>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; padding: 8px 20px 20px">

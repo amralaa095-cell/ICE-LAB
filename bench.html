@@ -13,7 +13,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Raleway:wght@400;500;600;700&family=Changa:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Raleway:wght@400;500;600;700&family=Changa:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="katex/katex.min.css">
 <script src="katex/katex.min.js"></script>
 <style>
@@ -171,7 +171,7 @@ footer{margin-top:28px;font-size:12px;color:var(--muted)}
 :root[data-theme="light"]{--bg:#ffffff;--panel:#f5f6f8;--panel-2:#e9edf5;--ink:#1b2433;--muted:#5c6f7c;--line:#dfe3ea;
   --steel:#5c6f7c;--steel-2:#a9b6c2;--accent:#0039a6;--accent-ink:#0039a6;--on-accent:#ffffff;
   --trace:#0039a6;--control:#0039a6;--fit:#cc092f;--cold:#2472a7;--water:#2472a7;--glass:#dfe8f1;
-  --display:"Playfair Display",Georgia,serif;--body:"Raleway","Changa",system-ui,-apple-system,"Segoe UI",sans-serif}
+  --display:"Playfair Display",Georgia,serif;--mono:"Raleway","Changa",system-ui,sans-serif;--body:"Raleway","Changa",system-ui,-apple-system,"Segoe UI",sans-serif}
 body{background:#ffffff;font-variant-numeric:lining-nums tabular-nums;-webkit-font-smoothing:antialiased}
 /* site bar on brand blue */
 .site-bar{background:#0039a6!important;border-bottom:1px solid #002f8a!important;font-family:var(--body)!important}
@@ -193,10 +193,12 @@ a{color:#0039a6}
 .panel{box-shadow:none;border-radius:12px}
 @media (max-width:720px){.site-bar nav a{background:rgba(255,255,255,.12)!important;border-color:rgba(255,255,255,.28)!important}
 .site-bar nav a[aria-current]{background:#fff!important;border-color:#fff!important;color:#0039a6!important;box-shadow:none!important}}
+/* numbers in readouts, tables and inputs: lining, equal width */
+body,input,select,button,table,output,dd,code,kbd,samp,pre{font-variant-numeric:lining-nums tabular-nums;font-feature-settings:"lnum" 1,"tnum" 1}
 </style></head>
 <body>
 <style>
-.site-bar{background:#050A1A;border-bottom:1px solid #16224A;font-family:"IBM Plex Sans",system-ui,sans-serif}
+.site-bar{background:#050A1A;border-bottom:1px solid #16224A;font-family:"Raleway","Changa",system-ui,sans-serif}
 .site-bar .in{max-width:1400px;margin:0 auto;padding:10px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 28px}
 .site-bar .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
 .site-bar .brand img{height:30px;width:auto}
@@ -231,7 +233,7 @@ a{color:#0039a6}
 <script>
 "use strict";
 const root=document.documentElement, $=id=>document.getElementById(id);
-const MONO='"IBM Plex Mono", ui-monospace, Menlo, monospace';
+const MONO='"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 const SECTIONS=[
   {id:'mat',name:'Materials Science',v:'--s-mat'},
   {id:'solid',name:'Solid Mechanics',v:'--s-solid'},
@@ -957,7 +959,7 @@ DEV({id:'metallography',man:'MECH241L §6 Metallographic observations: grind, po
 (function(){
 const dark=()=>document.documentElement.getAttribute('data-theme')==='dark'||(!document.documentElement.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
 const base=(K,R)=>{const M=K.mat,flM=M('#e9eae6',{r:.9});if(!window.G3_STUDIO)R.add(K.node(K.plane(6,5),flM,{r:[-Math.PI/2,0,0]}));return ()=>{flM.c=dark()?'#4d5258':'#e9eae6';};};
-const lcdDraw=(t,txt,col)=>t.draw((c,w,h)=>{c.fillStyle='#10161a';c.fillRect(0,0,w,h);c.fillStyle=col||'#7fe08a';c.font='600 '+Math.round(h*0.55)+'px monospace';c.textAlign='right';c.fillText(txt,w-10,h*0.72);});
+const lcdDraw=(t,txt,col)=>t.draw((c,w,h)=>{c.fillStyle='#10161a';c.fillRect(0,0,w,h);c.fillStyle=col||'#7fe08a';c.font='600 '+Math.round(h*0.55)+'px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText(txt,w-10,h*0.72);});
 const matCol={s1018:'#9aa2aa',s1045:'#8c949c',ss304:'#c3c8cc',al6061:'#cfd3d6',al1100:'#d8dbdd',brass:'#c9a43a',cu:'#c07a4a',ci:'#5d6268',c1018:'#9aa2aa',s355:'#8c949c',al:'#cfd3d6',steel:'#9aa2aa'};
 
 /* ===== tensile: 100 kN universal testing machine ===== */
@@ -1267,7 +1269,7 @@ DEV({id:'eskit',sec:'solid',model:'ES kits',short:'ES kit: springs',name:"Hooke'
 (function(){
 const dark=()=>document.documentElement.getAttribute('data-theme')==='dark'||(!document.documentElement.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
 const base=(K,R)=>{const M=K.mat,flM=M('#e9eae6',{r:.9});if(!window.G3_STUDIO)R.add(K.node(K.plane(6,5),flM,{r:[-Math.PI/2,0,0]}));return ()=>{flM.c=dark()?'#4d5258':'#e9eae6';};};
-const lcdDraw=(t,txt,col)=>t.draw((c,w,h)=>{c.fillStyle='#10161a';c.fillRect(0,0,w,h);c.fillStyle=col||'#7fe08a';c.font='600 '+Math.round(h*0.55)+'px monospace';c.textAlign='right';c.fillText(txt,w-10,h*0.72);});
+const lcdDraw=(t,txt,col)=>t.draw((c,w,h)=>{c.fillStyle='#10161a';c.fillRect(0,0,w,h);c.fillStyle=col||'#7fe08a';c.font='600 '+Math.round(h*0.55)+'px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText(txt,w-10,h*0.72);});
 const bench=(K,R,B,M,TOP,W,D)=>{R.add(B(W,0.05,D,M('#d9d6cf',{r:.7}),[0,TOP-0.025,0]));[[-W/2+0.05,-D/2+0.05],[W/2-0.05,-D/2+0.05],[-W/2+0.05,D/2-0.05],[W/2-0.05,D/2-0.05]].forEach(([x,z])=>R.add(B(0.04,TOP-0.05,0.04,M(MATC.frame),[x,(TOP-0.05)/2,z])));};
 /* a cylinder between two points */
 const seg=(K,n,a,b,r)=>{const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1e-6;n.p=[(a[0]+b[0])/2,(a[1]+b[1])/2,a[2]||0];n.r=[0,0,Math.atan2(dy,dx)-Math.PI/2];n.s=[r,L,r];};
@@ -1498,7 +1500,7 @@ DEV({id:'whirling',sec:'vib',model:'Rotor rig',short:'Rotor dynamics',name:'Whir
 (function(){
 const dark=()=>document.documentElement.getAttribute('data-theme')==='dark'||(!document.documentElement.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
 const base=(K,R)=>{const M=K.mat,flM=M('#e9eae6',{r:.9});if(!window.G3_STUDIO)R.add(K.node(K.plane(6,5),flM,{r:[-Math.PI/2,0,0]}));return ()=>{flM.c=dark()?'#4d5258':'#e9eae6';};};
-const lcdDraw=(t,txt,col)=>t.draw((c,w,h)=>{c.fillStyle='#10161a';c.fillRect(0,0,w,h);c.fillStyle=col||'#7fe08a';c.font='600 '+Math.round(h*0.55)+'px monospace';c.textAlign='right';c.fillText(txt,w-10,h*0.72);});
+const lcdDraw=(t,txt,col)=>t.draw((c,w,h)=>{c.fillStyle='#10161a';c.fillRect(0,0,w,h);c.fillStyle=col||'#7fe08a';c.font='600 '+Math.round(h*0.55)+'px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText(txt,w-10,h*0.72);});
 const coil=(x,y0,y1,z,r,n)=>{const pts=[];const N=n*12;for(let i=0;i<=N;i++){const a=i/12*Math.PI*2;pts.push([x+Math.cos(a)*r,y0+(y1-y0)*i/N,z+Math.sin(a)*r]);}return pts;};
 
 /* ===== TM1016V ===== */
@@ -1663,7 +1665,7 @@ function bench3d(K,R,o){o=o||{};const M=K.mat,B=(w,h,dd,m,p,op)=>K.node(K.box(w,
   /* control panel on the front */const pT=K.tex(512,256,null);R.add(K.node(K.plane(0.36,0.18),M('#fff',{t:pT,r:.5}),{p:[0.1,H-0.16,D/2+0.003]}));
   const sw=K.node(K.cyl(0.02,0.02,0.02,18),M('#2fae3b',{r:.4}),{r:[Math.PI/2,0,0],p:[0.0,H-0.2,D/2+0.012],pick:'bpump',tip:()=>'Bench pump: '+(BENCH.on?'running (click to stop)':'off (click to start)')});R.add(sw);
   const hw=K.group({p:[0.45,H-0.2,D/2+0.02]});R.add(hw);hw.add(K.node(K.torus(0.05,0.008,24,8),red,{r:[Math.PI/2,0,0],pick:'knob:'+(o.vp||'bv'),tip:()=>'Bench flow control valve '+BENCH.v+' % open: drag sideways'}));for(let k=0;k<3;k++)hw.add(B(0.1,0.008,0.008,red,[0,0,0],{r:[0,0,k*1.047]}));
-  const draw=()=>pT.draw((c,w,h)=>{c.fillStyle='#d9dbdd';c.fillRect(0,0,w,h);c.fillStyle='#222';c.font='600 20px sans-serif';c.fillText('VOLUME FLOW RATE',16,30);c.fillStyle='#14181b';c.fillRect(16,44,300,90);c.fillStyle='#7CFC9A';c.font='600 56px monospace';c.textAlign='right';c.fillText(bDisp().toFixed(1),300,110);c.textAlign='left';c.fillStyle='#222';c.font='600 24px sans-serif';c.fillText('L/min',330,110);c.font='600 16px sans-serif';c.fillText('PUMP',140,240);});draw();
+  const draw=()=>pT.draw((c,w,h)=>{c.fillStyle='#d9dbdd';c.fillRect(0,0,w,h);c.fillStyle='#222';c.font='600 20px sans-serif';c.fillText('VOLUME FLOW RATE',16,30);c.fillStyle='#14181b';c.fillRect(16,44,300,90);c.fillStyle='#7CFC9A';c.font='600 56px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText(bDisp().toFixed(1),300,110);c.textAlign='left';c.fillStyle='#222';c.font='600 24px sans-serif';c.fillText('L/min',330,110);c.font='600 16px sans-serif';c.fillText('PUMP',140,240);});draw();
   R.add(B(0.3,0.4,0.25,M('#2a64d0',{a:.18}),[0.38,0.5,0.0]));const sumpW=B(0.28,0.3,0.23,M('#3d8fd6',{a:.45}),[0.38,0.35,0]);R.add(sumpW);
   let tt=0;return {H,W,D,outlet:[0.55,H+0.02,-0.2],update(dt,t){sw.mat.c=BENCH.on?'#2fae3b':'#5b6066';hw.r[2]=-BENCH.v/100*4;chW.mat.a=BENCH.Q>0.005?0.55:0.15;tt+=dt;if(tt>0.25){tt=0;draw();}}};}
 (function(){const d=DEVMAP.h8;if(!d)return;
@@ -1761,7 +1763,7 @@ d.view3d={h:540,cam:{tgt:[0,1.08,0],yaw:0.42,pitch:0.22,dist:1.9},
       lev.r[1]=-(s.bv/100)*Math.PI/2;ow.r[1]=-s.ov/100*Math.PI*4;plg.p[1]=0.06-Math.max(0,s._pp||0)*0.04;s._pp=Math.max(0,(s._pp||0)-dt*3);
       swB.mat=BENCH.on?M('#d2281f',{r:.3}):M('#2fae3b',{r:.3});lamp.mat=BENCH.on?M('#ffe060',{e:'#ffb000'}):M('#555');
       const v=clamp((s.vol||0)/20,0,1.02);mw.s=[1,Math.max(0.001,0.28*v),1];mw.p[1]=-0.15+0.14*v;dl.r[1]=s.dump?-Math.PI/2:0;
-      tt+=dt;if(tt>0.2){tt=0;fmT.draw((c,w,h)=>{c.fillStyle='#9fb08a';c.fillRect(0,0,w,h);c.fillStyle='#132';c.font='600 52px monospace';c.textAlign='right';c.textBaseline='middle';c.fillText(bDisp().toFixed(2),w-70,h/2+3);c.font='22px monospace';c.fillText('L/min',w-6,h/2+6);});}
+      tt+=dt;if(tt>0.2){tt=0;fmT.draw((c,w,h)=>{c.fillStyle='#9fb08a';c.fillRect(0,0,w,h);c.fillStyle='#132';c.font='600 52px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.textBaseline='middle';c.fillText(bDisp().toFixed(2),w-70,h/2+3);c.font='22px "Segoe UI", Roboto, Arial, sans-serif';c.fillText('L/min',w-6,h/2+6);});}
       if(s.spill&&Math.random()<0.7)K.emit({p:[BW/2+0.04,1.0+BH+0.015,-0.058],v:[0.15+Math.random()*0.1,0.2,0.05],g:-3,life:0.6,size:0.004,c:'#3d8fe0',a:.9});
       if(s.over&&Math.random()<0.8)K.emit({p:[0.35+(Math.random()-.5)*0.3,0.47,0.18],v:[(Math.random()-.5)*0.1,0.05,0.2],g:-3,life:0.5,size:0.005,c:'#3d8fe0',a:.9});
       if(on&&Math.random()<0.5)K.emit({p:[0.38,0.5,0.1],v:[0,-0.6,0],g:-2,life:0.25,size:0.006,c:'#3d8fe0',a:.7});
@@ -2036,7 +2038,7 @@ d.view3d={h:600,cam:{tgt:[0,0.95,0],yaw:0.18,pitch:0.12,dist:3.0},
       isoA.r[1]=s.cir==='A'?-Math.PI/2:0;isoB.r[2]=0;isoB.r[1]=s.cir==='B'?-Math.PI/2:0;wD.r[1]=s.cir==='A'?-s.vo/100*Math.PI*5:-Math.PI*5;wK.r[1]=s.cir==='B'?-s.vo/100*Math.PI*5:-Math.PI*5;svl.r[1]=-(s.bv/100)*Math.PI/2;
       gn.r[2]=(225-clamp(on?h16Gauge(s)*RHO*G/1e5:0,0,1.02)*270)*Math.PI/180;swB.mat=BENCH.on?M('#d2281f',{r:.3}):M('#2fae3b',{r:.3});lamp.mat=BENCH.on?M('#ffe060',{e:'#ffb000'}):M('#555');
       const vv=clamp((s.vol||0)/25,0,1.02);mw.s=[1,Math.max(0.001,0.38*vv),1];mw.p[1]=-0.19+0.19*vv;dl.r[1]=s.dump?-Math.PI/2:0;
-      tt+=dt;if(tt>0.2){tt=0;fmT.draw((c,w,h)=>{c.fillStyle='#9fb08a';c.fillRect(0,0,w,h);c.fillStyle='#132';c.font='600 52px monospace';c.textAlign='right';c.textBaseline='middle';c.fillText(bDisp().toFixed(2),w-70,h/2+3);c.font='22px monospace';c.fillText('L/min',w-6,h/2+6);});}
+      tt+=dt;if(tt>0.2){tt=0;fmT.draw((c,w,h)=>{c.fillStyle='#9fb08a';c.fillRect(0,0,w,h);c.fillStyle='#132';c.font='600 52px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.textBaseline='middle';c.fillText(bDisp().toFixed(2),w-70,h/2+3);c.font='22px "Segoe UI", Roboto, Arial, sans-serif';c.fillText('L/min',w-6,h/2+6);});}
       if(s.spill&&Math.random()<0.7)K.emit({p:[MX1+0.07,MY0+MH+0.03,0],v:[0.15,0.2,0.05],g:-3,life:0.6,size:0.004,c:'#3d8fe0',a:.9});
       if(s.over&&Math.random()<0.8)K.emit({p:[1.25+(Math.random()-.5)*0.35,0.41,0.45],v:[0,0.05,0.2],g:-3,life:0.5,size:0.005,c:'#3d8fe0',a:.9});
       if(on&&Math.random()<0.5)K.emit({p:[1.12,0.3,0.25],v:[0,-0.6,0],g:-2,life:0.25,size:0.006,c:'#3d8fe0',a:.7});
@@ -2119,8 +2121,8 @@ d.view3d={h:520,cam:{tgt:[0,0.9,0],yaw:0.32,pitch:0.28,dist:3.4},
       tgP.s=[1,s.tw/1000,1];tgP.p[1]=s.tw/2000;hk.p[0]=X(s.hx/1000)-X(0.6)+X(0.6);
       const ys=depth(s.hx/1000)||0.004;const top=Yb+FC.D+0.08,bot=Yb+0.012+(on?ys:0.004);pt.s=[1,top-bot,1];pt.p=[0,(top+bot)/2,-0.0];
       mlab.el.textContent=s.m==='sharp'?'Sharp-crested weir':s.m==='broad'?'Broad-crested weir':'Sluice gate'+(on&&jx>0&&jx<2.45?' · hydraulic jump at '+(jx*1000).toFixed(0)+' mm':'');
-      tt+=dt;if(tt>0.2){tt=0;fmT.draw((c,w,h)=>{c.fillStyle='#9fb08a';c.fillRect(0,0,w,h);c.fillStyle='#132';c.font='600 52px monospace';c.textAlign='right';c.textBaseline='middle';c.fillText(bDisp().toFixed(1),w-70,h/2+3);c.font='22px monospace';c.fillText('L/min',w-6,h/2+6);});
-        vern.draw((c,w,h)=>{c.fillStyle='#111';c.fillRect(0,0,w,h);c.fillStyle='#9f9';c.font='600 34px monospace';c.textAlign='center';c.textBaseline='middle';c.fillText(((s._hy||0)*1000).toFixed(1),w/2,h/2+2);});}
+      tt+=dt;if(tt>0.2){tt=0;fmT.draw((c,w,h)=>{c.fillStyle='#9fb08a';c.fillRect(0,0,w,h);c.fillStyle='#132';c.font='600 52px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.textBaseline='middle';c.fillText(bDisp().toFixed(1),w-70,h/2+3);c.font='22px "Segoe UI", Roboto, Arial, sans-serif';c.fillText('L/min',w-6,h/2+6);});
+        vern.draw((c,w,h)=>{c.fillStyle='#111';c.fillRect(0,0,w,h);c.fillStyle='#9f9';c.font='600 34px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(((s._hy||0)*1000).toFixed(1),w/2,h/2+2);});}
       /* tracer particles carried at the local mean velocity q/y */if(on&&Math.random()<0.9){const q0=K.emit({p:[X(0.01),Yb+0.014+Math.random()*depth(0.01)*0.9,(Math.random()-.5)*b*0.8],life:30,size:0.0045,c:'#ffffff',a:.95,e:'#606060'});
         if(q0){q0.f=Math.random();q0.fn=(q,dt)=>{const x=q.p[0]-X0;if(x>L){q.age=q.life;return;}const y=Math.max(depth(x),0.004),u=BENCH.Q/1000/(b*y);q.v=[Math.min(u,4),0,0];q.p[1]=Yb+0.012+y*q.f*0.95+((jx>0&&Math.abs(x-jx)<0.08)?Math.sin(t*20+q.f*9)*0.004:0);};}}
       if(on)for(let k=0;k<2;k++)K.emit({p:[X(L)+0.01,Yb+0.012+Math.max(depth(L),s.tw/1000),(Math.random()-.5)*b],v:[0.25,-0.2,0],g:-4,life:0.45,size:0.005,c:'#3d8fe0',a:.8});
@@ -2256,7 +2258,7 @@ d.view3d={h:560,cam:{tgt:[0.05,0.75,0],yaw:0.3,pitch:0.2,dist:2.3},
       levs.forEach((l,i)=>l.r[2]=s.V[i]?0:Math.PI/2);v5.r[2]=-s.v5/100*4;v1t.r[2]=-s.v1/100*4;
       if(Rr.cav<0.98&&Math.random()<0.6)K.emit({p:[(c==='p1'?P1x:P2x)+(Math.random()-.5)*0.02,0.5,0.06],v:[0,0.15,0],life:0.4,size:0.004,c:'#ffffff',a:.8});
       cfgL.el.textContent=c?H52CFG[c].n:'Valves not set as in Table 5.1';warn.el.textContent=Rr.cav<0.98?'⚠ Cavitation at the pump inlet: noise and falling head':((s.P1||s.P2)&&!fl&&!c?'⚠ Pump running against closed valves':'');
-      tt+=dt;if(tt>0.2){tt=0;const m=s.rm||Rr;['P1','P2','P3'].forEach((k,i)=>drawG(gT[i],m[k],k));fT.draw((c2,w,h)=>{c2.fillStyle='#9fb08a';c2.fillRect(0,0,w,h);c2.fillStyle='#132';c2.font='600 64px monospace';c2.textAlign='right';c2.textBaseline='middle';c2.fillText((m.Q*60).toFixed(2),w-80,h/2);c2.font='24px monospace';c2.fillText('L/min',w-6,h/2+10);});}}};}};
+      tt+=dt;if(tt>0.2){tt=0;const m=s.rm||Rr;['P1','P2','P3'].forEach((k,i)=>drawG(gT[i],m[k],k));fT.draw((c2,w,h)=>{c2.fillStyle='#9fb08a';c2.fillRect(0,0,w,h);c2.fillStyle='#132';c2.font='600 64px "Segoe UI", Roboto, Arial, sans-serif';c2.textAlign='right';c2.textBaseline='middle';c2.fillText((m.Q*60).toFixed(2),w-80,h/2);c2.font='24px "Segoe UI", Roboto, Arial, sans-serif';c2.fillText('L/min',w-6,h/2+10);});}}};}};
 })();
 /* ---- H11 centre of pressure in 3D: pivoted quadrant tank, weight hanger, water filled by jug ---- */
 (function(){const d=DEVMAP.h11;if(!d)return;
@@ -2530,7 +2532,7 @@ d.view3d={h:560,get cam(){return vOf(d.s.exp);},
     const seg=K.group({p:[tx+0.1,TOP+0.3,tz]});R.add(seg);const NQ=16;for(let k=0;k<NQ;k++){const am=Math.PI+(k+0.5)*Math.PI/2/NQ;[0.1,0.2].forEach(rr=>seg.add(B(rr*Math.PI/2/NQ*1.05,0.004,0.075,M('#c9b27a',{r:.5}),[rr*Math.cos(am),rr*Math.sin(am),0],{r:[0,0,am+Math.PI/2],pick:'plane',tip:'Toroidal segment: only the flat end face makes a moment about the pivot'})));}
     seg.add(B(0.004,0.1,0.075,M('#c9b27a',{r:.5}),[0,-0.15,0]));seg.add(B(0.32,0.01,0.01,M(MATC.alu,{m:1}),[0.06,0.005,0]));const phg=K.group({p:[0.22,0,0]});seg.add(phg);phg.add(K.node(K.cyl(0.0015,0.0015,0.06,6),steel,{p:[0,-0.03,0]}));const pms=K.node(K.cyl(0.018,0.018,1,16),M('#b9922f',{m:1}),{});phg.add(pms);lab('Plane surface (toroid)','plane');
     const tag=K.label('',R,[0,TOP+0.62,-0.2],{cls:'v3tag'});
-    const lcd=(t,txt)=>t.draw((c,w,h)=>{c.fillStyle='#9fb39a';c.fillRect(0,0,w,h);c.fillStyle='#152015';c.font='600 56px monospace';c.textAlign='right';c.fillText(txt,w-12,h-22);});
+    const lcd=(t,txt)=>t.draw((c,w,h)=>{c.fillStyle='#9fb39a';c.fillRect(0,0,w,h);c.fillStyle='#152015';c.font='600 56px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText(txt,w-12,h-22);});
     let lastBal='',lastSw='';
     return {root:R,update(s,dt,t){flM.c=dark()?'#4d5258':'#e9eae6';const e=s.exp,p=IT[e]||[0,0];ring.p=[p[0],TOP+0.004,p[1]];ring.s=[1+0.08*Math.sin(t*4),1,1+0.08*Math.sin(t*4)];
       const ro=(H3[e]&&H3[e].ro)?H3[e].ro(s):[];const g=ro.filter(r=>r[2]==='g'&&r[1]!=='—').pop();const bt=g?String(g[1]):'0.0';if(bt!==lastBal){lastBal=bt;lcd(balT,bt+' g');}
@@ -2854,8 +2856,8 @@ d.view3d={h:540,cam:{tgt:[0.2,1.2,0],yaw:0.12,pitch:0.12,dist:3.6},
       /* smoke: released at 13 heights in the centre plane, carried downstream, deflected by the model */if(s.V>0.3){const vis=0.45+Math.min(s.V,40)*0.01;const ne=Math.max(1,Math.round(38*Math.min(dt,0.3)));for(let k=0;k<n;k++){for(let e=0;e<ne;e++){const z0=-H/2+sp*(k+1),q=K.emit({p:[X0+0.03+e/ne*vis*Math.min(dt,0.3),CY+z0,(Math.random()-.5)*0.004],life:6,size:0.0032,c:'#f4f4f4',a:.9,e:'#606060'});if(q){q.z0=z0;q.fn=(q,dt)=>{const x=q.p[0];q.v=[vis,0,0];if(sc)q.p[1]=CY+clamp(sc.z(x,q.z0,t),-H/2+0.004,H/2-0.004);if(x>X1-0.01)q.age=q.life;};}}}}
       warn.el.textContent=sc&&sc.r.blk>0.12?'⚠ Blockage '+(sc.r.blk*100).toFixed(0)+' %: model too big for the section':(sc&&sc.r.stall&&WT_LIFT(s.mdl)&&s.V>0.3?'⚠ Stalled: flow separated from the upper surface':'');
       tt+=dt;if(tt>0.25){tt=0;const al=s.mdl==='sphere'?0:s.aoa,r=wtAero(s,Math.max(s.V,0.01),al),on=s.V>0.3;
-        bT.draw((c,w,h)=>{c.fillStyle='#1b1c1f';c.fillRect(0,0,w,h);c.fillStyle='#f0f0f0';c.font='italic 800 22px sans-serif';c.fillText('MATRIX',14,28);c.font='600 14px sans-serif';c.fillText('3-COMPONENT BALANCE',120,27);c.fillStyle='#2b3035';[['LIFT N',on?r.Lraw:0],['DRAG N',on?r.Draw:0]].forEach(([l,v],i)=>{const x=14+i*250;c.fillStyle='#14181b';c.fillRect(x,46,232,80);c.fillStyle='#d7f7c2';c.font='600 40px monospace';c.textAlign='right';c.fillText(v.toFixed(3),x+222,102);c.textAlign='left';c.fillStyle='#2b3035';c.font='600 15px sans-serif';c.fillText(l,x,148);});c.fillStyle=s.zero?'#2e9b4f':'#888';c.fillText(s.zero?'● ZEROED':'○ not zeroed',14,200);});
-        pT.draw((c,w,h)=>{c.fillStyle='#e2e5e7';c.fillRect(0,0,w,h);c.fillStyle='#2b3035';c.font='600 20px sans-serif';c.fillText('FAN CONTROLLER',14,30);c.fillStyle='#14181b';c.fillRect(14,46,300,80);c.fillStyle='#ffd27a';c.font='600 44px monospace';c.textAlign='right';c.fillText(s.V.toFixed(1),300,104);c.textAlign='left';c.fillStyle='#2b3035';c.font='600 15px sans-serif';c.fillText('AIR SPEED m/s',14,148);c.fillText('START/STOP',40,236);c.fillText('SPEED',300,236);});}}};}};
+        bT.draw((c,w,h)=>{c.fillStyle='#1b1c1f';c.fillRect(0,0,w,h);c.fillStyle='#f0f0f0';c.font='italic 800 22px sans-serif';c.fillText('MATRIX',14,28);c.font='600 14px sans-serif';c.fillText('3-COMPONENT BALANCE',120,27);c.fillStyle='#2b3035';[['LIFT N',on?r.Lraw:0],['DRAG N',on?r.Draw:0]].forEach(([l,v],i)=>{const x=14+i*250;c.fillStyle='#14181b';c.fillRect(x,46,232,80);c.fillStyle='#d7f7c2';c.font='600 40px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText(v.toFixed(3),x+222,102);c.textAlign='left';c.fillStyle='#2b3035';c.font='600 15px sans-serif';c.fillText(l,x,148);});c.fillStyle=s.zero?'#2e9b4f':'#888';c.fillText(s.zero?'● ZEROED':'○ not zeroed',14,200);});
+        pT.draw((c,w,h)=>{c.fillStyle='#e2e5e7';c.fillRect(0,0,w,h);c.fillStyle='#2b3035';c.font='600 20px sans-serif';c.fillText('FAN CONTROLLER',14,30);c.fillStyle='#14181b';c.fillRect(14,46,300,80);c.fillStyle='#ffd27a';c.font='600 44px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText(s.V.toFixed(1),300,104);c.textAlign='left';c.fillStyle='#2b3035';c.font='600 15px sans-serif';c.fillText('AIR SPEED m/s',14,148);c.fillText('START/STOP',40,236);c.fillText('SPEED',300,236);});}}};}};
 })();
 /* ================= THERMO ================= */
 /* ---- TD360 heat exchangers (MECH490L §1, MECH204L §4) ---- */
@@ -3026,11 +3028,11 @@ d.view3d={h:540,cam:{tgt:[0.0,1.12,0.1],yaw:0.3,pitch:0.28,dist:2.1},
     const drawPanel=()=>pT.draw((c,w,h)=>{c.fillStyle='#e3e5e6';c.fillRect(0,0,w,h);c.fillStyle='#dcdfe0';c.fillRect(0,440,w,h-440);c.strokeStyle='#9aa0a5';c.lineWidth=3;c.strokeRect(3,3,w-6,h-6);c.beginPath();c.moveTo(0,440);c.lineTo(w,440);c.stroke();c.setLineDash([14,10]);c.lineWidth=2;c.beginPath();c.moveTo(500,8);c.lineTo(500,432);c.moveTo(500,448);c.lineTo(500,h-8);c.stroke();c.setLineDash([]);
       c.fillStyle='#2b3035';c.font='600 21px sans-serif';c.fillText('TD360 HEAT EXCHANGER SERVICE MODULE',22,32);c.fillStyle='#9aa0a5';[[14,14],[w-24,14],[14,h-24],[w-24,h-24],[486,14],[486,h-24]].forEach(([x,y])=>{c.beginPath();c.arc(x+5,y+5,5,0,7);c.fill();});
       const D=s.Dm||s.D,mid=HXT[s.tp].mid,lcd=(x,y,ww,hh)=>{c.fillStyle='#3a3f44';c.fillRect(x-6,y-6,ww+12,hh+12);c.fillStyle='#0f2a12';c.fillRect(x,y,ww,hh);};
-      lcd(60,52,330,140);lcd(610,52,330,140);c.font='600 28px monospace';[['TH1',D.TH1],['TH2',D.TH2],['TH3',D.TH3]].forEach(([k,v],i)=>{c.fillStyle='#ff9a7a';c.fillText(k,78,90+i*42);c.fillStyle='#b8f59a';c.fillText(k[2]==='3'&&!mid?' ----':v.toFixed(1),200,90+i*42);});
+      lcd(60,52,330,140);lcd(610,52,330,140);c.font='600 28px "Segoe UI", Roboto, Arial, sans-serif';[['TH1',D.TH1],['TH2',D.TH2],['TH3',D.TH3]].forEach(([k,v],i)=>{c.fillStyle='#ff9a7a';c.fillText(k,78,90+i*42);c.fillStyle='#b8f59a';c.fillText(k[2]==='3'&&!mid?' ----':v.toFixed(1),200,90+i*42);});
       [['TC1',D.TC1],['TC2',D.TC2],['TC3',D.TC3]].forEach(([k,v],i)=>{c.fillStyle='#8fc2ff';c.fillText(k,628,90+i*42);c.fillStyle='#b8f59a';c.fillText(k[2]==='3'&&!mid?' ----':v.toFixed(1),750,90+i*42);});
-      lcd(60,212,200,44);lcd(610,212,200,44);c.font='600 28px monospace';c.fillStyle='#ffb09a';c.fillText((s.hfm||0).toFixed(2)+' L/m',72,244);c.fillStyle='#a8ccff';c.fillText((s.cfm||0).toFixed(2)+' L/m',622,244);
+      lcd(60,212,200,44);lcd(610,212,200,44);c.font='600 28px "Segoe UI", Roboto, Arial, sans-serif';c.fillStyle='#ffb09a';c.fillText((s.hfm||0).toFixed(2)+' L/m',72,244);c.fillStyle='#a8ccff';c.fillText((s.cfm||0).toFixed(2)+' L/m',622,244);
       [[330,212],[880,212]].forEach(([x,y])=>{c.fillStyle='#222';c.fillRect(x,y,40,32);c.fillStyle='#2b3035';c.font='600 11px sans-serif';c.fillText('VDAS',x+4,y-6);c.fillText('DIGITAL OUTPUT',x-18,y+48);});
-      c.fillStyle='#222';c.fillRect(245,290,120,100);c.fillStyle='#ff3b2f';c.font='600 32px monospace';c.textAlign='right';c.fillText(s.Tt.toFixed(1),356,330);c.fillStyle='#36d46a';c.font='600 20px monospace';c.fillText('SP '+s.Th,356,366);c.textAlign='left';
+      c.fillStyle='#222';c.fillRect(245,290,120,100);c.fillStyle='#ff3b2f';c.font='600 32px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText(s.Tt.toFixed(1),356,330);c.fillStyle='#36d46a';c.font='600 20px "Segoe UI", Roboto, Arial, sans-serif';c.fillText('SP '+s.Th,356,366);c.textAlign='left';
       c.fillStyle='#2b3035';c.font='600 12px sans-serif';c.fillText('WATER TEMPERATURE CONTROLLER',214,282);c.fillText('PRESS TO',38,282);c.fillText('FILL TANK',38,296);c.fillText('WATER',150,282);c.fillText('LEVEL',150,296);c.fillText('HEATER',52,388);c.fillText('PUMP',130,388);
       c.fillStyle=s.lvl>0.3?'#2fbf4a':'#d62d20';c.beginPath();c.arc(170,320,9,0,7);c.fill();c.fillStyle='#bbb';c.beginPath();c.arc(65,320,16,0,7);c.fill();
       [120,240,360,620,740,860].forEach(x=>{c.fillStyle='#1fae6a';c.fillRect(x-18,404,36,22);c.fillStyle='#2b3035';c.fillRect(x-6,410,12,8);});
@@ -3133,8 +3135,8 @@ d.view3d={h:540,cam:{tgt:[0.05,1.15,0.1],yaw:0.12,pitch:0.2,dist:1.6},
     /* base unit: tall upright panel (as in the lab) */const ux=-0.2,uw=0.62,uh=0.78,ud=0.1,uz=-0.1,UB=BY;R.add(B(uw,uh,ud,pan,[ux,UB+uh/2,uz],{pick:'bu',tip:'TD1002 heat transfer experiment base unit: heater supply, wattmeter and thermocouple displays'}));
     const pT=K.tex(640,805,null);R.add(K.node(K.plane(uw-0.01,uh-0.01),M('#fff',{t:pT,r:.5}),{p:[ux,UB+uh/2,uz+ud/2+0.002],pick:'panel',tip:'Base unit panel'}));const PX=x=>ux-(uw-0.01)/2+x/640*(uw-0.01),PY=y=>UB+uh-0.005-y/805*(uh-0.01),FZ=uz+ud/2+0.004;
     const draw=()=>pT.draw((c,w,h)=>{c.fillStyle='#e2e5e5';c.fillRect(0,0,w,h);c.fillStyle='#2b3035';c.font='600 22px sans-serif';c.fillText('TD1002 HEAT TRANSFER EXPERIMENT BASE UNIT',30,62);
-      const D=s.Dm||s.D;c.fillStyle='#14181b';c.fillRect(40,100,560,150);for(let i=0;i<7;i++){const x=52+(i%4)*136,y=140+Math.floor(i/4)*60;c.fillStyle='#8fd27a';c.font='600 16px monospace';c.fillText('T'+(i+1),x,y);c.fillStyle='#d7f7c2';c.font='600 26px monospace';c.fillText(D[i].toFixed(1),x+30,y);}
-      c.fillStyle='#14181b';c.fillRect(380,290,220,70);c.fillStyle='#ffb09a';c.font='600 36px monospace';c.textAlign='right';c.fillText((s.heat?(s.Pm||0):0).toFixed(1)+' W',590,340);c.textAlign='left';c.fillStyle='#2b3035';c.font='600 14px sans-serif';c.fillText('HEATER POWER',420,380);
+      const D=s.Dm||s.D;c.fillStyle='#14181b';c.fillRect(40,100,560,150);for(let i=0;i<7;i++){const x=52+(i%4)*136,y=140+Math.floor(i/4)*60;c.fillStyle='#8fd27a';c.font='600 16px "Segoe UI", Roboto, Arial, sans-serif';c.fillText('T'+(i+1),x,y);c.fillStyle='#d7f7c2';c.font='600 26px "Segoe UI", Roboto, Arial, sans-serif';c.fillText(D[i].toFixed(1),x+30,y);}
+      c.fillStyle='#14181b';c.fillRect(380,290,220,70);c.fillStyle='#ffb09a';c.font='600 36px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText((s.heat?(s.Pm||0):0).toFixed(1)+' W',590,340);c.textAlign='left';c.fillStyle='#2b3035';c.font='600 14px sans-serif';c.fillText('HEATER POWER',420,380);
       c.strokeStyle='#2b3035';c.lineWidth=2;c.strokeRect(50,280,200,300);c.font='600 18px sans-serif';c.fillText('HEATER',110,310);c.font='600 13px sans-serif';c.fillText('POWER',125,545);
       for(let i=0;i<7;i++){const x=275+i*48;c.fillStyle='#1fae6a';c.fillRect(x-16,530,32,26);c.fillStyle='#2b3035';c.fillText('T'+(i+1),x-8,575);}
       if(s.trip){c.fillStyle='#d62d20';c.fillRect(270,420,330,44);c.fillStyle='#fff';c.font='700 18px sans-serif';c.fillText('OVER-TEMPERATURE TRIP',286,450);}});draw();
@@ -3194,7 +3196,7 @@ d.view3d={h:540,cam:{tgt:[0.05,1.2,0],yaw:0.4,pitch:0.15,dist:1.6},
     /* base unit: tall white panel, as in the lab */const ux=-0.21,uw=0.4,uh=0.6,ud=0.1,uy=BY+0.03;R.add(B(uw+0.5,0.03,0.3,M('#2a2d30',{r:.5}),[0.03,BY+0.015,0]));R.add(B(uw,uh,ud,M('#e8eaeb',{m:.15,r:.5}),[ux,uy+uh/2,0],{pick:'con',tip:'Base unit: heater supply, fan controller, temperature and velocity displays'}));
     const pT=K.tex(800,1200,null);R.add(K.node(K.plane(uw-0.012,uh-0.012),M('#fff',{t:pT,r:.5}),{p:[ux,uy+uh/2,ud/2+0.002]}));const PX=x=>ux-(uw-0.012)/2+x/800*(uw-0.012),PY=y=>uy+uh/2+(uh-0.012)/2-y/1200*(uh-0.012),FZ=ud/2+0.004;
     const draw=()=>pT.draw((c,w,h)=>{c.fillStyle='#eceeee';c.fillRect(0,0,w,h);c.strokeStyle='#b4b9bd';c.lineWidth=4;c.strokeRect(6,6,w-12,h-12);c.fillStyle='#a9aeb2';[[20,20],[w-34,20],[20,h-34],[w-34,h-34]].forEach(([x,y])=>{c.beginPath();c.arc(x+7,y+7,8,0,7);c.fill();});c.fillStyle='#2b3035';c.font='600 30px sans-serif';c.fillText('FREE AND FORCED CONVECTION',60,80);
-      c.fillStyle='#3a3f44';c.fillRect(60,120,520,330);c.fillStyle='#10161a';c.fillRect(72,132,496,306);const L=[['T surface',(s.Tsm==null?s.Ts:s.Tsm).toFixed(1)+' °C','#ffb09a'],['T air',s.Ta.toFixed(1)+' °C','#a8ccff'],['Velocity',(s.vm||0).toFixed(2)+' m/s','#d7f7c2'],['Power',(s.Pm||0).toFixed(1)+' W','#ffd27a']];L.forEach(([k,v,col],i)=>{c.fillStyle='#8a9399';c.font='600 26px sans-serif';c.fillText(k,92,190+i*70);c.fillStyle=col;c.font='600 40px monospace';c.textAlign='right';c.fillText(v,550,192+i*70);c.textAlign='left';});
+      c.fillStyle='#3a3f44';c.fillRect(60,120,520,330);c.fillStyle='#10161a';c.fillRect(72,132,496,306);const L=[['T surface',(s.Tsm==null?s.Ts:s.Tsm).toFixed(1)+' °C','#ffb09a'],['T air',s.Ta.toFixed(1)+' °C','#a8ccff'],['Velocity',(s.vm||0).toFixed(2)+' m/s','#d7f7c2'],['Power',(s.Pm||0).toFixed(1)+' W','#ffd27a']];L.forEach(([k,v,col],i)=>{c.fillStyle='#8a9399';c.font='600 26px sans-serif';c.fillText(k,92,190+i*70);c.fillStyle=col;c.font='600 40px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText(v,550,192+i*70);c.textAlign='left';});
       c.strokeStyle='#2b3035';c.lineWidth=3;c.strokeRect(610,140,150,300);c.fillStyle='#2b3035';c.font='600 22px sans-serif';c.fillText('HEATER',640,175);c.beginPath();c.arc(685,240,30,0,7);c.fillStyle='#1a1a1a';c.fill();
       c.fillStyle='#2b3035';c.font='600 24px sans-serif';c.textAlign='center';c.fillText('POWER',240,700);c.fillText('FAN SPEED',520,700);c.textAlign='left';
       ['T1','T2','T3'].forEach((k,i)=>{const x=120+i*150;c.fillStyle='#1fae6a';c.fillRect(x-35,800,70,46);c.fillStyle='#145c3a';c.fillRect(x-12,812,24,22);c.fillStyle='#2b3035';c.font='600 22px sans-serif';c.fillText(k,x-12,790);});c.fillStyle='#555';c.beginPath();c.arc(600,823,24,0,7);c.fill();c.fillStyle='#2b3035';c.font='600 18px sans-serif';c.fillText('ANEMOMETER',540,790);
@@ -3380,7 +3382,7 @@ d.view3d={h:540,xray:true,cam:{tgt:[0,0.72,0],yaw:0.62,pitch:0.3,dist:2.3},
     /* sloping upper panel */const ang=-Math.atan2(0.23,0.42),pn=K.group({p:[0.51,1.13+0.003*Math.cos(ang),0.215-0.003*Math.sin(ang)],r:[ang,0,0]});cab.add(pn);
     const PW=0.54,PH=0.46,PP=(u,v)=>[(u-0.5)*PW,(0.5-v)*PH,0];
     const up=K.tex(1080,920,(c,w,h)=>{c.fillStyle='#eef0ec';c.fillRect(0,0,w,h);c.strokeStyle='#222';c.lineWidth=7;const lx=70,ly=70;for(let i=0;i<3;i++){c.strokeRect(lx+i*10,ly+i*10,90-i*20,70-i*20);}c.beginPath();c.arc(lx+170,ly+40,34,0,7);c.stroke();c.beginPath();c.moveTo(lx+190,ly+60);c.lineTo(lx+215,ly+85);c.stroke();
-      c.fillStyle='#222';c.font='500 22px monospace';c.fillText('TD1060V',lx+270,ly+15);c.font='600 30px monospace';c.fillText('THERMAL POWER PLANT',lx+270,ly+60);c.fillText('WITH STEAM TURBINE',lx+270,ly+100);
+      c.fillStyle='#222';c.font='500 22px "Segoe UI", Roboto, Arial, sans-serif';c.fillText('TD1060V',lx+270,ly+15);c.font='600 30px "Segoe UI", Roboto, Arial, sans-serif';c.fillText('THERMAL POWER PLANT',lx+270,ly+60);c.fillText('WITH STEAM TURBINE',lx+270,ly+100);
       [[0.3,0.33],[0.64,0.33]].forEach(([u,v])=>{c.fillStyle='#2b2d2f';c.fillRect(u*w-8,v*h-8,0.27*w+16,0.12*h+16);c.fillStyle='#fff';c.fillRect(u*w+0.18*w,v*h+0.12*h+18,64,26);c.fillStyle='#222';c.font='bold 16px sans-serif';c.fillText('VDAS',u*w+0.18*w+6,v*h+0.12*h+38);});
       c.fillStyle='#333';c.font='600 17px sans-serif';c.textAlign='center';c.fillText('HEATER CONTROL',0.29*w,0.765*h);c.fillText('PUMP CONTROL',0.76*w,0.715*h);c.fillText('GENERATOR LOAD',0.9*w,0.95*h);c.fillText('S_W',0.76*w,0.735*h+12);
       [['🎧',0.1],['🥽',0.24]].forEach(([e,u],i)=>{c.fillStyle='#fff';c.fillRect(u*w-62,0.82*h,124,124);c.fillStyle='#1f5fbf';c.beginPath();c.arc(u*w,0.82*h+62,54,0,7);c.fill();c.fillStyle='#fff';c.font='54px sans-serif';c.fillText(e,u*w,0.82*h+82);});
@@ -3397,8 +3399,8 @@ d.view3d={h:540,xray:true,cam:{tgt:[0,0.72,0],yaw:0.62,pitch:0.3,dist:2.3},
     const kS=knob(0.76,0.6,'sw',s=>'Pump control knob S_W = '+s.sw+' RPM. Drag sideways to turn'),kL=knob(0.9,0.84,'L',s=>'Generator load knob = '+s.L+' %. Drag sideways to turn');
     /* labels */K.label('Turbine (inside guard)',hood,[-0.61,1.2,0]);K.label('Generator',gen,[0,0.12,0]);K.label('Bypass valve',hw,[0,0.03,0]);K.label('P₁ gauge',gg,[0,0.12,0]);K.label('Flash boiler · T₂',boil,[0,0.0,0.13]);K.label('Condenser + fans · T₅',cond,[0.08,0.2,0.22]);
     K.label('Feed pump',pump,[0,0.07,0]);K.label('Reservoir · T₁',res,[0,0.09,0.2]);K.label('Isolator',iso,[0,0.09,0]);const warn=K.label('',hood,[-0.61,1.3,0],{cls:'warn'});
-    /* dynamic textures */const drawLCD=(c,w,h,rows)=>{c.fillStyle='#a9c45a';c.fillRect(0,0,w,h);c.fillStyle='rgba(0,0,0,.06)';for(let x=0;x<w;x+=6)c.fillRect(x,0,1,h);c.fillStyle='#1b2a10';c.font='600 34px monospace';c.textBaseline='middle';rows.forEach(([a,b],i)=>{c.textAlign='left';c.fillText(a,16,30+i*44);c.textAlign='right';c.fillText(b,w-16,30+i*44);});};
-    const drawPID=(c,w,h)=>{c.fillStyle='#0b0b0b';c.fillRect(0,0,w,h);c.fillStyle='#d9d9d9';c.font='bold 18px sans-serif';c.textAlign='left';c.fillText('red lion',12,26);c.textAlign='right';const on=s.iso;c.fillStyle='#ff3b2a';c.font='bold 64px monospace';c.fillText(on?s.T2.toFixed(0):'',w-16,108);c.fillStyle='#4be06a';c.font='bold 40px monospace';c.fillText(on?String(s.sp):'',w-16,166);
+    /* dynamic textures */const drawLCD=(c,w,h,rows)=>{c.fillStyle='#a9c45a';c.fillRect(0,0,w,h);c.fillStyle='rgba(0,0,0,.06)';for(let x=0;x<w;x+=6)c.fillRect(x,0,1,h);c.fillStyle='#1b2a10';c.font='600 34px "Segoe UI", Roboto, Arial, sans-serif';c.textBaseline='middle';rows.forEach(([a,b],i)=>{c.textAlign='left';c.fillText(a,16,30+i*44);c.textAlign='right';c.fillText(b,w-16,30+i*44);});};
+    const drawPID=(c,w,h)=>{c.fillStyle='#0b0b0b';c.fillRect(0,0,w,h);c.fillStyle='#d9d9d9';c.font='bold 18px sans-serif';c.textAlign='left';c.fillText('red lion',12,26);c.textAlign='right';const on=s.iso;c.fillStyle='#ff3b2a';c.font='bold 64px "Segoe UI", Roboto, Arial, sans-serif';c.fillText(on?s.T2.toFixed(0):'',w-16,108);c.fillStyle='#4be06a';c.font='bold 40px "Segoe UI", Roboto, Arial, sans-serif';c.fillText(on?String(s.sp):'',w-16,166);
       c.fillStyle='#888';c.font='14px sans-serif';c.textAlign='left';c.fillText('PV',14,96);c.fillText('SV',14,156);if(on&&s.duty>0.5){c.fillStyle='#ffb02a';c.fillRect(14,180,26,12);c.fillStyle='#ccc';c.fillText('OUT1',46,191);}c.fillStyle='#666';[0,1,2,3].forEach(i=>c.fillRect(30+i*52,214,36,24));c.fillStyle='#ddd';c.font='16px sans-serif';['P','↻','▲','▼'].forEach((t,i)=>c.fillText(t,40+i*52,231));};
     const drawMim=(c,w,h,fl,by,run,t)=>{c.fillStyle='#fff';c.fillRect(0,0,w,h);c.lineWidth=4;const ln=(pts,col,on)=>{c.strokeStyle=col;c.setLineDash([]);c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.stroke();if(on){c.strokeStyle='rgba(255,255,255,.85)';c.setLineDash([10,14]);c.lineDashOffset=-t*40;c.lineWidth=2;c.stroke();c.lineWidth=4;c.setLineDash([]);}};
       c.fillStyle='#8a6d3b';c.beginPath();c.moveTo(180,60);c.lineTo(250,90);c.lineTo(250,140);c.lineTo(180,170);c.closePath();c.fill();c.fillStyle='#111';c.font='600 16px sans-serif';c.fillText('STEAM',90,105);c.fillText('TURBINE',85,125);c.fillText('T₄',180,45);c.fillText('T₃',238,45);
@@ -3408,7 +3410,7 @@ d.view3d={h:540,xray:true,cam:{tgt:[0,0.72,0],yaw:0.62,pitch:0.3,dist:2.3},
       c.strokeStyle='#111';c.lineWidth=2;c.strokeRect(85,250,50,80);for(let i=0;i<5;i++){c.beginPath();c.moveTo(85,262+i*14);c.lineTo(135,262+i*14);c.stroke();}c.fillStyle='#111';c.fillText('CONDENSER',145,280);c.fillText('FANS',145,298);
       c.strokeRect(495,250,50,80);c.strokeStyle='#d0302a';c.beginPath();for(let i=0;i<=8;i++)c.lineTo(i%2?530:510,256+i*9);c.stroke();c.fillStyle='#111';c.fillText('FLASH',555,280);c.fillText('BOILER',555,298);c.fillText('T₂',560,255);
       c.strokeStyle='#111';c.beginPath();c.arc(520,345,0,0,7);c.stroke();c.fillStyle='#3d7fbf';c.fillRect(60,365,520,22);c.fillStyle='#111';c.fillText('RESERVOIR',260,360);c.fillText('T₁',590,380);c.fillText('T₅',60,350);c.fillText('FEED PUMP',540,350);
-      c.fillStyle=fl?'#d0302a':'#444';c.font='600 15px monospace';c.fillText(fl?'STEAM FLOWING':'NO FLOW',380,180);};
+      c.fillStyle=fl?'#d0302a':'#444';c.font='600 15px "Segoe UI", Roboto, Arial, sans-serif';c.fillText(fl?'STEAM FLOWING':'NO FLOW',380,180);};
     let tt=0,ang0=0,hwA=0,isoA=0;
     return {root:R,update(s,dt,t){flM.c=document.documentElement.getAttribute('data-theme')==='dark'||(!document.documentElement.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches)?'#5a5f66':'#ffffff';const r=stState(Object.assign({},s,{sw:s.sw_})),fl=r.m>0.02&&s.iso,sp=r.m/0.6;
       ang0+=dt*s.N/60*2*Math.PI*0.03;rot.r[0]=ang0;cpl.r[0]=0;fans[0].r[1]+=dt*(s.iso?14:0);fans[1].r[1]+=dt*(s.iso&&s.fan2?14:0);piston.p[0]=Math.sin(t*s.sw_/60*2*Math.PI)*0.018*(s.sw_>0.5?1:0);
@@ -3621,7 +3623,7 @@ d.view3d={h:560,cam:{tgt:[0,1.0,0],yaw:0.12,pitch:0.15,dist:2.3},
     R.add(K.node(K.tube([[0.07,DY-DH/2-0.07,DD/2],[0.04,DY-DH/2-0.03,DD/2-0.02],[0.04,DY-0.08,0.1]],0.005,8,0.02),Le,{pick:'le',tip:()=>'Evaporator inlet (cold two-phase), T4 '+(s.Dm?s.Dm.Te.toFixed(1):'—')+' °C'}));
     R.add(K.node(K.tube([[-0.04,DY+0.12,0.11],[-0.04,DY-0.02,0.13],[-0.04,TOPY-0.1,0.13],[0.05,LY2+0.4,0.1],[0.22,LY2+0.2,0.06]],0.008,8,0.05),Ls,{pick:'ls',tip:()=>'Suction line (cool gas), T1 '+(s.Dm?(s.Dm.Te+5).toFixed(1):'—')+' °C'}));
     const draw=()=>pT.draw((c,w,h)=>{c.fillStyle='#e4e5e2';c.fillRect(0,0,w,h);c.fillStyle='#2b3035';c.font='600 22px sans-serif';c.fillText('EC1501V   AIR CONDITIONING TRAINER',18,36);const Dm=s.Dm,on=Dm&&Dm.on;
-      const box=(x,y,v,l,col)=>{c.fillStyle='#14181b';c.fillRect(x,y,190,54);c.fillStyle=col;c.font='600 28px monospace';c.textAlign='right';c.fillText(v,x+180,y+38);c.textAlign='left';c.fillStyle='#2b3035';c.font='600 13px sans-serif';c.fillText(l,x+2,y+70);};
+      const box=(x,y,v,l,col)=>{c.fillStyle='#14181b';c.fillRect(x,y,190,54);c.fillStyle=col;c.font='600 28px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText(v,x+180,y+38);c.textAlign='left';c.fillStyle='#2b3035';c.font='600 13px sans-serif';c.fillText(l,x+2,y+70);};
       box(18,56,(s.Tim??s.Ti).toFixed(1)+'°C','AIR IN','#ffb09a');box(222,56,(Dm?Dm.Tout:s.Ti).toFixed(1)+'°C','AIR OUT','#a8ccff');box(426,56,(s.RHim??s.RH).toFixed(0)+'%','RH IN','#ffd27a');box(426,146,(Dm?rhOf(Dm.Tout,Dm.wout)*100:s.RH).toFixed(0)+'%','RH OUT','#d7f7c2');
       box(18,146,on?(Dm.Te+5).toFixed(1):'--.-','T1 SUCTION','#8fc2ff');box(222,146,on?(Dm.Tc+25+0.4*(Dm.Tc-Dm.Te)).toFixed(1):'--.-','T2 DISCHARGE','#ff9a7a');
       c.fillStyle='#2b3035';c.font='600 14px sans-serif';c.textAlign='center';c.fillText('FAN',80,330);c.fillText('COMPRESSOR',200,330);c.fillText('LOW / HIGH TRIP',320,330);c.fillText('AIR FLOW',460,330);c.textAlign='left';
@@ -3792,7 +3794,7 @@ function panelArt(c,w,h){const k=w/1810;c.setTransform(k,0,0,k,-140*k,-215*k);c.
   [[410,1065,'Ta (°C)'],[720,1065,'ṁf (g/s)'],[1028,1065,'F (N)'],[1338,1070,'P3 (bar)'],[1648,1070,'Na (%AREA)']].forEach(([x,y,t])=>{fr(x,y);c.fillStyle='#222';c.fillText(t,x,y-52);});
   /* title (no maker logo) */c.fillStyle='#111';
 
-  c.textAlign='left';c.font='500 26px monospace';c.fillText('GT100',930,1195);c.font='700 40px monospace';c.fillText('TURBOJET',930,1243);
+  c.textAlign='left';c.font='500 26px "Segoe UI", Roboto, Arial, sans-serif';c.fillText('GT100',930,1195);c.font='700 40px "Segoe UI", Roboto, Arial, sans-serif';c.fillText('TURBOJET',930,1243);
   /* control labels */c.textAlign='center';c.font='500 22px sans-serif';[[233,'FANS'],[378,'FUEL|TANK'],[520,'FUEL|FLOW'],[660,'FUEL|PRESSURE'],[805,'FUEL|PUMP'],[945,'IGNITION'],[1090,'OIL|PRESSURE'],[1235,'OIL|PUMP'],[1375,'OIL|TEMPERATURE'],[1523,'NOZZLE|AREA'],[1668,'HOURS|RUN'],[1815,'PURGE / SHUTDOWN']].forEach(([x,t])=>t.split('|').forEach((q,i)=>c.fillText(q,x,1402+i*22)));
   c.fillStyle='#e6c300';c.fillRect(1868,243,38,20);c.setTransform(1,0,0,1,0,0);}
 /* photo px -> local panel coordinates (board 1.6 m x 1.1 m) */
@@ -3866,7 +3868,7 @@ d.view3d={h:560,xray:true,cam:{tgt:[0.35,1.0,-0.05],yaw:0.62,pitch:0.2,dist:3.4}
     wv.add(K.node(K.cyl(0.02,0.02,0.04,12),M(MATC.brass,{m:1,r:.3}),{r:[0,0,Math.PI/2],p:[0,-0.03,0]}));const lev=K.group({p:[0,0,0]});wv.add(lev);lev.add(K.node(K.box(0.012,0.012,0.12),M('#2a5fd0',{r:.4}),{p:[0,0,0.05],pick:'water',tip:()=>'WATER SUPPLY valve: '+(s.water?'OPEN':'closed')+'. Click to turn'}));
     K.label('Inlet plenum · ΔP1',ib,[0,0.2,0],{cond:()=>G.xray});K.label('Compressor',comp,[0,0,0],{cond:()=>G.xray});K.label('Turbine',E,[1.3,Y+0.14,0],{cond:()=>G.xray});K.label('Combustion chamber',combS,[0,0,0.09],{cond:()=>G.xray});K.label('Variable nozzle',E,[1.8,Y+0.1,0],{cond:()=>G.xray});K.label('Thrust load cell',lc,[0,-0.05,0.04],{cond:()=>G.xray});
     const warn=K.label('',R,[0.3,1.05,-0.25],{cls:'warn'});
-    const lcdDraw=(c,w,h,v)=>{c.fillStyle='#aab4a6';c.fillRect(0,0,w,h);c.fillStyle='rgba(255,255,255,.18)';c.fillRect(0,0,w,h*0.35);c.fillStyle='#1a1f18';c.font='600 66px monospace';c.textAlign='right';c.textBaseline='middle';c.fillText(v,w-14,h/2+4);};
+    const lcdDraw=(c,w,h,v)=>{c.fillStyle='#aab4a6';c.fillRect(0,0,w,h);c.fillStyle='rgba(255,255,255,.18)';c.fillRect(0,0,w,h*0.35);c.fillStyle='#1a1f18';c.font='600 66px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.textBaseline='middle';c.fillText(v,w-14,h/2+4);};
     let tt=0;
     return {root:R,update(s,dt,t){flM.c=dark()?'#4d5258':'#e9eae6';const D=gtDisp(s),run=s.burn,spin=s.N>0.5,a=s.na/85;
       nut.r[0]+=dt*s.N*0.6;fb.r[1]+=dt*(s.fans?15:0);
@@ -3879,7 +3881,7 @@ d.view3d={h:560,xray:true,cam:{tgt:[0.35,1.0,-0.05],yaw:0.62,pitch:0.2,dist:3.4}
       led.forEach(([k,n])=>{n.mat=s.trip===k?M('#ff3020',{e:Math.floor(t*4)%2?'#ff2010':'#601010'}):ilOK(k)?M('#40e070',{e:'#109040'}):M('#5a4a20',{e:'#302000'});});
       const nd=(n,f)=>{n.r[2]=(210-clamp(f,0,1.02)*240)*Math.PI/180;};nd(gTank,s.tank);nd(gFP,s.fuelP/10);nd(gOP,s.oilP/5);nd(gOT,(s.oilT-50)/100);
       const kr=(k,v,mn,mx)=>{k.r[2]=-(-135+270*(v-mn)/(mx-mn))*Math.PI/180;};kF.r[2]=s.fk*2*Math.PI;kr(kN,s.na,50,100);esB.p[2]=s.lock?0.032:0.045;solL.mat=gtSol(s)?M('#40e070',{e:'#10a040'}):M('#3a3a3a');ftvL.r[1]=s.ftv?0:Math.PI/2;
-      tt+=dt;if(tt>0.2){tt=0;LC.forEach(([k,,,dec],i)=>lcdT[i].draw((c,w,h)=>lcdDraw(c,w,h,(k==='N1'?D.N1:D[k]).toFixed(dec))));hrsT.draw((c,w,h)=>{c.fillStyle='#111';c.fillRect(0,0,w,h);c.fillStyle='#eee';c.font='600 46px monospace';c.textAlign='center';c.textBaseline='middle';c.fillText(String(Math.floor(s.hrs*10)).padStart(6,'0'),w/2,h/2+2);});}
+      tt+=dt;if(tt>0.2){tt=0;LC.forEach(([k,,,dec],i)=>lcdT[i].draw((c,w,h)=>lcdDraw(c,w,h,(k==='N1'?D.N1:D[k]).toFixed(dec))));hrsT.draw((c,w,h)=>{c.fillStyle='#111';c.fillRect(0,0,w,h);c.fillStyle='#eee';c.font='600 46px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(String(Math.floor(s.hrs*10)).padStart(6,'0'),w/2,h/2+2);});}
       /* particles: intake air, exhaust plume, hot-start torching */const W=E.W,wp=(x,y,z)=>{const m=W;return [m[0]*x+m[4]*y+m[8]*z+m[12],m[1]*x+m[5]*y+m[9]*z+m[13],m[2]*x+m[6]*y+m[10]*z+m[14]];};
       if(spin&&Math.random()<Math.min(0.8,s.N/80))K.emit({p:[-0.95,0.7+(Math.random()-.5)*0.25,-0.25+(Math.random()-.5)*0.3],v:[0.12+s.N/150,0,0],life:1.2,size:0.006,c:'#6fb2ff',a:.6});
       if(run&&Math.random()<0.7)K.emit({p:[1.86,0.72+(Math.random()-.5)*0.05,-0.25+(Math.random()-.5)*0.05],v:[0.6+s.N/50,(Math.random()-.5)*0.05,(Math.random()-.5)*0.05],life:0.5,size:0.01,grow:3,c:s.T4v>500?'#ffb060':'#e8e0d8',a:.35,e:s.T4v>500?'#a04010':null});
@@ -4089,7 +4091,7 @@ function rebuildCtl(){const d=DEVMAP.ce117;if(cur===d)refresh(true);}
 (function(){
 const dark=()=>document.documentElement.getAttribute('data-theme')==='dark'||(!document.documentElement.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
 const base=(K,R)=>{const M=K.mat,flM=M('#e9eae6',{r:.9});if(!window.G3_STUDIO)R.add(K.node(K.plane(6,5),flM,{r:[-Math.PI/2,0,0]}));return ()=>{flM.c=dark()?'#4d5258':'#e9eae6';};};
-const lcdDraw=(t,txt,col)=>t.draw((c,w,h)=>{c.fillStyle='#10161a';c.fillRect(0,0,w,h);c.fillStyle=col||'#7fe08a';c.font='600 '+Math.round(h*0.55)+'px monospace';c.textAlign='right';c.fillText(txt,w-10,h*0.72);});
+const lcdDraw=(t,txt,col)=>t.draw((c,w,h)=>{c.fillStyle='#10161a';c.fillRect(0,0,w,h);c.fillStyle=col||'#7fe08a';c.font='600 '+Math.round(h*0.55)+'px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText(txt,w-10,h*0.72);});
 const bench=(K,R,B,M,TOP,W,D)=>{R.add(B(W,0.05,D,M('#d9d6cf',{r:.7}),[0,TOP-0.025,0]));[[-W/2+0.05,-D/2+0.05],[W/2-0.05,-D/2+0.05],[-W/2+0.05,D/2-0.05],[W/2-0.05,D/2-0.05]].forEach(([x,z])=>R.add(B(0.04,TOP-0.05,0.04,M(MATC.frame),[x,(TOP-0.05)/2,z])));};
 const roVal=(d,lab)=>{const r=d.ro(d.s).find(q=>q[0]===lab);return r?r[1]:'';};
 
@@ -4592,7 +4594,7 @@ DEV({id:'hotwire',sec:'mfg',model:'UNI-CUT-3D',short:'Hot wire cutter',name:'CNC
 (function(){
 const dark=()=>document.documentElement.getAttribute('data-theme')==='dark'||(!document.documentElement.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
 const base=(K,R)=>{const M=K.mat,flM=M('#e9eae6',{r:.9});if(!window.G3_STUDIO)R.add(K.node(K.plane(4,3),flM,{r:[-Math.PI/2,0,0]}));return ()=>{flM.c=dark()?'#4d5258':'#e9eae6';};};
-const lcdDraw=(t,txt,col)=>t.draw((c,w,h)=>{c.fillStyle='#10161a';c.fillRect(0,0,w,h);c.fillStyle=col||'#7fe08a';c.font='600 '+Math.round(h*0.55)+'px monospace';c.textAlign='right';c.fillText(txt,w-10,h*0.72);});
+const lcdDraw=(t,txt,col)=>t.draw((c,w,h)=>{c.fillStyle='#10161a';c.fillRect(0,0,w,h);c.fillStyle=col||'#7fe08a';c.font='600 '+Math.round(h*0.55)+'px "Segoe UI", Roboto, Arial, sans-serif';c.textAlign='right';c.fillText(txt,w-10,h*0.72);});
 const TOP=0.82,mm=0.001,T2=0.016;
 const bench=(K,R,B,M,W,D)=>{R.add(B(W,0.04,D,M('#232426',{r:.35,m:.1}),[0,TOP-0.02,0]));R.add(B(0.62,0.016,0.32,M('#dcc59a',{r:.7}),[0.04,TOP+0.008,0.02],{pick:'base',tip:'UNIMAT wooden base board'}));[[-W/2+0.04,-D/2+0.04],[W/2-0.04,-D/2+0.04],[-W/2+0.04,D/2-0.04],[W/2-0.04,D/2-0.04]].forEach(([x,z])=>R.add(B(0.035,TOP-0.04,0.035,M(MATC.frame),[x,(TOP-0.04)/2,z])));};
 const matCol=k=>{try{return (MM[k]&&MM[k].col)||'#c9cdd1';}catch(e){return '#c9cdd1';}};
