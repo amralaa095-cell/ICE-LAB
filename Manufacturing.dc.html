@@ -50,7 +50,7 @@ a{color:#0039a6}a:hover{color:#3d4757}
 <h2 style="margin: 0; display: flex; align-items: baseline; gap: 12px; font-family: 'Playfair Display', Georgia, serif; font-weight: 600; font-size: 22px; color: #3f6212"><span aria-hidden="true" style="width: 22px; height: 8px; border-radius: 2px; background: #A3D65C; align-self: center"></span>{{g.title}} <small style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-weight: 400; font-size: 12px; letter-spacing: .03em; text-transform: none; color: #5c6f7c">{{g.count}}</small></h2>
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 14px">
 <sc-for list="{{g.items}}" as="m" hint-placeholder-count="3">
-<article class="mf-card" style="display: flex; flex-direction: column; gap: 12px; padding: 18px 18px 16px; border-radius: 10px; border: 1px solid #dfe3ea; background: #f5f6f8">
+<article class="mf-card" id="{{m.no}}" style="display: flex; flex-direction: column; gap: 12px; padding: 18px 18px 16px; border-radius: 10px; border: 1px solid #dfe3ea; background: #f5f6f8">
 <img src="img/eq/{{m.no}}.jpg" alt="" loading="lazy" style="width: 100%; aspect-ratio: 640 / 420; object-fit: cover; border-radius: 8px; background: #e8edf7; display: block">
 <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px">
 <span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; color: #3f6212; letter-spacing: .06em">{{m.no}}</span>
@@ -108,5 +108,5 @@ class Component extends DCLogic {
   }
 }
 </script>
-</body>
+<style>.mf-card.qr-hit{outline:3px solid #cc092f;outline-offset:3px}.mf-card{scroll-margin-top:90px}</style><script>(function(){var h=decodeURIComponent(location.hash.slice(1));if(!/^M-\d+$/.test(h))return;var n=0,t=setInterval(function(){var e=document.getElementById(h);if(e||++n>40){clearInterval(t);if(e){e.scrollIntoView({block:"center"});e.classList.add("qr-hit");}}},100);})();</script></body>
 </html>
