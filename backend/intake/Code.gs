@@ -91,7 +91,10 @@ function doGet(e) {
   if (vals[C_('Status') - 1] !== 'Pending supervisor') return HtmlService.createHtmlOutput('<p>This request was already ' + esc_(String(vals[C_('Status') - 1]).toLowerCase()) + '.</p>');
   const status = p.a === 'approve' ? 'Approved by supervisor' : 'Declined by supervisor';
   sh.getRange(row, C_('Status')).setValue(status); sh.getRange(row, C_('Decided')).setValue(new Date());
-  const r = {}; COLS.forEach((c, i) => r[c[1]] = vals[i]);
+  // Google Sheets turns "2026-11-18" and "10:00" into Date values: format them back to text for the email
+  const tz = SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone();
+  const txt_ = v => !(v instanceof Date) ? v : Utilities.formatDate(v, tz, v.getFullYear() < 1901 ? 'HH:mm' : 'yyyy-MM-dd');
+  const r = {}; COLS.forEach((c, i) => r[c[1]] = txt_(vals[i]));
   r.when = r.date ? r.date + ' ' + r.start + '–' + r.end : r.from + ' to ' + r.to;
   MailApp.sendEmail({ to: r.email, cc: LAB_EMAIL, name: LAB_NAME, subject: 'Lab request ' + r.ref + ': ' + (p.a === 'approve' ? 'approved' : 'declined'),
     htmlBody: '<p>Hello ' + esc_(r.name) + ',</p><p>Your supervisor <b>' + (p.a === 'approve' ? 'approved' : 'declined') + '</b> request ' + esc_(r.ref) + '.' +
