@@ -199,7 +199,7 @@ body,input,select,button,table,output,dd,code,kbd,samp,pre{font-variant-numeric:
 .labwrap{--lbb:var(--accent-ink,#0039a6);--lbr:#cc092f;--lbt:var(--ink);--lbl:var(--panel-2);padding:0!important;overflow:hidden;margin-top:18px}
 .labwrap .lb-head{color:#fff;background:#0039a6}
 .labmode-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 12px}.labmode-note{font-size:13px;color:var(--muted);flex:1 1 260px}
-.wb.labmode .wb-side,.wb.labmode .wb-bot{display:none!important}@media (min-width:721px){.wb.labmode .wb-app{grid-column:app-start/side-end}}.wb .labwrap{grid-column:1/-1;margin-top:0;order:1}.labmode-seg{flex:0 0 auto}.labmode-seg span{white-space:nowrap}
+.wb.labmode .wb-side,.wb.labmode .wb-bot{display:none!important}@media (min-width:721px){.wb.labmode .wb-app{grid-column:app-start/side-end}.wb.labmode{grid-template-rows:auto min(74vh,680px) auto!important}}.wb .labwrap{grid-column:1/-1;margin-top:0;order:1}.labmode-seg{flex:0 0 auto}.labmode-seg span{white-space:nowrap}
 .labwrap .lb-run select{background:#fff;color:#1b2433}
 .lb-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--lbb);color:#fff;padding:12px 16px;border-bottom:3px solid var(--lbr)}
 .lb-kick{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;font-weight:700}.lb-name{font-family:var(--display);font-size:21px;font-weight:700;line-height:1.2}.lb-src{font-size:12.5px;opacity:.85;margin-top:2px}
@@ -5641,6 +5641,854 @@ START();
 </script>
 
 <script id="lab-js">
+/* new 3D models of the ICE Lab devices (manual-sim/models3d) */
+(function(){function refresh(){}function setParam(d,id,v){d.s[id]=v;}
+/* New 3D models for the ICE Lab benches, built on the site's own G3 engine. Units: metres. */
+const NEW3D=[];
+(function(){
+const PI=Math.PI;
+/* ---- shared helpers ---- */
+function kit(K){
+  const M=K.mat;
+  const B=(w,h,d,m,p,o)=>K.node(K.box(w,h,d),m,Object.assign({p},o||{}));
+  const Cy=(r,h,m,p,o,seg)=>K.node(K.cyl(r,r,h,seg||24),m,Object.assign({p},o||{}));
+  const Cz=(r,h,m,p,seg)=>Cy(r,h,m,p,{r:[PI/2,0,0]},seg);      /* axis along z */
+  const Cx=(r,h,m,p,seg)=>Cy(r,h,m,p,{r:[0,0,PI/2]},seg);      /* axis along x */
+  /* rounded box: rounded on the 4 edges that run along x */
+  const rprof=(d,h,rad,n)=>{const P=[];n=n||5;[[1,1],[-1,1],[-1,-1],[1,-1]].forEach(([sz,sy],q)=>{for(let i=0;i<=n;i++){const a=q*PI/2+i/n*PI/2;P.push([sz*(d/2-rad)+rad*Math.cos(a),sy*(h/2-rad)+rad*Math.sin(a)]);}});return P;};
+  const RB=(w,h,d,rad,m,p,o)=>K.node(K.prismX(rprof(d,h,rad),-w/2,w/2),m,Object.assign({p},o||{}));
+  /* square loft along x: sections [x,w,h,yc] */
+  const loft=(S)=>{const g={p:[],n:[],u:[],i:[]};const quad=(a,b,c,d)=>{const u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],v=[d[0]-a[0],d[1]-a[1],d[2]-a[2]];let n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];const l=Math.hypot(...n)||1;n=n.map(x=>x/l);const k=g.p.length/3;[a,b,c,d].forEach((q,j)=>{g.p.push(...q);g.n.push(...n);g.u.push(j%3?1:0,j>1?1:0);});g.i.push(k,k+1,k+2,k,k+2,k+3);};
+    const ring=([x,w,h,yc])=>{yc=yc||0;return [[x,yc-h/2,w/2],[x,yc+h/2,w/2],[x,yc+h/2,-w/2],[x,yc-h/2,-w/2]];};
+    for(let s=0;s<S.length-1;s++){const A=ring(S[s]),C=ring(S[s+1]);for(let k=0;k<4;k++){const k2=(k+1)%4;quad(A[k],C[k],C[k2],A[k2]);}}return g;};
+  const floor=(R,c)=>{if(!window.G3_STUDIO)R.add(K.node(K.plane(8,8),M(c||'#e9eae6',{r:.9}),{r:[-PI/2,0,0]}));};
+  /* lab bench: dark worktop on white cabinet with wood drawers, as in the ICE Lab */
+  const bench=(R,w,d,h,x,z)=>{const g=K.group({p:[x||0,0,z||0]});R.add(g);g.add(RB(w,0.04,d,0.012,M('#2b2d31',{r:.25,m:.1}),[0,h-0.02,0]));g.add(B(w-0.06,h-0.14,d-0.08,M('#eceeed',{r:.7}),[0,(h-0.14)/2+0.1,0]));g.add(B(w-0.1,0.1,d-0.14,M('#3a3d42',{r:.6}),[0,0.05,0]));
+    const n=Math.max(2,Math.round(w/0.62));for(let i=0;i<n;i++){const dw=(w-0.12)/n,xx=-w/2+0.06+dw*(i+0.5);g.add(B(dw-0.02,h-0.32,0.012,M('#7d6a58',{r:.6}),[xx,(h-0.14)/2+0.1,d/2-0.036]));g.add(B(0.12,0.02,0.012,M('#2b2d31',{r:.4}),[xx,h-0.2,d/2-0.028]));}return g;};
+  return {M,B,Cy,Cz,Cx,RB,loft,floor,bench,PI};
+}
+
+window.kit3=kit;
+/* =================== 1. Universal testing machine (twin column) =================== */
+NEW3D.push({id:'utm',name:'Universal Testing Machine',photo:8,s:{},view3d:{h:560,cam:{tgt:[0,1.3,0],yaw:0.42,pitch:0.1,dist:3.3},shadow:{c:[0,1,0],r:2.4},
+ build(K,s){const refs={};const {M,B,Cy,Cz,Cx,RB,floor}=kit(K),R=K.group();floor(R);
+  const body=M('#2c2e32',{r:.42,m:.25}),body2=M('#1f2124',{r:.5,m:.2}),steel=M('#b9bdc2',{m:1,r:.28}),dsteel=M('#6f757c',{m:1,r:.35}),rub=M('#151617',{r:.8}),red=M('#b3261e',{r:.45});
+  /* plinth the frame stands on */R.add(RB(1.05,0.42,0.8,0.02,M('#d9dcdc',{r:.6}),[0,0.21,0]));
+  const Y0=0.42,g=K.group({p:[0,Y0,0]});R.add(g);
+  /* base: rounded casing, red waist line, feet */
+  [[-0.3,0.22],[0.3,0.22],[-0.3,-0.22],[0.3,-0.22]].forEach(([x,z])=>g.add(Cy(0.035,0.03,rub,[x,0.015,z])));
+  g.add(RB(0.86,0.03,0.62,0.012,red,[0,0.045,0]));g.add(RB(0.84,0.2,0.6,0.05,body,[0,0.16,0]));g.add(RB(0.78,0.02,0.54,0.008,body2,[0,0.265,0]));
+  /* T-slot table */g.add(B(0.4,0.012,0.34,dsteel,[0,0.281,0.02]));[-0.1,0,0.1].forEach(x=>g.add(B(0.012,0.004,0.34,body2,[x,0.288,0.02])));
+  /* columns with ribbed way covers on the inside faces */
+  const H=1.62;[-1,1].forEach(sx=>{g.add(RB(0.13,H,0.2,0.03,body,[sx*0.335,0.27+H/2,-0.02],{r:[0,PI/2,0]}));
+    for(let i=0;i<46;i++)g.add(B(0.022,0.022,0.11,i%2?body2:M('#34373b',{r:.6}),[sx*0.262,0.33+i*0.033,-0.02]));
+    g.add(B(0.012,H-0.16,0.03,dsteel,[sx*0.3,0.3+H/2,0.085]));/* limit-stop rail */[0.62,1.28].forEach(y=>g.add(B(0.03,0.035,0.045,M('#d9a514',{r:.5}),[sx*0.3,y,0.1])));});
+  /* top beam */g.add(RB(0.82,0.13,0.24,0.03,body,[0,0.27+H+0.045,-0.02]));g.add(B(0.3,0.012,0.16,body2,[0,0.27+H+0.115,-0.02]));
+  /* moving crosshead */const xh=K.group({p:[0,1.2,-0.02]});g.add(xh);xh.add(RB(0.52,0.12,0.2,0.02,body,[0,0,0]));xh.add(B(0.16,0.035,0.012,M('#d7dadd',{r:.5}),[0,0.01,0.102]));xh.add(B(0.05,0.012,0.002,red,[0,0.01,0.109]));
+  /* load cell + coupling */xh.add(Cy(0.055,0.06,steel,[0,-0.09,0.02]));xh.add(Cy(0.022,0.05,dsteel,[0,-0.145,0.02]));
+  /* wedge grips */const grip=(y,flip)=>{const q=K.group({p:[0,y,0],r:[flip?PI:0,0,0]});q.add(K.node(K.prismX([[0.055,0.07],[-0.055,0.07],[-0.04,-0.07],[0.04,-0.07]],-0.075,0.075),steel,{}));q.add(B(0.152,0.03,0.115,dsteel,[0,0.085,0]));
+     [-1,1].forEach(k=>q.add(K.node(K.prismX([[0.057,0.05],[0.02,0.05],[0.008,-0.068],[0.045,-0.068]],-0.03,0.03),M('#8f959b',{m:1,r:.5}),{s:[1,1,k]})));q.add(Cz(0.012,0.05,rub,[0.09,0.085,0]));q.add(Cx(0.008,0.09,dsteel,[0.12,0.085,0]));return q;};
+  refs.hs=null;const up=grip(-0.26);up.p[2]=0.02;xh.add(up);const lo=grip(0.0,true);lo.p=[0,0.46,0];g.add(lo);g.add(Cy(0.03,0.1,dsteel,[0,0.335,0]));
+  /* dog-bone specimen */refs.spec=B(0.02,0.36,0.004,M('#c9cdd2',{m:1,r:.25}),[0,0.7,0]);g.add(refs.spec);refs.xh=xh;refs.g=g;
+  /* handset on its bracket with coiled cable */const hs=K.group({p:[0.47,1.18,0.1],r:[0.25,-0.4,0]});g.add(hs);hs.add(RB(0.085,0.2,0.04,0.014,M('#3a3d42',{r:.5}),[0,0,0],{r:[0,PI/2,0]}));hs.add(B(0.05,0.035,0.004,M('#9fd6a8',{e:'#1d3b22',r:.3}),[0,0.05,0.022]));[[-0.014,0],[0.014,0],[-0.014,-0.03],[0.014,-0.03],[0,-0.06]].forEach(([x,y])=>hs.add(Cz(0.008,0.006,M('#d7dadd',{r:.5}),[x,y,0.022],12)));
+  g.add(B(0.07,0.02,0.04,body2,[0.42,1.1,0.06]));refs.hs=hs;
+  const coil=[];for(let i=0;i<=90;i++){const t=i/90;coil.push([0.47+0.012*Math.cos(i*0.9),1.07-t*0.7,0.1+0.012*Math.sin(i*0.9)]);}g.add(K.node(K.tube(coil,0.004,6,0.001),rub,{}));
+  /* E-stop */g.add(RB(0.07,0.05,0.07,0.01,M('#e2b21c',{r:.5}),[0.33,0.3,0.22]));g.add(Cy(0.022,0.02,M('#c0221b',{r:.4}),[0.33,0.335,0.22]));
+  /* status lights */[['#3fae5a',0],['#d9a514',0.03],['#d7dadd',0.06]].forEach(([c,o])=>g.add(Cz(0.007,0.004,M(c,{e:c}),[-0.335,0.46+o,0.082],10)));
+  K.label('Load cell',xh,[0,-0.09,0.1]);K.label('Wedge grips',g,[0.12,0.5,0.1]);K.label('Moving crosshead',xh,[-0.2,0.08,0.12]);K.label('Handset',hs,[0,0.14,0]);
+  return {root:R,refs,update(){}};}}});
+})();
+
+(function(){const PI=Math.PI,kit=window.kit3;
+/* =================== 2. Pendulum impact tester in its octagonal guard =================== */
+NEW3D.push({id:'charpy',name:'Pendulum Impact Tester',photo:9,s:{},view3d:{h:560,cam:{tgt:[0,1.25,0],yaw:0.38,pitch:0.08,dist:4.3},shadow:{c:[0,1.1,0],r:2.6},
+ build(K,s){const refs={};const {M,B,Cy,Cz,Cx,RB,floor}=kit(K),R=K.group();floor(R);
+  const alu=M('#c4c8cc',{m:.9,r:.35}),clear=M('#dcebf2',{a:.06,r:.05}),blk=M('#1d1f22',{r:.45,m:.2}),steel=M('#aeb3b8',{m:1,r:.3}),yel=M('#e8b90f',{r:.5});
+  /* plinth */R.add(RB(1.5,0.32,1.1,0.02,M('#dfe1e1',{r:.6}),[0,0.16,0]));R.add(B(1.2,0.06,0.8,M('#2b2d31',{r:.4}),[0,0.35,0]));
+  const Y=0.38,g=K.group({p:[0,Y,0]});R.add(g);refs.g=g;
+  /* octagon outline in the x-y plane */const W=0.98,HH=1.0,c=0.42,cy=1.0;const V=[[-c,cy+HH],[c,cy+HH],[W,cy+HH-0.56],[W,cy-HH+0.56],[c,cy-HH],[-c,cy-HH],[-W,cy-HH+0.56],[-W,cy+HH-0.56]];const D=0.42,p=0.04;
+  const bar=(a,b,z)=>{const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy);g.add(B(L+p,p,p,alu,[(a[0]+b[0])/2,(a[1]+b[1])/2,z],{r:[0,0,Math.atan2(dy,dx)]}));};
+  [D,-D].forEach(z=>{V.forEach((v,i)=>bar(v,V[(i+1)%8],z));/* the two full-height posts and the mid rails */[-c,c].forEach(x=>g.add(B(p,2*HH,p,alu,[x,cy,z])));[cy+0.42,cy-0.34].forEach(y=>g.add(B(2*c,p,p,alu,[0,y,z])));g.add(B(p,0.66,p,alu,[-0.14,cy-0.67,z]));});
+  V.forEach((v,i)=>{g.add(B(p,p,2*D,alu,[v[0],v[1],0]));g.add(K.node(K.sphere(0.03,10),blk,{p:[v[0],v[1],D]}));g.add(K.node(K.sphere(0.03,10),blk,{p:[v[0],v[1],-D]}));
+    const w=V[(i+1)%8],dx=w[0]-v[0],dy=w[1]-v[1],L=Math.hypot(dx,dy);g.add(B(L,0.005,2*D-0.04,clear,[(v[0]+w[0])/2,(v[1]+w[1])/2,0],{r:[0,0,Math.atan2(dy,dx)]}));});
+  /* front and back sheets */[D,-D].forEach(z=>{g.add(B(2*c,2*HH,0.005,clear,[0,cy,z]));[-1,1].forEach(sx=>g.add(K.node(K.prismX([[sx*c,cy+HH],[sx*W,cy+HH-0.56],[sx*W,cy-HH+0.56],[sx*c,cy-HH]],-0.0025,0.0025),clear,{r:[0,-PI/2,0],p:[0,0,z]})));});
+  /* machine: base casting, column, dial, pendulum */
+  g.add(RB(0.5,0.16,0.62,0.02,blk,[0,0.08,0]));g.add(RB(0.3,1.24,0.14,0.03,blk,[0,0.78,-0.2],{r:[0,PI/2,0]}));g.add(RB(0.34,0.3,0.2,0.04,blk,[0,1.42,-0.17],{r:[0,PI/2,0]}));
+  const PV=[0,1.36,0];g.add(Cz(0.03,0.36,steel,[0,1.36,-0.05]));
+  /* dial */const dt=K.tex(256,256,(c2,w,h)=>{c2.fillStyle='#f3f3ef';c2.beginPath();c2.arc(w/2,h/2,w/2,0,7);c2.fill();c2.strokeStyle='#222';c2.fillStyle='#222';for(let i=0;i<=60;i++){const a=PI*0.75+i/60*PI*1.5,r0=i%5?108:98;c2.lineWidth=i%5?1.5:3;c2.beginPath();c2.moveTo(w/2+r0*Math.cos(a),h/2+r0*Math.sin(a));c2.lineTo(w/2+118*Math.cos(a),h/2+118*Math.sin(a));c2.stroke();}c2.font='bold 15px sans-serif';c2.textAlign='center';for(let i=0;i<=6;i++){const a=PI*0.75+i/6*PI*1.5;c2.fillText(String(i*50),w/2+82*Math.cos(a),h/2+82*Math.sin(a)+5);}c2.fillText('J',w/2,h/2+58);c2.fillStyle='#1d1f22';c2.beginPath();c2.arc(w/2,h/2,60,0,7);c2.fill();},{});
+  g.add(Cz(0.19,0.03,M('#e9e9e4',{r:.5}),[0,1.36,-0.07],40));g.add(K.node(K.plane(0.37,0.37),M('#fff',{t:dt,at:.5,r:.5}),{p:[0,1.36,-0.052]}));refs.ptr=K.group({p:[0,1.36,-0.046]});refs.ptr.add(B(0.006,0.15,0.004,M('#c0221b'),[0,0.075,0]));g.add(refs.ptr);
+  const pen=K.group({p:PV.slice(),r:[0,0,0.5]});g.add(pen);pen.add(Cy(0.014,0.9,steel,[0,-0.45,0.08]));pen.add(Cz(0.05,0.1,blk,[0,0,0.08]));
+  /* C-shaped hammer */pen.add(K.node(K.prismX([[0.17,0.11],[-0.17,0.11],[-0.17,-0.13],[-0.05,-0.13],[-0.05,-0.01],[0.05,-0.01],[0.05,-0.13],[0.17,-0.13]],-0.03,0.03),M('#33363a',{m:.6,r:.4}),{p:[0,-0.93,0.08],r:[0,PI/2,0]}));pen.add(B(0.012,0.05,0.04,steel,[0.031,-1.03,0.08]));
+  /* anvil with specimen */g.add(RB(0.3,0.14,0.2,0.012,M('#c9b98a',{r:.5,m:.3}),[0,0.23,0.08]));[-0.06,0.06].forEach(x=>g.add(B(0.05,0.07,0.1,steel,[x,0.335,0.08])));refs.spec=B(0.14,0.012,0.012,M('#8f959b',{m:1,r:.3}),[0,0.345,0.08]);g.add(refs.spec);refs.pen=pen;refs.g=g;
+  /* warning labels and controls on the front */[0,-0.09].forEach(dy=>g.add(B(0.13,0.07,0.004,yel,[-0.26,cy+0.3+dy,D+0.004])));[['#1a56c4',0],['#d9a514',0.045],['#d9a514',0.09],['#1a56c4',0.135]].forEach(([cc,o])=>g.add(Cz(0.016,0.004,M(cc,{r:.5}),[0.3,cy+0.32-o,D+0.004],14)));
+  g.add(B(0.03,0.09,0.04,blk,[c+0.01,cy+0.3,D+0.02]));/* door latch */
+  K.label('Dial',g,[0.2,1.56,0]);K.label('Pendulum',pen,[0.05,-0.5,0.1]);K.label('Anvil + specimen',g,[0.2,0.3,0.2]);K.label('Guard',g,[-0.75,1.75,D]);
+  return {root:R,refs,update(){}};}}});
+
+/* =================== 3. Bench-top wind tunnel =================== */
+NEW3D.push({id:'wind',name:'Wind Tunnel',photo:22,s:{},view3d:{h:560,cam:{tgt:[0.15,1.08,0],yaw:0.5,pitch:0.16,dist:3.1},shadow:{c:[0.1,1,0],r:2.2},
+ build(K,s){const refs={};const {M,B,Cy,Cz,Cx,RB,loft,floor,bench}=kit(K),R=K.group();floor(R);bench(R,3.0,0.9,0.9,0.15,0);
+  const blk=M('#17181b',{r:.38,m:.15}),blk2=M('#232529',{r:.55}),edge=M('#0e0f11',{r:.6}),clear=M('#d6e6ee',{a:.2,r:.04}),steel=M('#b5b9be',{m:1,r:.3});
+  const Y=0.9,g=K.group({p:[0,Y,0]});R.add(g);refs.g=g;const AX=0.36;
+  /* inlet: square mouth with a rounded lip, then a smooth contraction */
+  const sec=[];for(let i=0;i<=14;i++){const t=i/14,k=1-(3*t*t-2*t*t*t);sec.push([-1.18+t*0.5,0.2+0.42*k,0.2+0.42*k,AX]);}
+  g.add(K.node(loft(sec),blk,{}));g.add(B(0.3,0.64,0.64,blk,[-1.31,AX,0]));g.add(RB(0.04,0.68,0.68,0.03,edge,[-1.46,AX,0]));
+  /* honeycomb screen at the mouth */const hc=K.tex(256,256,(c,w,h)=>{c.fillStyle='#0c0d0e';c.fillRect(0,0,w,h);c.strokeStyle='#3a3d42';c.lineWidth=1;for(let i=0;i<=32;i++){c.beginPath();c.moveTo(i*8,0);c.lineTo(i*8,h);c.stroke();c.beginPath();c.moveTo(0,i*8);c.lineTo(w,i*8);c.stroke();}});
+  g.add(K.node(K.plane(0.6,0.6),M('#fff',{t:hc,r:.8}),{p:[-1.481,AX,0],r:[0,-PI/2,0]}));
+  /* test section: flanged frame with clear window, aerofoil inside */
+  [-0.68,-0.24].forEach(x=>{g.add(RB(0.035,0.3,0.3,0.012,edge,[x,AX,0]));for(let i=0;i<5;i++)[-1,1].forEach(k=>g.add(Cx(0.006,0.04,steel,[x,AX-0.12+i*0.06,k*0.138],8)));});
+  g.add(B(0.42,0.012,0.2,blk,[-0.46,AX+0.106,0]));g.add(B(0.42,0.012,0.2,blk,[-0.46,AX-0.106,0]));g.add(B(0.42,0.2,0.006,M('#111214',{r:.5}),[-0.46,AX,-0.1]));
+  g.add(B(0.42,0.2,0.006,clear,[-0.46,AX,0.1]));[[0,0.1],[0,-0.1]].forEach(([_,dy])=>g.add(B(0.42,0.022,0.012,edge,[-0.46,AX+dy,0.102])));[-0.66,-0.26].forEach(x=>g.add(B(0.022,0.2,0.012,edge,[x,AX,0.102])));
+  const af=[];for(let i=0;i<=20;i++){const t=i/20,x=t*t,y=0.6*(0.2969*Math.sqrt(x)-0.126*x-0.3516*x*x+0.2843*x*x*x-0.1015*x*x*x*x);af.push([x*0.12-0.06,y*0.12*1.6]);}for(let i=19;i>0;i--){const t=i/20,x=t*t,y=0.6*(0.2969*Math.sqrt(x)-0.126*x-0.3516*x*x+0.2843*x*x*x-0.1015*x*x*x*x);af.push([x*0.12-0.06,-y*0.12*1.6]);}
+  refs.af=K.node(K.prismX(af,-0.09,0.09),M('#c9cdd2',{m:.8,r:.3}),{p:[-0.46,AX,0],r:[0.14,PI/2,0]});g.add(refs.af);refs.g=g;refs.AX=AX;g.add(Cz(0.005,0.2,steel,[-0.46,AX,0],8));
+  /* control box under the test section */g.add(RB(0.46,0.22,0.3,0.015,blk2,[-0.46,0.11,0],{r:[0,PI/2,0]}));g.add(B(0.4,0.02,0.24,blk,[-0.46,0.225,0]));
+  [[-0.08,'#d7dadd'],[0,'#d7dadd'],[0.08,'#d7dadd']].forEach(([x,cc])=>{g.add(Cz(0.022,0.02,M('#0f1012',{r:.4}),[-0.46+x,0.13,0.156],20));g.add(Cz(0.006,0.024,M(cc,{m:.8,r:.3}),[-0.46+x,0.13,0.158],10));});
+  [['#3fae5a',-0.14],['#c0221b',0.14]].forEach(([cc,x])=>g.add(Cz(0.01,0.008,M(cc,{e:cc}),[-0.46+x,0.06,0.154],12)));g.add(B(0.16,0.03,0.004,M('#d7dadd',{r:.5}),[-0.46,0.055,0.153]));
+  /* long diffuser with a coloured stripe */
+  const st=K.tex(512,64,(c,w,h)=>{c.fillStyle='#17181b';c.fillRect(0,0,w,h);const gr=c.createLinearGradient(0,0,w,0);gr.addColorStop(0,'rgba(120,70,190,0)');gr.addColorStop(.5,'#7a46c0');gr.addColorStop(1,'rgba(200,60,140,0)');c.strokeStyle=gr;c.lineWidth=5;c.beginPath();c.moveTo(60,46);c.lineTo(w-30,30);c.stroke();c.fillStyle='#e6e8ea';c.font='600 20px sans-serif';c.fillText('WIND TUNNEL',70,30);});
+  g.add(K.node(loft([[-0.22,0.2,0.2,AX],[1.02,0.4,0.4,AX]]),blk,{}));g.add(K.node(K.plane(1.1,0.14),M('#fff',{t:st,r:.4}),{p:[0.38,AX,0.166],r:[0,-0.081,0]}));
+  /* fan housing with bolted flange and grille */g.add(RB(0.05,0.5,0.5,0.03,edge,[1.03,AX,0]));g.add(RB(0.2,0.46,0.46,0.06,blk,[1.15,AX,0]));g.add(Cx(0.2,0.012,M('#0b0c0d',{r:.8}),[1.252,AX,0],36));
+  for(let i=0;i<8;i++){const a=i/8*PI*2;g.add(B(0.006,0.36,0.03,M('#3a3d42',{m:.5,r:.4}),[1.256,AX,0],{r:[a,0,0]}));}g.add(Cx(0.05,0.03,blk2,[1.265,AX,0],20));
+  for(let i=0;i<12;i++){const a=i/12*PI*2;g.add(Cx(0.008,0.07,steel,[1.03,AX+0.215*Math.sin(a)*1.05,0.215*Math.cos(a)*1.05],8));}
+  /* supports */[[-1.3,0.3],[0.55,0.2],[1.12,0.3]].forEach(([x,w])=>{[-1,1].forEach(k=>g.add(B(0.04,0.2,0.04,blk2,[x,0.1,k*w*0.5])));g.add(B(0.06,0.02,w+0.1,blk2,[x,0.01,0]));});
+  K.label('Inlet contraction',g,[-1.05,AX+0.38,0]);K.label('Test section',g,[-0.46,AX+0.2,0.1]);K.label('Diffuser',g,[0.4,AX+0.24,0]);K.label('Fan',g,[1.18,AX+0.3,0]);K.label('Speed and balance controls',g,[-0.46,0.02,0.2]);
+  return {root:R,refs,update(){}};}}});
+
+/* =================== 4. Heat-exchanger service module =================== */
+NEW3D.push({id:'hx',name:'Heat Exchanger Service Module',photo:20,s:{},view3d:{h:560,cam:{tgt:[0.2,1.2,0.1],yaw:0.5,pitch:0.2,dist:2.5},shadow:{c:[0.1,1.1,0],r:2.0},
+ build(K,s){const refs={};const {M,B,Cy,Cz,Cx,RB,floor,bench}=kit(K),R=K.group();floor(R);bench(R,2.4,1.1,0.9,0.15,0);
+  const fr=M('#4a4f55',{m:.5,r:.45}),white=M('#ecedea',{r:.55}),blk=M('#1d1f22',{r:.5}),steel=M('#b5b9be',{m:1,r:.3}),brass=M('#c9a43a',{m:1,r:.3}),hot=M('#c8261c',{r:.45}),cold=M('#1f3f9c',{r:.45}),clear=M('#d6e6ee',{a:.25,r:.04}),grn=M('#2f9b55',{r:.5});
+  const Y=0.9,g=K.group({p:[-0.25,Y,-0.05]});R.add(g);refs.g=g;const t=0.035;
+  /* steel tube frame: base rectangle, two uprights at the back right, top rail */
+  [[0,0.3],[0,-0.3]].forEach(([_,z])=>g.add(B(1.0,t,t,fr,[0,t/2,z])));[-0.5,0.5].forEach(x=>g.add(B(t,t,0.6+t,fr,[x,t/2,0])));
+  [[-0.5,0.3],[0.5,0.3],[-0.5,-0.3],[0.5,-0.3]].forEach(([x,z])=>g.add(Cy(0.02,0.012,blk,[x,-0.004,z],12)));
+  [[0.5,0.3],[0.5,-0.3],[-0.12,-0.3],[-0.5,-0.3]].forEach(([x,z])=>g.add(B(t,0.86,t,fr,[x,0.43,z])));g.add(B(1.0+t,t,t,fr,[0,0.86,-0.3]));g.add(B(t,t,0.6+t,fr,[0.5,0.86,0]));g.add(B(0.62+t,t,t,fr,[0.19,0.86,0.3]));
+  /* tanks and pump behind the panel */g.add(RB(0.3,0.5,0.34,0.02,M('#2a2c2f',{r:.5}),[0.28,0.3,-0.08]));g.add(RB(0.26,0.3,0.26,0.04,M('#dfe3e4',{a:.55,r:.1}),[-0.08,0.2,-0.12]));g.add(Cx(0.07,0.2,M('#2b4e9b',{r:.4,m:.3}),[-0.3,0.12,0.12]));g.add(Cx(0.085,0.05,blk,[-0.19,0.12,0.12]));
+  /* white panel with printed mimic, displays, sockets */
+  const pt=K.tex(768,768,(c,w,h)=>{c.fillStyle='#ecedea';c.fillRect(0,0,w,h);c.strokeStyle='#b8bcbc';c.lineWidth=2;c.strokeRect(6,6,w-12,h-12);c.fillStyle='#4a4f55';c.font='bold 26px sans-serif';c.fillText('HEAT EXCHANGER SERVICE MODULE',64,52);c.fillRect(22,26,30,30);
+    const disp=(x,y,v,l)=>{c.fillStyle='#1b1d20';c.fillRect(x,y,150,58);c.fillStyle='#39d353';c.font='bold 34px monospace';c.fillText(v,x+18,y+42);c.fillStyle='#4a4f55';c.font='16px sans-serif';c.fillText(l,x,y-10);};
+    disp(110,120,'60.0','Hot flow  L/min');disp(470,120,'2.40','Cold flow  L/min');disp(110,250,'41.6','T1 … T4  °C');
+    c.fillStyle='#1b1d20';c.fillRect(470,250,60,60);c.fillRect(548,250,92,60);c.fillStyle='#e23b2e';c.font='bold 26px monospace';c.fillText('60',478,290);c.fillStyle='#39d353';c.fillText('59.8',556,290);c.fillStyle='#4a4f55';c.font='16px sans-serif';c.fillText('Tank heater controller',470,240);
+    c.fillStyle='#1b1d20';[[130,380],[190,380]].forEach(([x,y])=>{c.beginPath();c.arc(x,y,20,0,7);c.fill();});c.fillStyle='#39d353';c.beginPath();c.arc(130,380,9,0,7);c.fill();c.fillStyle='#4a4f55';c.fillText('Heater    Pump',104,424);
+    c.strokeStyle='#4a4f55';c.lineWidth=2;c.beginPath();c.moveTo(30,470);c.lineTo(w-30,470);c.stroke();c.font='15px sans-serif';['T1','T2','T3','T4'].forEach((l,i)=>{c.fillText(l,118+i*150,505);});
+    c.fillStyle='#c8261c';c.font='bold 17px sans-serif';c.fillText('HOT OUT',70,640);c.fillText('HOT RETURN',190,640);c.fillStyle='#1f3f9c';c.fillText('COLD OUT',420,640);c.fillText('COLD RETURN',560,640);
+    c.fillStyle='#1a56c4';c.beginPath();c.arc(80,560,24,0,7);c.fill();c.fillStyle='#fff';c.font='bold 22px sans-serif';c.fillText('!',75,568);});
+  const PX=0.02,PZ=0.32;g.add(B(0.66,0.66,0.02,white,[PX,0.5,PZ-0.011]));g.add(K.node(K.plane(0.66,0.66),M('#fff',{t:pt,r:.5}),{p:[PX,0.5,PZ]}));
+  const px=u=>PX-0.33+u/768*0.66,py=v=>0.83-v/768*0.66;
+  /* thermocouple sockets (green) with leads */const tc=[];[0,1,2,3].forEach(i=>{const x=px(128+i*150),y=py(528);g.add(B(0.03,0.018,0.016,grn,[x,y,PZ+0.008]));tc.push([x,y]);});
+  /* hose tails on the panel */const tails=[[px(110),py(690),hot],[px(250),py(690),hot],[px(460),py(690),cold],[px(620),py(690),cold]];tails.forEach(([x,y,m])=>{g.add(Cz(0.016,0.04,brass,[x,y,PZ+0.02],14));g.add(Cz(0.02,0.012,m,[x,y,PZ+0.044],14));});
+  /* flow valves */[[px(330),py(150)],[px(690),py(150)]].forEach(([x,y])=>{g.add(Cz(0.02,0.03,blk,[x,y,PZ+0.015],16));g.add(B(0.05,0.008,0.008,blk,[x,y,PZ+0.034]));});
+  /* exchanger on its plate, to the right of the module */const e=K.group({p:[1.0,Y,0.25]});R.add(e);e.add(RB(0.62,0.02,0.3,0.008,white,[0,0.01,0]));
+  [-0.2,0.2].forEach(x=>{e.add(RB(0.05,0.13,0.1,0.01,blk,[x,0.085,0]));e.add(Cx(0.035,0.03,blk,[x+(x<0?-0.035:0.035),0.11,0],18));});
+  e.add(Cx(0.03,0.36,clear,[0,0.11,0],24));e.add(Cx(0.011,0.5,M('#b8653a',{m:1,r:.3}),[0,0.11,0],14));[-0.12,0.12].forEach(x=>e.add(Cy(0.008,0.05,brass,[x,0.16,0],10)));[-0.27,0.27].forEach(x=>e.add(Cx(0.012,0.04,brass,[x,0.11,0],10)));
+  /* hoses: hot (red) to the inner tube ends, cold (blue) to the shell ports */
+  const W=(x,y)=>[x-0.25,Y+y-0.9+0.9,0];const P=([x,y],z)=>[x-0.25,y+Y,z-0.05];
+  const hose=(a,b,m,sag,side)=>{const A=P([a[0],a[1]],PZ+0.05),Bq=b,mid=[(A[0]+Bq[0])/2+side,Y+0.03,Math.max(A[2],Bq[2])+sag];R.add(K.node(K.tube([A,[A[0],A[1],A[2]+0.07],[A[0]+side*0.3,Y+0.04,A[2]+sag*0.7],mid,[Bq[0],Bq[1]-0.0,Bq[2]+0.12],Bq],0.011,10,0.09),m,{}));};
+  hose(tails[0],[1.0-0.3,Y+0.11,0.25],hot,0.34,0.05);hose(tails[1],[1.0+0.3,Y+0.11,0.25],hot,0.42,0.2);
+  hose(tails[2],[1.0-0.12,Y+0.19,0.25],cold,0.28,0.1);hose(tails[3],[1.0+0.12,Y+0.19,0.25],cold,0.22,0.12);
+  /* green thermocouple leads to the exchanger */tc.forEach(([x,y],i)=>{const A=P([x,y],PZ+0.02),E=[1.0+[-0.24,-0.12,0.12,0.24][i],Y+0.15,0.25];R.add(K.node(K.tube([A,[A[0],A[1]-0.12,A[2]+0.1],[(A[0]+E[0])/2,Y+0.02,A[2]+0.22+i*0.03],[E[0],Y+0.06,E[2]+0.1],E],0.003,6,0.06),grn,{}));});
+  /* bench services pod above, as in the photo */const pod=K.group({p:[0.15,1.78,-0.3]});R.add(pod);pod.add(RB(1.9,0.28,0.2,0.02,M('#e6e7e3',{r:.6}),[0,0,0]));[-0.7,-0.5].forEach((x,i)=>pod.add(Cz(0.035,0.03,M(i?'#1f5fb4':'#2f9b55',{r:.4}),[x,0,0.11],16)));pod.add(B(0.3,0.1,0.004,M('#fbfbf8',{r:.6}),[0.1,0.03,0.103]));[0.55,0.72].forEach(x=>pod.add(B(0.1,0.1,0.006,M('#f6f6f2',{r:.5}),[x,0,0.104])));[-0.9,0.9].forEach(x=>R.add(B(0.05,0.76,0.05,M('#d9dad6',{r:.6}),[0.15+x,1.3,-0.48])));
+  K.label('Service module',g,[PX,0.9,PZ]);K.label('Hot circuit',R,[0.55,Y+0.12,0.62]);K.label('Cold circuit',R,[1.05,Y+0.3,0.3]);K.label('Tubular heat exchanger',e,[0,0.24,0]);K.label('Thermocouple sockets',g,[px(350),py(470),PZ+0.03]);
+  return {root:R,refs,update(){}};}}});
+})();
+
+(function(){const PI=Math.PI;
+/* extra shared furniture */
+window.kit4=function(K){const refs={};const k=window.kit3(K),{M,B,Cy,Cz,Cx,RB}=k;
+  k.ss=M('#c9ccce',{m:.85,r:.32});k.blk=M('#1d1f22',{r:.5});k.steel=M('#b5b9be',{m:1,r:.3});k.white=M('#ecedea',{r:.55});k.rub=M('#151617',{r:.8});
+  /* stainless table with optional lower shelf */
+  k.stable=(R,w,d,h,x,z,shelf)=>{const g=K.group({p:[x||0,0,z||0]});R.add(g);refs.g=g;g.add(B(w,0.035,d,k.ss,[0,h-0.0175,0]));g.add(B(w,0.05,0.02,k.ss,[0,h-0.06,d/2-0.01]));[[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>{g.add(B(0.04,h-0.04,0.04,k.ss,[a*(w/2-0.03),(h-0.04)/2,b*(d/2-0.03)]));g.add(Cy(0.022,0.03,k.blk,[a*(w/2-0.03),0.015,b*(d/2-0.03)],10));});if(shelf)g.add(B(w-0.06,0.02,d-0.06,k.ss,[0,shelf,0]));return g;};
+  /* services pod above an island bench */
+  k.pod=(R,w,x,z,y)=>{const g=K.group({p:[x||0,y||1.78,z||-0.3]});R.add(g);refs.g=g;g.add(RB(w,0.26,0.2,0.02,M('#e6e7e3',{r:.6}),[0,0,0]));[-w*0.36,-w*0.28].forEach((xx,i)=>g.add(Cz(0.032,0.03,M(i?'#1f5fb4':'#2f9b55',{r:.4}),[xx,0,0.11],16)));g.add(B(0.26,0.09,0.004,M('#fbfbf8',{r:.6}),[0.05,0.03,0.103]));[w*0.28,w*0.37].forEach(xx=>g.add(B(0.09,0.09,0.006,M('#f6f6f2',{r:.5}),[xx,0,0.104])));[-1,1].forEach(a=>R.add(B(0.05,(y||1.78)-0.9-0.12,0.05,M('#d9dad6',{r:.6}),[(x||0)+a*(w/2-0.1),0.9+((y||1.78)-0.9-0.12)/2,(z||-0.3)-0.15])));return g;};
+  /* small touch screen texture */
+  k.screen=(w,h,draw)=>K.tex(w||256,h||160,(c,W,H)=>{c.fillStyle='#10161d';c.fillRect(0,0,W,H);c.fillStyle='#1f6fd1';c.fillRect(0,0,W,H*0.16);c.fillStyle='#dfe7ee';c.font='bold '+Math.round(H*0.2)+'px sans-serif';if(draw)draw(c,W,H);else{c.fillText('READY',W*0.1,H*0.55);c.fillStyle='#39d353';c.fillRect(W*0.1,H*0.68,W*0.5,H*0.08);}});
+  k.stripe=(col)=>K.tex(256,64,(c,W,H)=>{c.fillStyle='#e3e5e4';c.fillRect(0,0,W,H);c.fillStyle=col||'#1c63b8';c.beginPath();c.moveTo(W*0.08,H);c.lineTo(W*0.2,0);c.lineTo(W*0.3,0);c.lineTo(W*0.18,H);c.fill();c.fillStyle='#3d4757';c.fillRect(W*0.36,H*0.3,W*0.4,H*0.1);c.fillRect(W*0.36,H*0.55,W*0.25,H*0.08);});
+  k.estop=(g,p)=>{g.add(Cy(0.028,0.012,M('#e2b21c',{r:.5}),[p[0],p[1],p[2]],18));g.add(Cy(0.02,0.02,M('#c0221b',{r:.4}),[p[0],p[1]+0.016,p[2]],18));};
+  k.estopZ=(g,p)=>{g.add(Cz(0.028,0.012,M('#e2b21c',{r:.5}),p,18));g.add(Cz(0.02,0.02,M('#c0221b',{r:.4}),[p[0],p[1],p[2]+0.016],18));};
+  return k;};
+const D=(o)=>NEW3D.push(Object.assign({s:{}},o));
+
+/* ---- 1. Automatic grinder-polisher ---- */
+D({id:'polisher',name:'Automated Polishing Machine',photo:1,view3d:{h:560,cam:{tgt:[0,1.08,0],yaw:0.45,pitch:0.22,dist:2.2},shadow:{c:[0,1,0],r:1.6},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,ss,blk,steel}=k,R=K.group();floor(R);k.stable(R,1.5,0.75,0.9);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;const body=M('#dfe1e0',{r:.5});
+  g.add(RB(0.64,0.2,0.5,0.03,body,[0,0.1,0]));g.add(K.node(K.plane(0.6,0.12),M('#fff',{t:k.stripe(),r:.5}),{p:[0,0.09,0.251]}));g.add(RB(0.64,0.03,0.5,0.012,M('#2a2c2f',{r:.4}),[0,0.215,0]));
+  [-0.15,0.15].forEach(x=>{g.add(Cy(0.135,0.03,M('#111214',{r:.5}),[x,0.235,0.04],40));g.add(Cy(0.115,0.012,M('#3a3d42',{m:.5,r:.35}),[x,0.246,0.04],40));g.add(K.node(K.torus(0.135,0.008,8,40),M('#0c0d0e',{r:.5}),{p:[x,0.25,0.04]}));});
+  k.estopZ(g,[0.25,0.1,0.25]);
+  /* head on a rear column */g.add(RB(0.12,0.3,0.12,0.02,body,[0.15,0.37,-0.2],{r:[0,PI/2,0]}));g.add(RB(0.3,0.2,0.26,0.03,M('#c8cacb',{r:.5}),[0.13,0.58,-0.08]));g.add(K.node(K.plane(0.14,0.1),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[0.17,0.6,0.052],r:[-0.25,0,0]}));
+  g.add(Cy(0.02,0.14,steel,[0.15,0.42,0.04]));g.add(Cy(0.08,0.035,steel,[0.15,0.34,0.04],30));for(let i=0;i<6;i++){const a=i/6*PI*2;g.add(Cy(0.016,0.05,M('#8f959b',{m:1,r:.4}),[0.15+0.052*Math.cos(a),0.3,0.04+0.052*Math.sin(a)],12));}
+  /* water arm and dispenser */g.add(K.node(K.tube([[-0.15,0.22,-0.2],[-0.15,0.42,-0.2],[-0.15,0.42,-0.02],[-0.15,0.33,0.0]],0.008,8,0.04),steel,{}));g.add(RB(0.16,0.18,0.14,0.015,M('#d9dbda',{r:.5}),[-0.48,0.09,0.0]));g.add(Cy(0.04,0.2,M('#e3f1fa',{a:.35,r:.05}),[-0.62,0.1,0.1]));
+  /* desiccators */[[0.52,0.02,0.12],[0.6,0.26,0.085]].forEach(([x,z,r])=>{g.add(Cy(r,0.07,M('#e6f1f6',{a:.35,r:.05}),[x,0.035,z],30));g.add(K.node(K.sphere(r,20),M('#e6f1f6',{a:.28,r:.05}),{p:[x,0.07,z],s:[1,0.75,1]}));g.add(K.node(K.sphere(0.02,10),M('#e6f1f6',{a:.5}),{p:[x,0.07+r*0.78,z]}));});
+  K.label('Polishing platens',g,[0,0.3,0.2]);K.label('Specimen mover head',g,[0.3,0.72,0]);K.label('Desiccators',g,[0.58,0.26,0.1]);return {root:R,refs,update(){}};}}});
+
+/* ---- 2. Twin mounting press ---- */
+D({id:'mount',name:'Specimen Mounting Press',photo:2,view3d:{h:560,cam:{tgt:[0,0.95,0],yaw:0.4,pitch:0.2,dist:2.6},shadow:{c:[0,0.8,0],r:1.8},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,ss,blk,steel}=k,R=K.group();floor(R);k.stable(R,0.95,0.75,0.82,0,0,0.22);
+  const g=K.group({p:[0,0.82,0]});R.add(g);refs.g=g;const body=M('#cfd3d6',{r:.45});
+  g.add(RB(0.6,0.26,0.46,0.05,body,[0,0.13,0]));g.add(K.node(K.prismX([[0.23,0.26],[-0.23,0.26],[-0.23,0.4],[0.1,0.4]],-0.3,0.3),body,{}));
+  g.add(K.node(K.plane(0.56,0.11),M('#fff',{t:k.stripe(),r:.5}),{p:[0,0.1,0.232]}));g.add(K.node(K.plane(0.16,0.1),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[-0.14,0.21,0.233]}));
+  [-0.15,0.15].forEach(x=>{g.add(Cy(0.075,0.16,M('#d5d8da',{m:.9,r:.25}),[x,0.47,-0.04],30));g.add(Cy(0.065,0.05,blk,[x,0.575,-0.04],30));g.add(Cy(0.02,0.05,blk,[x,0.62,-0.04]));
+    for(let i=0;i<3;i++){const a=i/3*PI*2+0.4;g.add(K.node(K.cyl(0.008,0.008,0.09,8),steel,{p:[x+0.045*Math.cos(a),0.655,-0.04+0.045*Math.sin(a)],r:[Math.sin(a)*-1.2,0,Math.cos(a)*1.2]}));g.add(K.node(K.sphere(0.022,12),blk,{p:[x+0.09*Math.cos(a),0.672,-0.04+0.09*Math.sin(a)]}));}});
+  /* resin jugs on the shelf */[['#f2f2ee',-0.28],['#f2f2ee',0],['#f0b6ae',0.28]].forEach(([c,x])=>{R.add(RB(0.2,0.26,0.16,0.03,M(c,{r:.5}),[x,0.36,0.05]));R.add(Cy(0.035,0.04,M('#e8e8e4',{r:.5}),[x,0.51,0.05],16));R.add(B(0.14,0.1,0.004,M('#2f5fa8',{r:.5}),[x,0.33,0.132]));});
+  /* sink with spring tap behind */const s=K.group({p:[-1.05,0,-0.35]});R.add(s);s.add(B(0.9,0.5,0.6,ss,[0,0.6,0]));s.add(B(0.8,0.02,0.5,M('#8f959b',{m:.9,r:.4}),[0,0.852,0]));s.add(B(0.9,0.6,0.03,ss,[0,0.3,0.28]));s.add(K.node(K.tube([[0.25,0.85,-0.22],[0.25,1.3,-0.22],[0.25,1.36,-0.05],[0.25,1.12,0.02]],0.012,10,0.07),steel,{}));for(let i=0;i<14;i++)s.add(K.node(K.torus(0.02,0.004,6,12),steel,{p:[0.25,0.9+i*0.028,-0.22]}));
+  K.label('Mould cylinders',g,[0,0.74,0]);K.label('Mounting resin',R,[0,0.56,0.14]);return {root:R,refs,update(){}};}}});
+
+/* ---- 3. Vickers hardness tester with microscopes ---- */
+D({id:'vickers',name:'Vickers Hardness Tester',photo:3,view3d:{h:560,cam:{tgt:[0,1.15,0],yaw:0.35,pitch:0.18,dist:2.4},shadow:{c:[0,1.1,0],r:1.8},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white}=k,R=K.group();floor(R);bench(R,2.2,1.0,0.9,0,0);k.pod(R,1.8,0,-0.35);
+  const g=K.group({p:[0,0.9,0.05]});R.add(g);refs.g=g;
+  g.add(RB(0.24,0.1,0.44,0.02,white,[0,0.05,0],{r:[0,PI/2,0]}));g.add(RB(0.2,0.5,0.16,0.03,white,[0,0.33,-0.13],{r:[0,PI/2,0]}));g.add(RB(0.22,0.16,0.34,0.03,white,[0,0.56,-0.04],{r:[0,PI/2,0]}));g.add(B(0.14,0.04,0.004,M('#2a2c2f'),[0,0.58,0.132]));
+  g.add(Cy(0.03,0.07,blk,[0,0.445,0.06]));g.add(Cy(0.012,0.03,steel,[0,0.4,0.06]));/* turret + indenter */
+  g.add(Cy(0.025,0.14,M('#2a2c2f',{m:.6,r:.4}),[0,0.2,0.06]));g.add(Cy(0.07,0.02,blk,[0,0.275,0.06],30));g.add(Cy(0.05,0.03,M('#33363a',{m:.5}),[0,0.14,0.06],24));
+  g.add(K.node(K.prismX([[0.12,0.0],[-0.02,0.0],[-0.02,0.26],[0.08,0.2]],-0.1,0.1),white,{p:[0,0,0.2]}));g.add(K.node(K.plane(0.15,0.13),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[0,0.105,0.305],r:[-0.55,0,0]}));
+  const scope=(x,ry)=>{const q=K.group({p:[x,0.9,0.1],r:[0,ry,0]});R.add(q);q.add(RB(0.2,0.05,0.28,0.02,white,[0,0.025,0],{r:[0,PI/2,0]}));q.add(RB(0.08,0.3,0.1,0.02,white,[0,0.18,-0.09],{r:[0,PI/2,0]}));q.add(RB(0.14,0.1,0.2,0.03,white,[0,0.33,-0.02],{r:[0,PI/2,0]}));q.add(B(0.16,0.012,0.16,blk,[0,0.17,0.03]));q.add(Cy(0.022,0.06,blk,[0,0.25,0.03]));[-0.03,0.03].forEach(a=>q.add(K.node(K.cyl(0.016,0.016,0.1,12),blk,{p:[a,0.41,0.08],r:[0.8,0,0]})));q.add(Cx(0.025,0.14,blk,[0,0.1,-0.09],16));};scope(-0.62,0.4);scope(0.62,-0.5);
+  K.label('Indenter + objectives',g,[0.16,0.44,0.06]);K.label('Test stage',g,[0.14,0.28,0.1]);K.label('Microscope',R,[0.62,1.38,0.1]);return {root:R,refs,update(){}};}}});
+
+/* ---- 4. Abrasive cut-off machine ---- */
+D({id:'cutter',name:'Abrasive Cutting Machine',photo:4,view3d:{h:560,cam:{tgt:[0,1.12,0],yaw:0.35,pitch:0.14,dist:2.4},shadow:{c:[0,1,0],r:1.7},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,blk,steel}=k,R=K.group();floor(R);k.stable(R,1.25,0.8,0.85);
+  const g=K.group({p:[0,0.85,0]});R.add(g);refs.g=g;const grey=M('#b9bdc0',{r:.5}),dark=M('#2c2f33',{r:.45});
+  g.add(RB(1.0,0.2,0.62,0.02,dark,[0.02,0.1,0]));const yt=K.tex(512,48,(c,w,h)=>{c.fillStyle='#e8c21a';c.fillRect(0,0,w,h);c.fillStyle='#17181b';c.font='italic bold 34px sans-serif';c.fillText('ABRASIVE CUTTER',150,37);});g.add(K.node(K.plane(0.98,0.07),M('#fff',{t:yt,r:.5}),{p:[0.02,0.17,0.312]}));
+  /* control cabinet */g.add(RB(0.34,0.56,0.6,0.02,grey,[-0.33,0.48,0]));g.add(B(0.34,0.1,0.004,M('#1c63b8',{r:.5}),[-0.33,0.26,0.302]));g.add(B(0.25,0.2,0.006,M('#e9ebea',{r:.5}),[-0.33,0.5,0.302]));g.add(K.node(K.plane(0.2,0.15),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[-0.33,0.5,0.306]}));k.estopZ(g,[-0.33,0.69,0.3]);[['#1d1f22',-0.43],['#2f9b55',-0.33],['#c0221b',-0.23]].forEach(([c,x])=>g.add(Cz(0.02,0.02,M(c,{r:.4}),[x,0.34,0.305],14)));
+  /* cutting hood with window */g.add(RB(0.66,0.42,0.6,0.05,M('#3a3d42',{r:.4,m:.3}),[0.19,0.41,0]));g.add(B(0.4,0.22,0.006,M('#0c0d0e',{r:.15,m:.4}),[0.17,0.44,0.302]));g.add(B(0.03,0.2,0.04,blk,[0.5,0.44,0.31]));g.add(B(0.26,0.035,0.004,M('#f08a1c',{r:.5}),[0.3,0.25,0.302]));
+  /* vice handles on top, coolant hose */g.add(B(0.2,0.012,0.14,M('#b9bdc0',{m:.6}),[0.2,0.63,-0.05]));[0.12,0.3].forEach(x=>{g.add(Cy(0.02,0.07,blk,[x,0.67,-0.05]));g.add(B(0.07,0.05,0.03,blk,[x,0.7,-0.05]));});g.add(K.node(K.sphere(0.07,16),blk,{p:[-0.3,0.78,0],s:[1.4,0.4,1]}));
+  R.add(K.node(K.tube([[0.55,1.3,0.1],[0.75,1.3,0.15],[0.8,0.95,0.2],[0.6,0.6,0.3],[0.62,0.2,0.3]],0.01,8,0.15),M('#2f74c0',{r:.4}),{}));
+  K.label('Control cabinet',g,[-0.33,0.84,0.2]);K.label('Cutting chamber',g,[0.2,0.7,0.3]);return {root:R,refs,update(){}};}}});
+
+/* ---- 5. Muffle furnace ---- */
+D({id:'furnace',name:'Muffle Furnace',photo:5,view3d:{h:560,cam:{tgt:[0,1.2,0],yaw:0.4,pitch:0.16,dist:2.5},shadow:{c:[0,1.1,0],r:1.7},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,blk,steel}=k,R=K.group();floor(R);k.stable(R,1.2,0.8,0.82);
+  const g=K.group({p:[0,0.82,0]});R.add(g);refs.g=g;const beige=M('#d8d2c6',{r:.6}),base=M('#aeb0b0',{r:.55});
+  g.add(RB(0.66,0.2,0.56,0.012,base,[0,0.1,0]));g.add(RB(0.72,0.56,0.6,0.012,beige,[0,0.48,-0.02]));g.add(B(0.68,0.5,0.03,M('#dcd6ca',{r:.6}),[0,0.5,0.295]));
+  g.add(Cz(0.022,0.01,steel,[0,0.44,0.315],18));g.add(Cz(0.01,0.012,blk,[0,0.44,0.318],12));
+  g.add(Cx(0.014,0.66,M('#8f8a80',{m:.5,r:.4}),[0,0.225,0.33],14));[-0.35,0.35].forEach(x=>g.add(RB(0.05,0.06,0.07,0.012,blk,[x,0.225,0.32])));
+  g.add(B(0.07,0.06,0.004,blk,[-0.2,0.1,0.282]));g.add(B(0.05,0.03,0.002,M('#e2572e',{e:'#5a1a0a'}),[-0.2,0.1,0.285]));g.add(B(0.05,0.05,0.004,blk,[0.22,0.1,0.282]));g.add(B(0.1,0.03,0.002,M('#f4f4ee'),[0,0.06,0.282]));
+  for(let i=0;i<14;i++)g.add(B(0.6,0.004,0.006,M('#b7b1a5',{r:.6}),[0,0.765,-0.28+i*0.008]));g.add(Cy(0.03,0.12,steel,[0,0.82,-0.2]));
+  /* heat-proof gloves on top */g.add(RB(0.22,0.03,0.1,0.012,M('#c2452e',{r:.8}),[0,0.775,0.12]));
+  K.label('Insulated chamber door',g,[0,0.62,0.32]);K.label('Temperature controller',g,[-0.2,0.02,0.3]);K.label('Vent',g,[0.1,0.9,-0.2]);return {root:R,refs,update(){}};}}});
+
+/* ---- 6. Sieve shaker ---- */
+D({id:'sieve',name:'Sieve Shaker',photo:6,view3d:{h:560,cam:{tgt:[0.1,1.15,0],yaw:0.35,pitch:0.14,dist:2.4},shadow:{c:[0,1.1,0],r:1.6},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,ss,blk,steel,white}=k,R=K.group();floor(R);k.stable(R,0.7,0.6,0.85);
+  const g=K.group({p:[0,0.85,0]});R.add(g);refs.g=g;
+  g.add(K.node(K.lathe([[0.0,0],[0.19,0],[0.2,0.02],[0.2,0.1],[0.17,0.17],[0.15,0.19],[0,0.19]],40),white,{}));g.add(K.node(K.plane(0.16,0.06),M('#fff',{t:k.screen(256,96),e:'#0b1016',r:.2}),{p:[0,0.07,0.2]}));g.add(B(0.2,0.012,0.004,M('#1c63b8'),[0,0.03,0.2]));
+  const sieve=(q,y,r)=>{q.add(Cy(r,0.05,M('#cfd2d4',{m:1,r:.22}),[0,y,0],40));q.add(K.node(K.torus(r,0.005,6,40),M('#e4e6e7',{m:1,r:.2}),{p:[0,y+0.025,0]}));};
+  sieve(g,0.215,0.15);sieve(g,0.268,0.15);g.add(Cy(0.152,0.014,M('#3a3d42',{m:.5}),[0,0.3,0],40));g.add(K.node(K.lathe([[0.03,0],[0.14,0],[0.1,0.03],[0.03,0.04]],30),M('#d7d9da',{m:.9,r:.3}),{p:[0,0.307,0]}));
+  [-0.2,0.2].forEach(x=>{g.add(Cy(0.008,0.62,steel,[x,0.43,0],10));g.add(Cy(0.02,0.04,blk,[x,0.36,0],12));g.add(Cy(0.02,0.03,M('#d7d9da',{m:1}),[x,0.13,0],12));});g.add(B(0.46,0.02,0.04,M('#d7d9da',{m:.9,r:.3}),[0,0.35,0]));
+  /* wall controller */R.add(RB(0.22,0.14,0.06,0.02,white,[0,1.72,-0.33],{r:[0,0,0]}));R.add(B(0.1,0.04,0.004,M('#12161b'),[-0.03,1.74,-0.298]));R.add(K.node(K.tube([[0,1.65,-0.31],[0,1.3,-0.3],[0.02,1.0,-0.22]],0.004,6,0.05),blk,{}));
+  /* rack with spare sieves and trays */const rk=K.group({p:[0.72,0,0]});R.add(rk);[[-0.25,-0.25],[0.25,-0.25],[-0.25,0.25],[0.25,0.25]].forEach(([x,z])=>rk.add(B(0.03,1.25,0.03,ss,[x,0.625,z])));[0.2,0.5,0.8,1.25].forEach(y=>rk.add(B(0.54,0.02,0.54,ss,[0,y,0])));
+  for(let i=0;i<7;i++){rk.add(Cy(0.15,0.05,M('#cfd2d4',{m:1,r:.22}),[0,1.29+i*0.055,0],40));rk.add(K.node(K.torus(0.15,0.005,6,40),M('#e4e6e7',{m:1,r:.2}),{p:[0,1.315+i*0.055,0]}));}
+  [['#3fae5a',0.56],['#e2c21c',0.86]].forEach(([c,y])=>rk.add(RB(0.44,0.1,0.4,0.02,M(c,{r:.6}),[0,y,0.02])));
+  K.label('Sieve stack + clamp',g,[0.24,0.36,0.1]);K.label('Vibrating base',g,[0.26,0.1,0.1]);K.label('Spare sieves',rk,[0,1.72,0]);return {root:R,refs,update(){}};}}});
+
+/* ---- 7. Direct shear machine ---- */
+D({id:'shear',name:'Direct Shear Testing Machine',photo:7,view3d:{h:560,cam:{tgt:[0.05,0.95,0],yaw:0.4,pitch:0.14,dist:3.0},shadow:{c:[0,0.8,0],r:2.0},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,ss,blk,steel}=k,R=K.group();floor(R);
+  const blue=M('#1f5fb4',{r:.45,m:.2});[-0.5,0.5].forEach(x=>{[-1,1].forEach(s=>R.add(B(0.07,0.86,0.03,blue,[x,0.43,s*0.13],{r:[s*0.16,0,0]})));R.add(B(0.09,0.02,0.52,blue,[x,0.01,0]));R.add(B(0.07,0.05,0.2,blue,[x,0.5,0]));});
+  const g=K.group({p:[0,0.86,0]});R.add(g);refs.g=g;g.add(RB(1.5,0.1,0.42,0.02,ss,[0,0.05,0]));const nt=K.tex(512,40,(c,w,h)=>{c.fillStyle='#c9ccce';c.fillRect(0,0,w,h);c.fillStyle='#3d4757';c.font='bold 24px sans-serif';c.fillText('DIRECT SHEAR TESTING MACHINE',50,29);});g.add(K.node(K.plane(0.8,0.06),M('#fff',{t:nt,m:.5,r:.4}),{p:[0.25,0.05,0.211]}));
+  /* control console */g.add(RB(0.4,0.24,0.36,0.03,M('#d9dbda',{r:.5}),[-0.52,0.22,0]));g.add(K.node(K.plane(0.2,0.13),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[-0.47,0.24,0.182]}));k.estopZ(g,[-0.66,0.26,0.18]);g.add(B(0.38,0.03,0.004,M('#1f5fb4'),[-0.52,0.13,0.182]));
+  /* shear box carriage */g.add(B(0.6,0.02,0.2,M('#8f959b',{m:.9,r:.4}),[0.2,0.11,0]));g.add(RB(0.2,0.1,0.18,0.01,blk,[0.05,0.17,0]));g.add(RB(0.12,0.05,0.12,0.008,M('#c9a43a',{m:1,r:.35}),[0.05,0.245,0]));g.add(Cy(0.012,0.05,steel,[0.05,0.29,0]));
+  /* loading yoke and hanger */[-0.1,0.1].forEach(z=>g.add(Cy(0.008,0.44,steel,[0.05,0.31,z],10)));g.add(B(0.03,0.02,0.24,steel,[0.05,0.53,0]));g.add(Cy(0.01,0.2,steel,[0.05,0.45,0]));g.add(Cy(0.03,0.02,blk,[0.05,0.56,0]));
+  R.add(Cy(0.008,0.6,steel,[0.05,0.5,0.1],10));R.add(Cy(0.07,0.01,steel,[0.05,0.21,0.1],24));[0,1].forEach(i=>R.add(Cy(0.06,0.02,M('#3a3d42',{m:.6}),[0.05,0.23+i*0.022,0.1],24)));
+  /* dial gauges, load ring, drive */g.add(Cz(0.035,0.02,M('#f4f4ee',{r:.4}),[-0.12,0.36,0.03],24));g.add(Cy(0.004,0.2,steel,[-0.12,0.26,0.03],6));g.add(Cx(0.012,0.26,steel,[0.3,0.17,0],10));g.add(K.node(K.torus(0.04,0.008,8,24),steel,{p:[0.36,0.17,0],r:[PI/2,0,0]}));g.add(Cz(0.03,0.02,M('#f4f4ee',{r:.4}),[0.36,0.17,0.03],20));
+  g.add(RB(0.14,0.12,0.14,0.01,blk,[0.52,0.17,0]));g.add(Cx(0.01,0.16,steel,[0.64,0.19,0],10));g.add(Cx(0.035,0.02,blk,[0.7,0.19,0],18));
+  /* slotted weights on the floor */[0,1,2].forEach(i=>R.add(RB(0.22,0.02,0.22,0.005,M('#d7d9da',{m:.7,r:.4}),[-0.95,0.01+i*0.022,0.35],{r:[0,0.2*i,0]})));
+  K.label('Shear box',g,[0.05,0.33,0.12]);K.label('Normal-load hanger',R,[0.2,0.5,0.14]);K.label('Control console',g,[-0.52,0.42,0.1]);K.label('Load ring',g,[0.36,0.28,0.05]);return {root:R,refs,update(){}};}}});
+
+/* ---- 10. Torsion test apparatus ---- */
+D({id:'torsion',name:'Torsion Test Apparatus',photo:10,view3d:{h:560,cam:{tgt:[0,1.08,0.1],yaw:0.4,pitch:0.2,dist:2.6},shadow:{c:[0,1,0],r:1.9},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel}=k,R=K.group();floor(R);bench(R,2.4,1.1,0.9,0,0);k.pod(R,1.9,0,-0.38);
+  const g=K.group({p:[0,0.9,0.05]});R.add(g);refs.g=g;const alu=M('#c9cdd2',{m:.9,r:.35});
+  [[-0.62,-0.08],[0.62,-0.08],[-0.62,0.08],[0.62,0.08]].forEach(([x,z])=>{g.add(B(0.04,0.16,0.04,alu,[x,0.08,z]));g.add(Cy(0.02,0.012,blk,[x,0.006,z],10));});
+  g.add(B(1.36,0.045,0.09,alu,[0,0.18,0]));[-0.02,0.02].forEach(z=>g.add(B(1.36,0.004,0.008,M('#8f959b',{m:1}),[0,0.204,z])));g.add(B(1.36,0.02,0.02,alu,[0,0.19,-0.07]));
+  /* fixed (torque) end with load cell arm */g.add(RB(0.1,0.12,0.1,0.01,blk,[-0.42,0.265,0]));g.add(Cx(0.03,0.05,steel,[-0.35,0.28,0],18));g.add(B(0.03,0.02,0.2,blk,[-0.46,0.28,0.06]));g.add(Cy(0.02,0.05,steel,[-0.46,0.24,0.15]));
+  /* driven end: gearbox, handwheel, protractor */g.add(RB(0.12,0.14,0.12,0.012,blk,[0.2,0.275,0]));g.add(Cx(0.03,0.05,steel,[0.12,0.28,0],18));g.add(Cx(0.085,0.012,M('#f4f4ee',{r:.4}),[0.27,0.28,0],36));const pt=K.tex(256,256,(c,w,h)=>{c.clearRect(0,0,w,h);c.fillStyle='#f4f4ee';c.beginPath();c.arc(w/2,h/2,w/2,0,7);c.fill();c.strokeStyle='#222';for(let i=0;i<72;i++){const a=i/72*PI*2,r0=i%6?112:100;c.lineWidth=i%6?1.5:3;c.beginPath();c.moveTo(w/2+r0*Math.cos(a),h/2+r0*Math.sin(a));c.lineTo(w/2+122*Math.cos(a),h/2+122*Math.sin(a));c.stroke();}c.fillStyle='#1d1f22';c.beginPath();c.arc(w/2,h/2,36,0,7);c.fill();});
+  g.add(K.node(K.plane(0.17,0.17),M('#fff',{t:pt,at:.5,r:.5}),{p:[0.277,0.28,0],r:[0,PI/2,0]}));g.add(Cx(0.012,0.1,steel,[0.33,0.28,0],10));g.add(Cx(0.05,0.015,blk,[0.38,0.28,0],24));g.add(Cx(0.008,0.04,blk,[0.4,0.31,0.02],8));
+  /* specimen */g.add(Cx(0.006,0.44,M('#c9a43a',{m:1,r:.3}),[-0.11,0.28,0],12));
+  /* digital torque meter */g.add(RB(0.2,0.14,0.08,0.012,M('#3fa56a',{r:.5}),[0.75,0.2,0.1],{r:[0,-0.3,0]}));g.add(K.node(K.plane(0.1,0.04),M('#fff',{t:k.screen(256,96,(c,w,h)=>{c.fillStyle='#39d353';c.font='bold 54px monospace';c.fillText('2.41',60,70);}),e:'#0b1016'}),{p:[0.745,0.22,0.143],r:[0,-0.3,0]}));
+  g.add(K.node(K.tube([[-0.46,0.22,0.15],[-0.3,0.02,0.3],[0.4,0.02,0.32],[0.72,0.14,0.14]],0.004,6,0.08),blk,{}));
+  /* keyboard as in the photo */
+  K.label('Torque arm + load cell',g,[-0.46,0.4,0.1]);K.label('Specimen',g,[-0.1,0.36,0]);K.label('Angle scale + handwheel',g,[0.32,0.44,0]);K.label('Torque display',g,[0.75,0.34,0.1]);return {root:R,refs,update(){}};}}});
+})();
+
+(function(){const PI=Math.PI;const D=(o)=>NEW3D.push(Object.assign({s:{}},o));
+const X=(K)=>{const k=kit4(K),{M,B,Cy}=k;k.alu=M('#c9cdd2',{m:.9,r:.35});
+  /* bar between two points in a z-plane */k.bar=(g,a,b,z,t,m,dz)=>{const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy);g.add(B(L,t,dz||t,m,[(a[0]+b[0])/2,(a[1]+b[1])/2,z],{r:[0,0,Math.atan2(dy,dx)]}));};
+  /* structures test frame: aluminium profile portal on four legs */
+  k.sframe=(g,w,h,y0,d)=>{const p=0.045,a=k.alu;d=d||0.0;[-1,1].forEach(s=>{g.add(B(p,h,p,a,[s*w/2,y0+h/2,0]));[-1,1].forEach(q=>{g.add(B(p,y0+0.02,p,a,[s*(w/2+0.0),(y0+0.02)/2,q*0.2]));g.add(Cy(0.022,0.012,k.blk,[s*w/2,0.006,q*0.2],10));});g.add(B(p,p,0.4+p,a,[s*w/2,y0,0]));});g.add(B(w+p,p,p,a,[0,y0+h,0]));g.add(B(w+p,p,p,a,[0,y0,0]));};
+  k.disp=(g,p,ry,txt)=>{g.add(k.RB(0.16,0.11,0.06,0.01,M('#3fa56a',{r:.5}),p,{r:[0,ry||0,0]}));g.add(K.node(K.plane(0.09,0.035),M('#fff',{t:k.screen(256,96,(c,w,h)=>{c.fillStyle='#39d353';c.font='bold 54px monospace';c.fillText(txt||'125',70,70);}),e:'#0b1016'}),{p:[p[0]+Math.sin(ry||0)*0.032,p[1]+0.015,p[2]+Math.cos(ry||0)*0.032],r:[0,ry||0,0]}));};
+  return k;};
+
+/* ---- 11. Rotating fatigue machine ---- */
+D({id:'fatigue',name:'Rotating Fatigue Machine',photo:11,view3d:{h:560,cam:{tgt:[0,1.02,0.1],yaw:0.35,pitch:0.28,dist:2.3},shadow:{c:[0,1,0],r:1.7},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel}=k,R=K.group();floor(R);bench(R,2.2,1.1,0.9,0,0);
+  const g=K.group({p:[0.05,0.9,0.1]});R.add(g);refs.g=g;g.add(RB(1.0,0.025,0.34,0.008,blk,[0,0.0125,0]));[[-0.46,0.14],[0.46,0.14],[-0.46,-0.14],[0.46,-0.14]].forEach(([x,z])=>g.add(Cy(0.015,0.02,steel,[x,0.03,z],10)));
+  /* spindle, chuck, specimen, loading bearing under a clear guard */g.add(B(0.06,0.1,0.1,M('#33363a',{m:.5}),[-0.12,0.075,0]));g.add(Cx(0.03,0.06,steel,[-0.17,0.11,0],18));g.add(Cx(0.008,0.16,M('#c9a43a',{m:1,r:.3}),[-0.27,0.11,0],10));g.add(Cx(0.022,0.03,steel,[-0.36,0.11,0],16));g.add(B(0.02,0.02,0.16,blk,[-0.36,0.11,0.05]));g.add(Cy(0.004,0.08,steel,[-0.36,0.07,0.12],6));g.add(Cy(0.03,0.02,M('#b9922f',{m:1}),[-0.36,0.04,0.12],18));g.add(Cx(0.035,0.01,M('#e9ebe8'),[-0.1,0.11,0.0],24));
+  g.add(RB(0.44,0.22,0.24,0.006,M('#dcebf2',{a:.09,r:.05}),[-0.27,0.135,0]));[-1,1].forEach(s=>g.add(B(0.44,0.006,0.006,M('#9fb3bd',{a:.6}),[-0.27,0.245,s*0.12])));g.add(B(0.16,0.07,0.003,M('#f6f6f2',{r:.6}),[-0.27,0.13,0.122]));g.add(B(0.16,0.018,0.004,M('#c0221b'),[-0.27,0.155,0.122]));
+  /* blue motor with fins and terminal box */g.add(Cx(0.08,0.24,M('#1f5fb4',{m:.3,r:.4}),[0.12,0.11,0],30));for(let i=0;i<9;i++)g.add(Cx(0.086,0.006,M('#1a50a0',{m:.3,r:.4}),[0.03+i*0.024,0.11,0],30));g.add(Cx(0.085,0.05,blk,[0.255,0.11,0],30));g.add(RB(0.1,0.05,0.09,0.008,blk,[0.1,0.21,0]));g.add(B(0.08,0.02,0.003,M('#e2b21c'),[0.1,0.236,0.02]));g.add(B(0.2,0.02,0.2,M('#1a50a0'),[0.12,0.035,0]));
+  /* starter with emergency stop */g.add(RB(0.13,0.2,0.14,0.02,M('#eeeeea',{r:.5}),[0.39,0.125,0.02]));g.add(Cz(0.035,0.004,M('#e2b21c'),[0.39,0.17,0.092],20));g.add(Cz(0.018,0.02,M('#c0221b'),[0.39,0.17,0.1],16));[-0.025,0.025].forEach(x=>g.add(Cz(0.012,0.01,M('#d7dadd'),[0.39+x,0.07,0.092],12)));
+  /* cycle counter */g.add(RB(0.2,0.05,0.14,0.01,M('#eeeeea',{r:.5}),[-0.72,0.025,0.1],{r:[0,0.2,0]}));g.add(K.node(K.plane(0.07,0.03),M('#fff',{t:k.screen(256,96,(c,w,h)=>{c.fillStyle='#39d353';c.font='bold 44px monospace';c.fillText('018432',30,66);}),e:'#0b1016'}),{p:[-0.74,0.051,0.09],r:[-PI/2,0,0.2]}));g.add(K.node(K.tube([[-0.62,0.03,0.08],[-0.52,0.01,0.2],[-0.4,0.02,0.16]],0.004,6,0.05),blk,{}));
+  K.label('Specimen under guard',g,[-0.27,0.3,0]);K.label('Motor',g,[0.12,0.3,0]);K.label('Load hanger',g,[-0.36,0.02,0.2]);K.label('Cycle counter',g,[-0.72,0.12,0.1]);return {root:R,refs,update(){}};}}});
+
+/* ---- 12. Forces in a truss ---- */
+D({id:'truss',name:'Forces in a Truss',photo:12,view3d:{h:560,cam:{tgt:[0,1.3,0],yaw:0.3,pitch:0.14,dist:3.0},shadow:{c:[0,1.2,0],r:2.0},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,alu}=k,R=K.group();floor(R);bench(R,2.4,1.1,0.9,0,0);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;k.sframe(g,1.3,0.78,0.2);
+  /* Warren truss of black members with strain-gauged joints */const y0=0.42,y1=0.74,N=[[-0.48,y0],[-0.16,y0],[0.16,y0],[0.48,y0],[-0.32,y1],[0,y1],[0.32,y1]];const E=[[0,1],[1,2],[2,3],[4,5],[5,6],[0,4],[4,1],[1,5],[5,2],[2,6],[6,3]];
+  E.forEach(([a,b])=>k.bar(g,N[a],N[b],0,0.018,blk,0.012));N.forEach(n=>{g.add(Cz(0.022,0.03,M('#33363a',{m:.6}),[n[0],n[1],0],16));g.add(Cz(0.007,0.036,steel,[n[0],n[1],0],8));});
+  /* supports: pinned left, roller right; screw load at mid joint with load cell */g.add(B(0.05,0.2,0.05,blk,[-0.48,0.33,0]));g.add(B(0.05,0.2,0.05,blk,[0.48,0.33,0]));g.add(Cz(0.012,0.06,steel,[0.48,0.4,0],10));
+  g.add(Cy(0.008,0.16,steel,[0,0.3,0],8));g.add(RB(0.06,0.06,0.05,0.008,M('#c0221b',{r:.5}),[0,0.26,0]));g.add(Cy(0.03,0.02,blk,[0,0.22,0],18));
+  k.disp(g,[0.78,0.3,0.1],-0.3,'500');g.add(RB(0.2,0.06,0.14,0.01,M('#3a3d42'),[0.2,0.03,0.3]));
+  [0,1,2,3,4].forEach(i=>g.add(K.node(K.tube([[N[i+1>6?6:i+1][0],N[i+1][1]-0.01,0.02],[N[i+1][0]+0.05,0.3,0.12],[0.15+i*0.02,0.05,0.26]],0.0025,5,0.05),M('#e9ebe8'),{})));
+  K.label('Truss members with strain gauges',g,[0,0.84,0]);K.label('Load cell + screw jack',g,[0.2,0.24,0.05]);K.label('Load display',g,[0.78,0.42,0.1]);K.label('Test frame',g,[-0.65,1.04,0]);return {root:R,refs,update(){}};}}});
+
+/* ---- 13. Bending stress in a beam ---- */
+D({id:'bending',name:'Bending Stress in a Beam',photo:13,view3d:{h:560,cam:{tgt:[0,1.3,0],yaw:0.3,pitch:0.14,dist:3.0},shadow:{c:[0,1.2,0],r:2.0},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,alu}=k,R=K.group();floor(R);bench(R,2.4,1.1,0.9,0,0);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;k.sframe(g,1.2,0.8,0.2);
+  /* inverted T-beam on two supports, loaded at two points from above */const y=0.5;g.add(B(0.9,0.006,0.04,alu,[0,y-0.02,0]));g.add(B(0.9,0.04,0.006,alu,[0,y,0]));[-0.4,0.4].forEach(x=>{g.add(B(0.05,0.26,0.05,blk,[x,0.34,0]));g.add(Cz(0.01,0.06,steel,[x,y-0.03,0],10));});
+  [-0.15,0.15].forEach(x=>{g.add(Cy(0.008,0.36,steel,[x,y+0.2,0],8));g.add(Cz(0.012,0.05,steel,[x,y+0.03,0],10));});g.add(B(0.36,0.025,0.04,blk,[0,y+0.38,0]));g.add(Cy(0.01,0.14,steel,[0,y+0.46,0],8));
+  /* load cell housing on top of the frame */g.add(RB(0.22,0.1,0.1,0.01,blk,[0,1.07,0]));g.add(B(0.12,0.03,0.003,M('#f4f4ee'),[0,1.08,0.052]));[-0.2,0.2].forEach(x=>g.add(B(0.03,0.2,0.03,blk,[x,1.12,0])));g.add(Cy(0.04,0.02,blk,[0,1.14,0],18));
+  /* strain gauges and leads to the bridge unit */for(let i=0;i<9;i++){const x=-0.04+i*0.01;g.add(B(0.006,0.01,0.002,M('#c9a43a',{m:1}),[x,y-0.015+i*0.004,0.004]));g.add(K.node(K.tube([[x,y,0.006],[x+0.05,0.3,0.1],[0.2+i*0.015,0.08,0.25]],0.0022,5,0.05),M(['#c0221b','#1f5fb4','#2f9b55','#e2b21c'][i%4]),{}));}
+  g.add(RB(0.3,0.08,0.2,0.012,M('#3a3d42'),[0.3,0.04,0.28]));k.disp(g,[0.75,0.3,0.1],-0.3,'-152');
+  /* parts tray on the bench */g.add(RB(0.4,0.05,0.14,0.01,M('#2a2c2f'),[-0.35,0.025,0.42]));g.add(B(0.38,0.006,0.12,M('#d6e6ee',{a:.4}),[-0.35,0.053,0.42]));
+  K.label('T-beam with strain gauges',g,[0,0.58,0.06]);K.label('Load cell',g,[0.2,1.2,0]);K.label('Strain bridge',g,[0.3,0.14,0.3]);return {root:R,refs,update(){}};}}});
+
+/* ---- 14. Buckling of struts ---- */
+D({id:'buckling',name:'Buckling Test Apparatus',photo:14,view3d:{h:560,cam:{tgt:[0,1.08,0.1],yaw:0.35,pitch:0.22,dist:2.7},shadow:{c:[0,1,0],r:1.9},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,alu,white}=k,R=K.group();floor(R);bench(R,2.4,1.1,0.9,0,0);k.pod(R,1.9,0,-0.38);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;const lg=M('#dcdedc',{r:.5});
+  [-0.62,0.62].forEach(x=>[-1,1].forEach(s=>{g.add(B(0.03,0.2,0.03,lg,[x+Math.sign(x)*0.04,0.1,s*0.13],{r:[s*0.25,0,Math.sign(x)*0.2]}));g.add(Cy(0.02,0.015,blk,[x+Math.sign(x)*0.06,0.008,s*0.155],10));}));
+  const st=K.tex(1024,64,(c,w,h)=>{c.fillStyle='#dcdedc';c.fillRect(0,0,w,h);c.fillStyle='#2a2c2f';for(let i=0;i<=100;i++){c.fillRect(20+i*9.8,h-(i%10?14:26),1.5,i%10?14:26);}c.font='14px sans-serif';for(let i=0;i<=10;i++)c.fillText(String(i*100),14+i*98,22);});
+  g.add(RB(1.3,0.09,0.2,0.01,lg,[0,0.24,0]));g.add(K.node(K.plane(1.24,0.07),M('#fff',{t:st,r:.5}),{p:[0,0.24,0.101]}));g.add(B(1.3,0.012,0.14,M('#8f959b',{m:.8}),[0,0.29,0]));
+  /* loading end with handwheel, load cell end, bowed strut */g.add(RB(0.1,0.12,0.14,0.01,blk,[0.52,0.35,0]));g.add(Cx(0.012,0.12,steel,[0.62,0.36,0],10));g.add(K.node(K.torus(0.07,0.012,8,30),blk,{p:[0.69,0.36,0],r:[0,0,PI/2]}));g.add(Cx(0.02,0.02,blk,[0.69,0.36,0],12));
+  g.add(RB(0.12,0.12,0.14,0.01,blk,[-0.52,0.35,0]));g.add(B(0.08,0.04,0.004,M('#f4f4ee'),[-0.52,0.36,0.072]));
+  const P=[];for(let i=0;i<=24;i++){const t=i/24;P.push([-0.46+t*0.92,0.36,0.05*Math.sin(t*PI)]);}refs.strut=K.node(K.tube(P,0.005,6,0.001),M('#b5b9be',{m:1,r:.25}),{});g.add(refs.strut);
+  /* mid-span dial gauge on magnetic base */g.add(RB(0.06,0.05,0.05,0.006,blk,[0,0.32,-0.07]));g.add(Cy(0.006,0.12,steel,[0,0.4,-0.07],6));g.add(Cz(0.035,0.02,M('#f4f4ee',{r:.4}),[0,0.44,-0.05],24));
+  /* upper black rail on posts */[-0.6,0.6].forEach(x=>g.add(B(0.03,0.3,0.03,lg,[x,0.44,-0.1])));g.add(B(1.36,0.04,0.05,blk,[0,0.6,-0.1]));
+  /* rack of spare struts on the bench */const rk=K.group({p:[0.15,0.01,0.4]});g.add(rk);rk.add(RB(0.66,0.02,0.24,0.01,blk,[0,0.01,0]));for(let i=0;i<7;i++)rk.add(B(0.6,0.004,0.018,M('#b5b9be',{m:1,r:.3}),[0,0.026,-0.09+i*0.03]));
+  k.disp(g,[-0.42,0.06,0.3],0.2,'184');
+  K.label('Strut (bows sideways)',g,[0,0.4,0.2]);K.label('Screw handwheel',g,[0.69,0.5,0]);K.label('Load cell end',g,[-0.52,0.48,0]);K.label('Spare struts',rk,[0,0.08,0]);return {root:R,refs,update(){}};}}});
+
+/* ---- 15. Beam apparatus ---- */
+D({id:'beams',name:'Beam Apparatus',photo:15,view3d:{h:560,cam:{tgt:[0,1.15,0],yaw:0.3,pitch:0.16,dist:3.0},shadow:{c:[0,1,0],r:2.1},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,alu,white}=k,R=K.group();floor(R);bench(R,2.6,1.1,0.9,0,0);k.pod(R,1.9,0,-0.38);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;
+  [-0.75,0.75].forEach(x=>{g.add(RB(0.06,0.46,0.3,0.01,white,[x,0.25,0]));[-1,1].forEach(s=>{g.add(Cy(0.05,0.04,blk,[x,0.02,s*0.15],20));});g.add(B(0.1,0.03,0.42,blk,[x,0.05,0]));});
+  const sc=K.tex(1024,32,(c,w,h)=>{c.fillStyle='#17181b';c.fillRect(0,0,w,h);c.fillStyle='#e9ebe8';for(let i=0;i<=140;i++)c.fillRect(8+i*7.2,0,1.2,i%10?9:18);});
+  g.add(B(1.5,0.05,0.03,blk,[0,0.13,0.08]));g.add(B(1.5,0.05,0.03,blk,[0,0.13,-0.08]));g.add(B(1.5,0.05,0.03,blk,[0,0.46,-0.02]));g.add(K.node(K.plane(1.46,0.03),M('#fff',{t:sc}),{p:[0,0.465,-0.004]}));
+  /* load-cell supports and the test beam */[-0.5,0.5].forEach(x=>{g.add(RB(0.07,0.14,0.2,0.008,white,[x,0.22,0]));g.add(K.node(K.prismX([[0.02,0],[-0.02,0],[0,0.03]],-0.03,0.03),steel,{p:[x,0.29,0],r:[0,PI/2,0]}));g.add(Cz(0.03,0.015,M('#f4f4ee',{r:.4}),[x,0.22,0.108],22));});
+  refs.beam=B(1.2,0.006,0.025,M('#b5b9be',{m:1,r:.25}),[0,0.324,0]);g.add(refs.beam);
+  /* hangers with weights, dial gauge on the top rail */[-0.2,0.25].forEach((x,i)=>{g.add(Cy(0.003,0.14,steel,[x,0.25,0],6));g.add(B(0.03,0.02,0.04,blk,[x,0.335,0]));for(let j=0;j<3+i;j++)g.add(Cy(0.03,0.012,M(j%2?'#b9922f':'#c9a43a',{m:1,r:.3}),[x,0.19+j*0.013,0],20));});
+  g.add(RB(0.06,0.07,0.05,0.006,blk,[0.05,0.5,0.0]));g.add(Cy(0.004,0.12,steel,[0.05,0.4,0.02],6));g.add(Cz(0.04,0.02,M('#f4f4ee',{r:.4}),[0.05,0.42,0.04],24));g.add(RB(0.07,0.1,0.02,0.006,white,[0.3,0.42,0.02]));
+  g.add(RB(0.24,0.03,0.18,0.01,M('#2a2c2f'),[-0.45,0.015,0.35]));g.add(K.node(K.tube([[-0.5,0.2,0.1],[-0.55,0.03,0.2],[-0.45,0.03,0.3]],0.003,6,0.05),blk,{}));
+  K.label('Test beam',g,[0,0.36,0.06]);K.label('Load-cell supports',g,[-0.5,0.2,0.2]);K.label('Weight hangers',g,[0.25,0.16,0.1]);K.label('Dial gauge on scale rail',g,[0.05,0.56,0]);return {root:R,refs,update(){}};}}});
+
+/* ---- 16. Pin-jointed frameworks ---- */
+D({id:'frameworks',name:'Pin-Jointed Frameworks',photo:16,view3d:{h:560,cam:{tgt:[0,1.2,0],yaw:0.35,pitch:0.16,dist:3.0},shadow:{c:[0,1.1,0],r:2.0},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,alu,white}=k,R=K.group();floor(R);bench(R,2.6,1.1,0.9,0,0);k.pod(R,2.0,0,-0.38);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;
+  [-0.6,0.6].forEach(x=>[-1,1].forEach(s=>{g.add(B(0.035,0.26,0.035,white,[x+Math.sign(x)*0.04,0.13,s*0.14],{r:[s*0.25,0,Math.sign(x)*0.25]}));g.add(Cy(0.02,0.015,blk,[x+Math.sign(x)*0.07,0.008,s*0.17],10));}));
+  const st=K.tex(1024,64,(c,w,h)=>{c.fillStyle='#c9cdd2';c.fillRect(0,0,w,h);c.fillStyle='#2a2c2f';for(let i=0;i<=120;i++)c.fillRect(10+i*8.3,h-(i%10?12:24),1.4,i%10?12:24);});
+  g.add(B(1.3,0.08,0.24,alu,[0,0.28,0]));g.add(K.node(K.plane(1.28,0.07),M('#fff',{t:st,m:.5,r:.4}),{p:[0,0.28,0.121]}));[-0.06,0.06].forEach(z=>g.add(B(1.3,0.004,0.01,M('#8f959b',{m:1}),[0,0.322,z])));
+  /* column with a cantilever pin-jointed frame */g.add(B(0.07,0.62,0.07,alu,[-0.5,0.63,0]));const N=[[-0.46,0.72],[-0.46,0.5],[-0.2,0.72],[-0.2,0.5],[0.06,0.5]],E=[[0,2],[1,3],[2,3],[0,3],[3,4],[2,4]];E.forEach(([a,b])=>k.bar(g,N[a],N[b],0.05,0.022,blk,0.014));N.forEach(n=>g.add(Cz(0.02,0.03,M('#33363a',{m:.6}),[n[0],n[1],0.05],14)));
+  g.add(Cy(0.004,0.16,steel,[0.06,0.42,0.05],6));g.add(Cy(0.03,0.04,M('#b9922f',{m:1}),[0.06,0.33,0.05],18));
+  /* red load cell block, white upright, instruments */g.add(RB(0.07,0.16,0.07,0.008,M('#c0221b',{r:.5}),[-0.52,0.4,0.13]));g.add(RB(0.08,0.5,0.06,0.008,white,[-0.2,0.57,-0.08]));g.add(RB(0.06,0.05,0.05,0.006,white,[0.1,0.35,0.13]));
+  for(let i=0;i<5;i++)g.add(K.node(K.tube([[-0.42+i*0.1,0.5,0.06],[-0.4+i*0.1,0.2,0.2],[-0.3+i*0.12,0.03,0.3]],0.003,5,0.06),M('#f1f1ee'),{}));
+  [-0.95,0.95].forEach(x=>{g.add(RB(0.2,0.07,0.16,0.01,M('#1f5fb4',{r:.45}),[x,0.035,0.2]));g.add(B(0.12,0.04,0.06,blk,[x,0.09,0.2]));});
+  K.label('Pin-jointed frame',g,[-0.2,0.82,0.05]);K.label('Load',g,[0.16,0.36,0.05]);K.label('Load cell',g,[-0.52,0.54,0.16]);K.label('Slotted bed with scale',g,[0.4,0.38,0.12]);return {root:R,refs,update(){}};}}});
+
+/* ---- 18. Thermal power plant with steam turbine ---- */
+D({id:'steam',name:'Steam Turbine Power Plant',photo:18,view3d:{h:560,cam:{tgt:[0.1,0.85,0],yaw:0.35,pitch:0.16,dist:3.4},shadow:{c:[0,0.8,0],r:2.2},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,blk,steel,white}=k,R=K.group();floor(R);
+  const fr=M('#55595e',{m:.4,r:.5}),g=K.group({p:[0,0,0]});R.add(g);refs.g=g;
+  [[-0.85,0.35],[0.05,0.35],[-0.85,-0.35],[0.05,-0.35],[0.95,0.35],[0.95,-0.35]].forEach(([x,z])=>{g.add(B(0.04,x>0.5?0.5:1.0,0.04,fr,[x,x>0.5?0.25:0.5,z]));g.add(Cy(0.03,0.04,blk,[x,0.02,z],12));});
+  g.add(B(0.96,0.035,0.78,fr,[-0.4,1.0,0]));g.add(B(0.94,0.03,0.74,fr,[-0.4,0.16,0]));[0.35,-0.35].forEach(z=>g.add(B(0.94,0.03,0.03,fr,[0.5,0.3,z])));
+  /* turbine and dynamo under a red perforated guard */const pt=K.tex(128,128,(c,w,h)=>{c.clearRect(0,0,w,h);c.fillStyle='#c41f24';c.fillRect(0,0,w,h);c.globalCompositeOperation='destination-out';for(let y=0;y<8;y++)for(let x=0;x<8;x++){c.beginPath();c.arc(x*16+(y%2?12:4),y*16+8,4.6,0,7);c.fill();}},{rep:true});
+  g.add(Cx(0.15,0.3,M('#fff',{t:pt,at:.5,uvs:[6,3],r:.5}),[-0.62,1.2,0.05],36));g.add(Cx(0.08,0.26,steel,[-0.62,1.2,0.05],20));g.add(Cx(0.07,0.2,blk,[-0.35,1.2,0.05],24));g.add(Cx(0.075,0.06,M('#d7d9da',{m:1}),[-0.47,1.2,0.05],24));g.add(B(0.05,0.05,0.003,M('#e2b21c'),[-0.42,1.2,0.122]));g.add(B(0.5,0.02,0.3,blk,[-0.52,1.03,0.05]));
+  g.add(Cx(0.07,0.2,M('#e9ebe8',{r:.4}),[-0.25,1.18,-0.2],24));g.add(K.node(K.tube([[-0.7,1.3,-0.1],[-0.7,1.45,-0.2],[-0.3,1.4,-0.25],[-0.25,1.25,-0.2]],0.012,8,0.08),blk,{}));
+  /* boiler and condenser below */g.add(RB(0.16,0.66,0.6,0.01,white,[-0.72,0.58,0]));for(let i=0;i<18;i++)g.add(B(0.004,0.56,0.5,blk,[-0.6+i*0.008,0.6,0],{}));g.add(Cy(0.15,0.52,blk,[-0.25,0.62,0.05],30));g.add(K.node(K.sphere(0.15,18),blk,{p:[-0.25,0.88,0.05],s:[1,0.5,1]}));
+  g.add(K.node(K.tube([[-0.5,0.8,0.25],[-0.45,0.72,0.3],[-0.4,0.8,0.3],[-0.36,0.7,0.25]],0.012,8,0.03),M('#d7d9da',{m:1}),{}));
+  g.add(RB(0.34,0.14,0.3,0.02,M('#1f5fb4',{r:.4,m:.3}),[-0.5,0.25,0.1]));g.add(Cx(0.06,0.16,M('#1a50a0',{m:.3}),[-0.3,0.27,0.1],20));[0,1].forEach(i=>g.add(K.node(K.tube([[-0.4+i*0.1,0.32,0.2],[-0.38+i*0.1,0.42,0.28],[-0.3+i*0.1,0.36,0.2]],0.01,8,0.03),M('#b8653a',{m:1,r:.3}),{})));
+  /* control console */const c=K.group({p:[0.5,0,0]});g.add(c);c.add(RB(0.86,0.56,0.6,0.01,white,[0,0.62,0]));c.add(K.node(K.prismX([[0.3,0.9],[-0.3,0.9],[-0.3,1.3],[0.06,1.3]],-0.43,0.43),white,{}));c.add(B(0.88,0.02,0.6,fr,[0,0.9,0]));
+  const pn=K.tex(512,256,(q,w,h)=>{q.fillStyle='#ecedea';q.fillRect(0,0,w,h);q.fillStyle='#4a4f55';q.font='bold 15px sans-serif';q.fillText('THERMAL POWER PLANT WITH STEAM ENGINE',60,26);q.fillRect(24,10,24,22);[[70,60],[300,60]].forEach(([x,y])=>{q.fillStyle='#1b1d20';q.fillRect(x,y,130,34);q.fillStyle='#b9c23a';q.fillRect(x+8,y+8,114,18);});[[80,130],[150,130],[230,130],[300,130],[330,190]].forEach(([x,y],i)=>{q.fillStyle='#1b1d20';q.fillRect(x-18,y-18,36,36);q.fillStyle=i===1?'#c0221b':i===0?'#e23b2e':'#33363a';q.beginPath();q.arc(x,y,10,0,7);q.fill();});['#1a56c4','#1a56c4','#1a56c4'].forEach((cc,i)=>{q.fillStyle=cc;q.beginPath();q.arc(40+i*44,222,16,0,7);q.fill();});});
+  c.add(K.node(K.plane(0.84,0.5),M('#fff',{t:pn,r:.5}),{p:[0,1.105,0.185],r:[-0.733,0,0]}));
+  c.add(B(0.14,0.14,0.006,M('#e2b21c'),[-0.18,0.52,0.302]));c.add(Cz(0.05,0.03,M('#c0221b'),[-0.18,0.52,0.31],20));c.add(B(0.02,0.1,0.02,M('#c0221b'),[-0.18,0.52,0.33]));c.add(B(0.05,0.05,0.006,blk,[-0.14,0.74,0.302]));[0.6,0.5].forEach(y=>c.add(Cz(0.012,0.01,blk,[0.22,y,0.302],10)));c.add(Cy(0.02,0.1,M('#2f9b55'),[0,0.25,0.1]));
+  K.label('Turbine + generator',g,[-0.55,1.42,0.05]);K.label('Boiler',g,[-0.78,0.98,0.3]);K.label('Condenser',g,[-0.25,0.98,0.2]);K.label('Feed pump',g,[-0.45,0.38,0.3]);K.label('Control console',c,[0,1.38,0]);return {root:R,refs,update(){}};}}});
+
+/* ---- 19. Refrigeration / heat pump trainer ---- */
+D({id:'refrig',name:'Refrigeration / Heat Pump Trainer',photo:19,view3d:{h:560,cam:{tgt:[0,1.25,0],yaw:0.35,pitch:0.14,dist:2.9},shadow:{c:[0,1.1,0],r:1.9},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,ss,blk,steel,white}=k,R=K.group();floor(R);
+  R.add(B(1.3,0.8,0.7,ss,[0,0.45,0]));R.add(B(1.36,0.04,0.76,ss,[0,0.87,0]));R.add(B(1.3,0.1,0.66,M('#8f959b',{m:.8}),[0,0.05,0]));R.add(B(0.006,0.72,0.004,M('#8f959b'),[0,0.45,0.352]));
+  const g=K.group({p:[0,0.89,0]});R.add(g);refs.g=g;const fr=M('#26282b',{r:.5});
+  /* glazed base frame */[[-0.6,0.25],[0.6,0.25],[-0.6,-0.25],[0.6,-0.25]].forEach(([x,z])=>g.add(B(0.03,0.36,0.03,fr,[x,0.18,z])));[0.015,0.36].forEach(y=>{[-0.25,0.25].forEach(z=>g.add(B(1.23,0.03,0.03,fr,[0,y,z])));[-0.6,0.6].forEach(x=>g.add(B(0.03,0.03,0.53,fr,[x,y,0])));});
+  g.add(B(1.2,0.33,0.005,M('#dcebf2',{a:.15,r:.05}),[0,0.19,0.25]));g.add(B(1.2,0.005,0.5,M('#dcebf2',{a:.15,r:.05}),[0,0.375,0]));
+  /* compressor, receiver, gauges, expansion valve */g.add(Cy(0.09,0.14,blk,[0.3,0.11,0],28));g.add(K.node(K.sphere(0.09,18),blk,{p:[0.3,0.18,0],s:[1,0.7,1]}));g.add(RB(0.14,0.16,0.14,0.02,blk,[0.48,0.11,0.02]));g.add(Cy(0.04,0.2,M('#2a2c2f',{m:.5}),[0.12,0.13,-0.1],18));
+  [-0.45,-0.3].forEach((x,i)=>{g.add(Cz(0.065,0.03,M('#f4f4ee',{r:.4}),[x,0.2,0.2],30));g.add(K.node(K.torus(0.065,0.006,6,30),M(i?'#c0221b':'#1f5fb4'),{p:[x,0.2,0.216],r:[PI/2,0,0]}));g.add(B(0.004,0.05,0.002,blk,[x,0.215,0.217],{r:[0,0,0.6-i*1.3]}));});
+  g.add(RB(0.16,0.12,0.12,0.01,white,[-0.38,0.07,0.16]));g.add(RB(0.26,0.03,0.2,0.008,white,[-0.02,0.03,0.1]));
+  [[[-0.3,0.2,0.1],[-0.1,0.3,0.0],[0.2,0.3,0.0],[0.3,0.25,0]],[[0.3,0.25,0.05],[0.1,0.33,0.15],[-0.2,0.33,0.15],[-0.45,0.27,0.18]]].forEach(P=>g.add(K.node(K.tube(P,0.006,8,0.05),M('#b8653a',{m:1,r:.3}),{})));
+  /* evaporator / condenser duct and instrument panel behind */g.add(RB(1.1,0.16,0.2,0.01,M('#b9bdc0',{r:.5}),[0,0.47,-0.12]));g.add(B(0.3,0.1,0.004,M('#2a4e7a',{r:.3}),[-0.25,0.47,-0.018]));g.add(B(0.3,0.1,0.004,M('#2a4e7a',{r:.3}),[0.3,0.47,-0.018]));g.add(Cz(0.05,0.03,blk,[0,0.47,0.0],20));
+  g.add(Cy(0.03,0.16,M('#dcebf2',{a:.3}),[0.58,0.5,0.0],14));g.add(Cy(0.03,0.16,M('#dcebf2',{a:.3}),[-0.58,0.5,0.0],14));
+  const pn=K.tex(512,256,(q,w,h)=>{q.fillStyle='#b9bdc0';q.fillRect(0,0,w,h);q.strokeStyle='#8f959b';q.strokeRect(4,4,w/2-8,h-8);q.strokeRect(w/2+4,4,w/2-8,h-8);q.fillStyle='#2a2c2f';q.font='bold 14px sans-serif';q.fillText('REFRIGERATION CYCLE',34,30);[[60,80],[140,80],[60,150],[140,150]].forEach(([x,y])=>{q.fillStyle='#1b1d20';q.fillRect(x-26,y-18,52,36);q.fillStyle='#39d353';q.font='bold 18px monospace';q.fillText('4.2',x-18,y+7);});[[200,90],[200,160]].forEach(([x,y])=>{q.fillStyle='#1b1d20';q.beginPath();q.arc(x,y,14,0,7);q.fill();});q.strokeStyle='#2a2c2f';q.lineWidth=2;q.strokeRect(300,70,150,110);q.beginPath();q.moveTo(300,125);q.lineTo(450,125);q.stroke();});
+  g.add(RB(1.0,0.38,0.05,0.008,M('#b9bdc0',{r:.5}),[0,0.76,-0.2]));g.add(K.node(K.plane(0.98,0.36),M('#fff',{t:pn,r:.5}),{p:[0,0.76,-0.172]}));[-0.4,0.4].forEach(x=>g.add(B(0.03,0.2,0.03,fr,[x,0.5,-0.22])));
+  K.label('Compressor',g,[0.3,0.3,0.1]);K.label('Pressure gauges',g,[-0.38,0.32,0.25]);K.label('Evaporator / condenser',g,[0,0.6,-0.05]);K.label('Instrument panel',g,[0,1.0,-0.17]);return {root:R,refs,update(){}};}}});
+})();
+
+(function(){const PI=Math.PI;const D=(o)=>NEW3D.push(Object.assign({s:{}},o));
+const X=(K)=>{const k=kit4(K),{M,B,Cy,Cz,Cx,RB}=k;k.alu=M('#c9cdd2',{m:.9,r:.35});k.brass=M('#c9a43a',{m:1,r:.3});k.clear=M('#dcebf2',{a:.22,r:.04});k.pvc=M('#4a4f58',{r:.5});
+  k.hose=(R,P,r,m)=>R.add(K.node(K.tube(P,r||0.008,8,0.06),m,{}));
+  k.gauge=(g,p,r)=>{g.add(Cz(r,0.03,M('#2a2c2f',{m:.5}),p,30));g.add(Cz(r*0.9,0.032,M('#f6f6f2',{r:.4}),p,30));const q=K.group({p:[p[0],p[1],p[2]+0.018],r:[0,0,2.2]});q.add(B(0.004,r*0.7,0.002,M('#17181b'),[0,r*0.3,0]));g.add(q);return q;};
+  k.valve=(g,p,m)=>{g.add(B(0.04,0.04,0.04,k.pvc,p));const h=B(0.07,0.012,0.02,m||M('#c0221b'),[p[0],p[1]+0.035,p[2]]);g.add(h);return h;};
+  k.patch=(g,p,w,d,ry,bare)=>{const t=K.tex(256,160,(c,W,H)=>{c.fillStyle='#f2f2ee';c.fillRect(0,0,W,H);c.strokeStyle='#8f959b';c.strokeRect(3,3,W-6,H-6);for(let y=0;y<5;y++)for(let x=0;x<9;x++){c.fillStyle=(x+y)%3?'#c0221b':'#1d1f22';c.beginPath();c.arc(22+x*26,22+y*29,5,0,7);c.fill();}});const q=K.group({p,r:[0,ry||0,0]});g.add(q);q.add(RB(w,0.03,d,0.008,M('#eeeeea',{r:.5}),[0,0.015,0]));if(!bare)q.add(K.node(K.plane(w-0.02,d-0.02),M('#fff',{t,r:.5}),{p:[0,0.031,0],r:[-PI/2,0,0]}));
+    for(let i=0;i<(bare?0:5);i++){const a=[-w*0.3+i*w*0.14,0.035,-d*0.2+((i*7)%5)*d*0.08],b=[-w*0.1+((i*3)%5)*w*0.1,0.035,d*0.25];q.add(K.node(K.tube([a,[a[0],0.09,a[2]],[(a[0]+b[0])/2,0.07,(a[2]+b[2])/2+0.05],[b[0],0.09,b[2]],b],0.004,6,0.03),M('#c0221b'),{}));}return q;};
+  return k;};
+
+/* ---- 21. Heat transfer base unit ---- */
+D({id:'heat',name:'Heat Transfer Base Unit',photo:21,view3d:{h:560,cam:{tgt:[0,1.2,0.1],yaw:0.4,pitch:0.18,dist:2.5},shadow:{c:[0,1.1,0],r:1.8},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white,brass}=k,R=K.group();floor(R);bench(R,2.4,1.1,0.9,0,0);k.pod(R,1.9,0,-0.38);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;const fr=M('#3a3d42',{m:.4,r:.5});
+  g.add(RB(0.5,0.56,0.3,0.01,fr,[-0.12,0.3,-0.12]));const pn=K.tex(512,512,(c,w,h)=>{c.fillStyle='#ecedea';c.fillRect(0,0,w,h);c.fillStyle='#4a4f55';c.fillRect(16,14,26,22);c.font='bold 15px sans-serif';c.fillText('HEAT TRANSFER EXPERIMENTS BASE UNIT',52,32);[[60,80],[330,80]].forEach(([x,y])=>{c.fillStyle='#1b1d20';c.fillRect(x,y,130,36);c.fillStyle='#39d353';c.font='bold 24px monospace';c.fillText(x<200?'42.6':'12.5',x+18,y+27);});c.strokeStyle='#8f959b';c.strokeRect(40,170,110,150);c.fillStyle='#1b1d20';[[95,215],[95,275]].forEach(([x,y])=>{c.beginPath();c.arc(x,y,18,0,7);c.fill();});c.fillStyle='#2f9b55';for(let i=0;i<7;i++)c.fillRect(200+i*40,292,22,14);});
+  g.add(K.node(K.plane(0.5,0.56),M('#fff',{t:pn,r:.5}),{p:[-0.12,0.3,0.031]}));
+  g.add(RB(0.22,0.56,0.3,0.01,M('#26282b',{r:.5}),[0.26,0.3,-0.12]));[[0.5,'#39d353'],[0.42,'#e23b2e']].forEach(([y,c])=>{g.add(B(0.1,0.035,0.004,M('#0e0f11'),[0.26,y,0.032]));g.add(B(0.06,0.014,0.002,M(c,{e:c}),[0.26,y,0.035]));});g.add(B(0.02,0.2,0.004,M('#2a66c8'),[0.26,0.24,0.032]));g.add(Cz(0.015,0.02,blk,[0.3,0.12,0.035],12));
+  /* linear conduction experiment on its plate */const e=K.group({p:[0.02,0,0.3]});g.add(e);e.add(RB(0.42,0.02,0.26,0.008,white,[-0.1,0.01,0]));e.add(RB(0.28,0.02,0.26,0.008,M('#3a3d42'),[0.26,0.01,0]));
+  [-0.22,0.0].forEach(x=>e.add(B(0.02,0.1,0.06,blk,[x,0.07,0])));e.add(Cx(0.035,0.09,white,[-0.16,0.09,0],22));e.add(Cx(0.035,0.09,white,[-0.05,0.09,0],22));e.add(Cx(0.014,0.06,brass,[-0.105,0.09,0],14));e.add(Cx(0.03,0.04,M('#c0221b'),[0.25,0.07,0],18));e.add(RB(0.14,0.03,0.1,0.008,M('#2a66c8'),[0.24,0.035,0.02]));
+  for(let i=0;i<7;i++)k.hose(g,[[-0.21+i*0.052,0.24,0.035],[-0.21+i*0.052,0.2,0.14],[-0.2+i*0.03,0.16,0.3],[-0.18+i*0.025,0.1,0.3]],0.0025,M('#2f9b55'));
+  k.hose(g,[[0.3,0.1,0.04],[0.36,0.05,0.2],[0.3,0.08,0.3]],0.008,M('#c0221b'));k.hose(g,[[0.34,0.08,0.3],[0.5,0.03,0.25],[0.55,0.03,0.0],[0.4,0.03,-0.2]],0.008,k.clear);k.hose(g,[[-0.4,0.3,-0.1],[-0.6,0.02,0.1],[-0.5,0.02,0.3],[-0.3,0.02,0.4]],0.006,blk);
+  K.label('Control module',g,[-0.12,0.64,0.03]);K.label('Heater power module',g,[0.3,0.64,0.03]);K.label('Linear conduction experiment',e,[-0.1,0.18,0]);K.label('Thermocouple leads',g,[-0.3,0.22,0.2]);return {root:R,refs,update(){}};}}});
+
+/* ---- 23. PLC process trainer ---- */
+D({id:'plc',name:'PLC Process Trainer',photo:23,view3d:{h:560,cam:{tgt:[0.1,1.25,0],yaw:0.4,pitch:0.16,dist:2.6},shadow:{c:[0,1.1,0],r:1.8},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white,clear}=k,R=K.group();floor(R);bench(R,2.4,1.1,0.9,0,0);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;[-0.22,0.4].forEach((x,i)=>{g.add(RB(0.56,0.07,0.42,0.02,M('#1d1f22',{r:.4}),[x,0.035,0.05]));for(let j=0;j<4;j++)g.add(B(0.1,0.01,0.03,M('#2a2c2f'),[x-0.2+j*0.13,0.03,0.262]));});
+  g.add(B(0.6,0.7,0.02,M('#2a2c2f',{r:.5}),[0.42,0.45,-0.2]));
+  const pn=K.tex(256,640,(c,w,h)=>{c.fillStyle='#f0f0ec';c.fillRect(0,0,w,h);c.strokeStyle='#2f86d1';c.lineWidth=9;c.strokeRect(46,40,150,520);c.beginPath();c.moveTo(121,40);c.lineTo(121,330);c.stroke();c.fillStyle='#c0221b';c.font='bold 30px sans-serif';c.fillText('TQ',150,310);c.save();c.translate(30,560);c.rotate(-PI/2);c.fillStyle='#1d1f22';c.font='bold 26px sans-serif';c.fillText('PLC  Process',0,0);c.restore();c.fillStyle='#1d1f22';[[196,120],[196,260],[196,420],[46,470]].forEach(([x,y])=>c.fillRect(x-12,y-9,24,18));});
+  g.add(RB(0.28,0.74,0.03,0.008,white,[-0.2,0.45,0.02]));g.add(K.node(K.plane(0.28,0.74),M('#fff',{t:pn,r:.5}),{p:[-0.2,0.45,0.036]}));
+  [[0.6,0.14],[0.33,0.2]].forEach(([y,h],i)=>{g.add(Cy(0.055,h,clear,[0.0,y,0.04],26));if(i===0)g.add(Cy(0.052,h*0.5,M('#3b82c4',{a:.45}),[0.0,y-h*0.25,0.04],24));g.add(Cy(0.058,0.012,M('#c9a43a',{m:1}),[0.0,y+h/2,0.04],26));g.add(Cy(0.058,0.012,blk,[0.0,y-h/2,0.04],26));});g.add(Cy(0.006,0.6,steel,[0.07,0.45,0.04],8));
+  [0.72,0.5].forEach(y=>g.add(RB(0.05,0.04,0.05,0.006,M('#2f9b55'),[-0.02,y+0.02,0.09])));
+  refs.pp=k.patch(g,[0.42,0.07,0.08],0.5,0.36,0,true);refs.g=g;
+  K.label('Process panel',g,[-0.2,0.88,0.04]);K.label('Tanks with level sensors',g,[0.12,0.7,0.1]);K.label('PLC connection panel',g,[0.42,0.2,0.2]);return {root:R,refs,update(){}};}}});
+
+/* ---- 24. Wind energy module ---- */
+D({id:'windenergy',name:'Wind Energy Module',photo:24,view3d:{h:560,cam:{tgt:[0,1.05,0.15],yaw:0.5,pitch:0.32,dist:2.0},shadow:{c:[0,1,0],r:1.5},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white}=k,R=K.group();floor(R);bench(R,2.0,1.1,0.9,0,0);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;g.add(RB(0.7,0.08,0.36,0.012,white,[0,0.04,-0.05]));g.add(B(0.1,0.004,0.02,M('#e08a1c'),[-0.2,0.082,-0.02]));g.add(B(0.3,0.03,0.004,M('#4a4f55'),[-0.1,0.045,0.131]));
+  /* fan duct, turbine and generator */g.add(Cx(0.1,0.16,blk,[0.27,0.2,-0.05],30));g.add(Cx(0.09,0.02,M('#0c0d0e'),[0.18,0.2,-0.05],30));for(let i=0;i<5;i++)g.add(B(0.004,0.17,0.03,M('#3a3d42',{m:.5}),[0.185,0.2,-0.05],{r:[i/5*PI,0,0]}));g.add(RB(0.16,0.2,0.18,0.02,blk,[0.3,0.18,-0.05]));g.add(Cx(0.07,0.1,M('#26282b',{m:.4}),[0.42,0.2,-0.05],24));g.add(B(0.06,0.1,0.14,blk,[0.3,0.33,-0.05]));
+  k.estopZ(g,[0.12,0.04,0.132]);g.add(B(0.05,0.03,0.004,M('#c0221b',{e:'#3a0a08'}),[0.26,0.045,0.131]));
+  /* sloped control panel */const pn=K.tex(512,320,(c,w,h)=>{c.fillStyle='#f0f0ec';c.fillRect(0,0,w,h);c.strokeStyle='#8f959b';c.lineWidth=2;c.strokeRect(6,6,w-12,h-12);c.fillStyle='#4a4f55';c.font='bold 16px sans-serif';c.fillText('WIND ENERGY MODULE',150,34);[[70,60],[290,60]].forEach(([x,y])=>{c.fillStyle='#1b1d20';c.fillRect(x,y,120,50);c.fillStyle='#4da3ff';c.font='bold 26px monospace';c.fillText(x<200?'12.4':'0.82',x+20,y+35);});c.strokeRect(40,150,130,130);c.strokeRect(190,150,130,130);c.strokeRect(340,150,130,130);c.fillStyle='#1b1d20';c.beginPath();c.arc(105,215,32,0,7);c.fill();c.fillStyle='#e9e44a';c.beginPath();c.arc(255,215,22,0,7);c.fill();[[370,190],[410,190],[450,190],[370,240],[410,240],[450,240]].forEach(([x,y],i)=>{c.fillStyle=i%2?'#c0221b':'#1d1f22';c.beginPath();c.arc(x,y,7,0,7);c.fill();});});
+  g.add(K.node(K.prismX([[0.2,0],[-0.2,0],[-0.2,0.1],[0.2,0.03]],-0.28,0.28),white,{p:[-0.2,0,0.36]}));g.add(K.node(K.plane(0.54,0.39),M('#fff',{t:pn,r:.5}),{p:[-0.2,0.068,0.36],r:[-PI/2+0.173,0,0]}));g.add(Cy(0.03,0.03,blk,[-0.36,0.1,0.38],18));
+  k.hose(g,[[-0.1,0.06,0.2],[0.0,0.03,0.16],[0.05,0.07,0.1]],0.005,blk);
+  K.label('Fan + wind turbine',g,[0.22,0.36,-0.05]);K.label('Generator',g,[0.44,0.32,-0.05]);K.label('Measurement panel',g,[-0.2,0.2,0.36]);return {root:R,refs,update(){}};}}});
+
+/* ---- 25. Process trainer ---- */
+D({id:'process',name:'Process Trainer',photo:25,view3d:{h:560,cam:{tgt:[0,1.3,0.1],yaw:0.35,pitch:0.16,dist:2.9},shadow:{c:[0,1.2,0],r:1.9},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white,clear,brass}=k,R=K.group();floor(R);bench(R,2.4,1.1,0.9,0,0);k.pod(R,1.9,0,-0.42);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;[-0.5,0.5].forEach(x=>{g.add(B(0.03,0.03,0.36,M('#8f959b',{m:.8}),[x,0.015,0]));[-1,1].forEach(s=>g.add(Cy(0.02,0.012,blk,[x,0.006,s*0.17],10)));g.add(B(0.03,0.2,0.03,M('#8f959b',{m:.8}),[x,0.1,-0.1]));});
+  g.add(RB(1.16,0.78,0.03,0.01,white,[0,0.5,-0.1]));g.add(B(0.07,0.07,0.003,M('#4a4f55'),[-0.5,0.82,-0.083]));[['#c0221b',0],['#1f5fb4',0.02],['#2f9b55',0.04]].forEach(([c,o])=>g.add(B(0.05,0.008,0.003,M(c),[-0.15,0.8-o,-0.083])));
+  /* heater tank (red), process vessel, radiator, reservoir */g.add(RB(0.22,0.3,0.14,0.012,M('#c41f24',{r:.45}),[-0.42,0.6,-0.01]));g.add(B(0.2,0.02,0.12,M('#9a1519'),[-0.42,0.76,-0.01]));g.add(B(0.06,0.05,0.003,M('#e2b21c'),[-0.42,0.56,0.062]));
+  g.add(Cy(0.085,0.34,clear,[0.02,0.66,0.02],32));g.add(Cy(0.09,0.02,brass,[0.02,0.84,0.02],32));g.add(K.node(K.lathe([[0.02,0],[0.09,0.06],[0.09,0.07],[0,0.07]],28),brass,{p:[0.02,0.42,0.02]}));g.add(Cy(0.008,0.42,steel,[-0.09,0.68,0.02],8));
+  g.add(RB(0.12,0.3,0.06,0.006,blk,[0.38,0.62,-0.04]));for(let i=0;i<16;i++)g.add(B(0.11,0.004,0.07,M('#2a2c2f'),[0.38,0.49+i*0.018,-0.035]));g.add(Cz(0.06,0.06,blk,[0.5,0.42,0.02],22));
+  g.add(RB(0.32,0.14,0.16,0.01,M('#1f5fb4',{r:.45}),[0.02,0.3,0.0]));
+  /* pipework */const cu=M('#2f86d1',{r:.4});[[[-0.3,0.52,0.02],[-0.24,0.52,0.02],[-0.24,0.36,0.02],[-0.14,0.36,0.02]],[[0.02,0.42,0.02],[0.02,0.38,0.02]],[[0.18,0.3,0.02],[0.26,0.3,0.02],[0.26,0.74,0.02],[0.34,0.74,0.0]],[[0.1,0.8,0.02],[0.2,0.8,0.02],[0.2,0.7,0.02]],[[-0.3,0.7,0.02],[-0.2,0.72,0.02],[-0.1,0.78,0.02]]].forEach(P=>k.hose(g,P,0.008,cu));
+  g.add(RB(0.06,0.06,0.06,0.008,brass,[0.2,0.7,0.02]));g.add(Cx(0.03,0.08,M('#33363a',{m:.5}),[-0.3,0.2,0.02],16));g.add(Cx(0.03,0.08,brass,[0.36,0.2,0.02],16));g.add(RB(0.05,0.06,0.04,0.006,brass,[-0.14,0.36,0.02]));
+  refs.pp=k.patch(g,[0.1,0,0.38],0.46,0.32,0,true);refs.g=g;
+  K.label('Heater tank',g,[-0.42,0.84,0]);K.label('Process vessel',g,[0.02,0.94,0.02]);K.label('Cooler + fan',g,[0.42,0.84,0]);K.label('Reservoir',g,[0.02,0.2,0.1]);K.label('Control panel',g,[0.1,0.1,0.42]);return {root:R,refs,update(){}};}}});
+
+/* ---- 26. Series and parallel pumps ---- */
+D({id:'pumps',name:'Series and Parallel Pumps',photo:26,view3d:{h:560,cam:{tgt:[0,1.15,0],yaw:0.4,pitch:0.2,dist:2.5},shadow:{c:[0,1.1,0],r:1.8},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white,clear,pvc}=k,R=K.group();floor(R);bench(R,2.2,1.1,0.9,0,0);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;[[-0.5,0.3],[0.5,0.3],[-0.5,-0.3],[0.5,-0.3]].forEach(([x,z])=>g.add(Cy(0.025,0.03,blk,[x,0.015,z],12)));g.add(RB(1.16,0.1,0.72,0.02,white,[0,0.08,0]));g.add(B(0.3,0.06,0.004,M('#b9bdc0',{m:.5}),[-0.36,0.08,0.362]));
+  /* two pumps with motors */[-0.02,0.34].forEach(x=>{g.add(Cz(0.1,0.07,M('#8f959b',{m:.8,r:.35}),[x,0.25,0.12],34));g.add(Cz(0.06,0.09,M('#b5b9be',{m:1,r:.3}),[x,0.25,0.13],26));g.add(Cz(0.03,0.12,steel,[x,0.25,0.14],16));{const mt=Cz(0.085,0.26,M('#1f5fb4',{m:.3,r:.4}),[x,0.25,-0.1],28);(refs.m=refs.m||[]).push(mt);g.add(mt);}g.add(B(0.16,0.03,0.3,M('#3a3d42'),[x,0.145,-0.05]));g.add(B(0.08,0.05,0.06,M('#e9ebe8'),[x-0.11,0.2,0.1]));});
+  /* PVC pipework with valves and gauges */const P=(a)=>k.hose(g,a,0.016,pvc);P([[-0.42,0.2,0.26],[0.48,0.2,0.26],[0.48,0.25,0.18]]);P([[-0.02,0.2,0.26],[-0.02,0.25,0.2]]);P([[-0.3,0.45,0.02],[0.5,0.45,0.02],[0.5,0.3,0.1]]);P([[0.14,0.45,0.02],[0.14,0.3,0.1],[0.34,0.25,0.18]]);P([[-0.3,0.45,0.02],[-0.42,0.45,0.02],[-0.42,0.7,0.0],[-0.36,0.7,-0.1]]);
+  refs.v=[[-0.2,0.2,0.26],[0.2,0.2,0.26],[0.0,0.45,0.02],[0.3,0.45,0.02]].map(p=>k.valve(g,p));refs.g=g;
+  refs.ga=[k.gauge(g,[-0.42,0.3,0.3],0.085),k.gauge(g,[0.0,0.62,0.04],0.075),k.gauge(g,[0.42,0.62,0.04],0.075)];[[ -0.42,0.2,0.28],[0,0.5,0.03],[0.42,0.5,0.03]].forEach(p=>g.add(Cy(0.01,0.08,k.brass,[p[0],p[1]+0.02,p[2]],8)));
+  /* clear reservoir and flow meter */g.add(Cy(0.1,0.4,clear,[-0.3,0.34,-0.12],34));g.add(Cy(0.096,0.24,M('#3b82c4',{a:.3}),[-0.3,0.26,-0.12],30));g.add(Cy(0.105,0.02,M('#c9cdd2',{m:.8}),[-0.3,0.55,-0.12],34));k.hose(g,[[-0.44,0.2,-0.1],[-0.44,0.72,-0.1],[-0.34,0.76,-0.12],[-0.3,0.6,-0.12]],0.02,M('#b6c3d6',{a:.6}));g.add(RB(0.09,0.06,0.05,0.006,blk,[-0.2,0.45,0.03]));g.add(B(0.06,0.03,0.003,M('#9fd6a8',{e:'#1d3b22'}),[-0.2,0.45,0.057]));
+  K.label('Pump 1',g,[-0.02,0.38,0.2]);K.label('Pump 2',g,[0.34,0.38,0.2]);K.label('Pressure gauges',g,[0.2,0.78,0.04]);K.label('Reservoir',g,[-0.3,0.66,-0.12]);K.label('Valves set series or parallel',g,[0.0,0.12,0.4]);return {root:R,refs,update(){}};}}});
+
+/* ---- 27. Losses in pipe systems (wall board) ---- */
+D({id:'pipes',name:'Losses in Pipe Systems',photo:27,view3d:{h:560,cam:{tgt:[0,1.25,0],yaw:0.25,pitch:0.08,dist:3.6},shadow:{c:[0,1.2,0],r:2.4},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,blk,steel,white,clear}=k,R=K.group();floor(R);
+  const g=K.group({p:[0,0.55,0]});R.add(g);refs.g=g;const fr=M('#33363a',{m:.4,r:.5});[-1.25,1.25].forEach(x=>{g.add(B(0.05,1.5,0.05,fr,[x,0.2,-0.06]));g.add(B(0.05,0.04,0.6,fr,[x,-0.53,0]));});g.add(RB(2.5,1.4,0.03,0.01,M('#e4e6e5',{r:.45,m:.15}),[0,0.7,0]));
+  const z=0.04,dark=M('#1c2740',{r:.45}),light=M('#8fb0cf',{r:.4});
+  k.hose(g,[[-1.2,0.2,z],[-1.2,0.06,z],[1.2,0.06,z],[1.2,1.34,z],[-0.62,1.34,z],[-0.62,0.3,z],[-1.05,0.3,z]],0.016,dark);
+  k.hose(g,[[-1.2,0.75,z],[-1.12,0.75,z],[-1.12,0.2,z],[1.1,0.2,z],[1.1,1.22,z],[-0.1,1.22,z],[-0.1,0.36,z],[-0.5,0.3,z]],0.013,light);
+  /* manometer tube pairs */[-0.5,-0.36,-0.22,0.12,0.4,0.68,0.96].forEach((x,i)=>{[-0.014,0.014].forEach(dx=>{g.add(Cy(0.006,0.8,clear,[x+dx,0.8,z],8));const wn=Cy(0.0045,1,M('#3b82c4',{a:.7}),[x+dx,0.6,z],8);wn.s=[1,0.4,1];(refs.w=refs.w||[]).push(wn);g.add(wn);});g.add(B(0.04,0.82,0.004,M('#f4f4f0'),[x,0.8,0.02]));g.add(B(0.06,0.03,0.03,blk,[x,1.22,z]));});
+  refs.ga=k.gauge(g,[-0.88,1.0,0.03],0.085);g.add(Cy(0.004,0.5,clear,[-0.9,0.6,z],6));g.add(RB(0.12,0.04,0.05,0.006,blk,[-0.78,0.3,z]));g.add(Cz(0.02,0.03,M('#2f9b55'),[-0.78,0.3,z+0.03],12));
+  [[0.0,0.2],[0.9,0.2],[-0.3,0.06],[0.6,0.06]].forEach(([x,y])=>g.add(Cx(0.02,0.07,light,[x,y,z],12)));g.add(B(0.07,0.07,0.003,M('#4a4f55'),[-1.15,1.3,0.018]));
+  K.label('Smooth and rough test pipes',g,[0.3,1.42,z]);K.label('Manometer tubes',g,[0.54,0.5,z]);K.label('Pressure gauge',g,[-0.88,1.16,z]);K.label('Bends, elbows and valves',g,[0.4,-0.02,z]);return {root:R,refs,update(){}};}}});
+
+/* ---- 28. Hydrostatics bench ---- */
+D({id:'hydro',name:'Hydrostatics and Properties of Fluids',photo:28,view3d:{h:560,cam:{tgt:[0,1.0,0],yaw:0.4,pitch:0.16,dist:3.2},shadow:{c:[0,0.9,0],r:2.0},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,blk,steel,white,clear}=k,R=K.group();floor(R);const gy=M('#c6cacb',{r:.4,m:.1}),dk=M('#2a2c2f',{r:.5});
+  R.add(B(1.5,0.3,0.8,dk,[0,0.15,0]));R.add(RB(1.0,0.62,0.7,0.02,gy,[0.18,0.61,0.02]));R.add(B(0.3,0.05,0.004,M('#f0f0ec'),[0.0,0.62,0.372]));
+  R.add(RB(0.44,0.3,0.5,0.02,gy,[0.46,1.06,-0.08]));R.add(B(1.0,0.012,0.7,M('#d5d8d9',{r:.3}),[0.18,0.925,0.02]));
+  /* back board with top rail, left drain tray */R.add(B(1.1,0.75,0.02,white,[0.0,1.3,-0.34]));[-0.56,0.56].forEach(x=>R.add(B(0.04,0.8,0.04,dk,[x,1.3,-0.34])));R.add(B(1.3,0.06,0.12,dk,[0,1.7,-0.3]));R.add(RB(0.4,0.1,0.6,0.01,dk,[-0.55,0.72,0.0]));
+  /* apparatus on top: hydrometer jars, balance, Pascal tubes, capillary plates */[-0.2,-0.1,0.0].forEach((x,i)=>{R.add(Cy(0.025,0.3,clear,[x,1.08,-0.2],14));R.add(Cy(0.022,0.2,M(['#3b82c4','#c9a43a','#7a4a2a'][i],{a:.5}),[x,1.03,-0.2],12));});
+  R.add(RB(0.3,0.03,0.14,0.006,M('#8f959b',{m:.8}),[0.0,0.945,0.15]));R.add(B(0.26,0.01,0.012,steel,[0.0,1.0,0.15]));R.add(Cy(0.006,0.06,steel,[0,0.97,0.15],6));[-0.12,0.12].forEach(x=>R.add(Cy(0.03,0.006,k.brass,[x,0.975,0.15],16)));
+  [0.02,0.06,0.1,0.14].forEach((x,i)=>R.add(Cy(0.004+i*0.002,0.4,clear,[-0.38+x,1.2,-0.3],8)));R.add(RB(0.14,0.14,0.04,0.006,clear,[0.42,1.3,0.12]));R.add(Cy(0.03,0.08,M('#d7d9da',{m:1}),[0.56,1.25,0.0],16));
+  R.add(B(0.2,0.28,0.003,M('#dbe8f2'),[-0.4,1.4,-0.325]));
+  K.label('Hydrometers',R,[-0.1,1.3,-0.2]);K.label('Lever balance',R,[0,1.06,0.2]);K.label('Capillary tubes',R,[-0.32,1.46,-0.3]);K.label('Storage + sump',R,[0.18,0.6,0.4]);return {root:R,refs,update(){}};}}});
+
+/* ---- 29. Centre of pressure ---- */
+D({id:'cop',name:'Centre of Pressure Apparatus',photo:29,view3d:{h:560,cam:{tgt:[0,1.2,0],yaw:0.35,pitch:0.14,dist:2.2},shadow:{c:[0,1.1,0],r:1.5},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white,clear}=k,R=K.group();floor(R);bench(R,1.8,1.0,0.9,0,0);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;g.add(RB(0.74,0.035,0.34,0.012,M('#2a2c2f',{r:.4}),[0,0.0175,0]));[[-0.33,0.14],[0.33,0.14],[-0.33,-0.14],[0.33,-0.14]].forEach(([x,z])=>g.add(Cy(0.018,0.02,steel,[x,-0.006,z],10)));
+  const bt=K.tex(512,460,(c,w,h)=>{c.fillStyle='#eeeeea';c.fillRect(0,0,w,h);c.strokeStyle='#5c6168';c.lineWidth=1.4;for(let y=150;y<h-30;y+=11){c.beginPath();c.moveTo(w*0.42,y);c.lineTo(w-16,y);c.stroke();}c.fillStyle='#4a4f55';c.fillRect(20,18,26,22);c.font='bold 14px sans-serif';c.fillText('CENTRE OF PRESSURE',54,34);});
+  g.add(RB(0.62,0.56,0.02,0.008,white,[-0.02,0.33,-0.1]));g.add(K.node(K.plane(0.62,0.56),M('#fff',{t:bt,r:.5}),{p:[-0.02,0.33,-0.089]}));
+  /* clear quadrant on its pivot, balance arm and hanger */const PV=[0.12,0.52,0];const piv=K.group({p:PV});g.add(piv);const R1=0.1,R2=0.2,N=18;for(let i=0;i<N;i++){const a=PI+(i+0.5)/N*PI/2;[R1,R2].forEach(r=>piv.add(B(r*PI/2/N*1.06,0.004,0.075,clear,[r*Math.cos(a),r*Math.sin(a),0],{r:[0,0,a+PI/2]})));[-0.0375,0.0375].forEach(zz=>piv.add(B(R2-R1,0.15*PI/2/N*1.1,0.003,M('#dcebf2',{a:.12}),[0.15*Math.cos(a),0.15*Math.sin(a),zz],{r:[0,0,a]})));}
+  refs.piv=piv;piv.add(B(0.004,R2-R1,0.075,M('#dcebf2',{a:.4}),[0,-0.15,0]));piv.add(B(R2-R1,0.004,0.075,clear,[-0.15,0,0]));g.add(Cz(0.008,0.14,steel,[PV[0],PV[1],-0.03],10));
+  piv.add(B(0.36,0.012,0.012,k.alu,[-0.14,0.012,-0.05]));piv.add(Cy(0.002,0.12,steel,[-0.3,-0.05,-0.05],6));piv.add(B(0.05,0.004,0.05,clear,[-0.3,-0.11,-0.05]));[0,1,2].forEach(i=>piv.add(Cy(0.018,0.005,k.brass,[-0.3,-0.105+i*0.006,-0.05],16)));piv.add(Cx(0.02,0.04,M('#555',{m:.6}),[0.07,0.03,-0.05],14));
+  /* water in the tank, spare ring weights */g.add(RB(0.36,0.2,0.1,0.006,M('#dcebf2',{a:.14}),[0.08,0.36,0.0]));refs.wat=B(0.34,1,0.09,M('#3b82c4',{a:.4}),[0.08,0.3,0]);refs.wat.s=[1,0.06,1];g.add(refs.wat);
+  [-0.3,-0.22].forEach((x,j)=>{g.add(Cy(0.004,0.2,steel,[x,0.13,0.26],6));for(let i=0;i<6+j*3;i++)g.add(K.node(K.torus(0.022,0.008,6,16),M('#b5b9be',{m:1,r:.25}),{p:[x,0.045+i*0.017,0.26]}));});g.add(Cy(0.03,0.04,blk,[0.2,0.055,0.24],16));
+  K.label('Quadrant',piv,[-0.16,-0.2,0.05]);K.label('Pivot',g,[PV[0]+0.08,PV[1]+0.06,0]);K.label('Balance arm + hanger',piv,[-0.28,0.08,0]);K.label('Spare masses',g,[-0.26,0.26,0.26]);return {root:R,refs,update(){}};}}});
+
+/* ---- 30. Multi-tube manometer ---- */
+D({id:'manometer',name:'Multi-Tube Manometer',photo:30,view3d:{h:560,cam:{tgt:[0,1.4,0],yaw:0.35,pitch:0.1,dist:2.6},shadow:{c:[0,1.2,0],r:1.7},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white,clear}=k,R=K.group();floor(R);bench(R,1.8,1.0,0.9,0,0);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;g.add(RB(0.6,0.03,0.3,0.008,white,[0,0.015,0]));
+  const st=K.tex(512,1024,(c,w,h)=>{c.fillStyle='#f1f1ee';c.fillRect(0,0,w,h);c.fillStyle='#9aa0a6';for(let i=0;i<14;i++){const x=36+i*33.5;for(let y=60;y<h-60;y+=9)c.fillRect(x-7,y,14,1.3);}c.fillStyle='#4a4f55';c.font='12px sans-serif';for(let i=0;i<14;i++)c.fillText(String(i+1),30+i*33.5,44);});
+  g.add(RB(0.56,1.0,0.025,0.008,white,[0,0.56,-0.02]));g.add(K.node(K.plane(0.56,1.0),M('#fff',{t:st,r:.5}),{p:[0,0.56,-0.006]}));
+  for(let i=0;i<14;i++){const x=-0.24+i*0.0367,l=0.25+0.5*Math.abs(Math.sin(i*0.5+0.6));g.add(Cy(0.006,0.86,clear,[x,0.56,0.004],8));{const wn=Cy(0.0045,1,M('#3b82c4',{a:.7}),[x,0.13+l/2,0.004],8);wn.s=[1,l,1];(refs.w=refs.w||[]).push(wn);g.add(wn);}}
+  g.add(B(0.52,0.03,0.03,M('#d7d9da',{m:.8}),[0,1.0,0.01]));[-0.2,-0.07,0.07,0.2].forEach(x=>g.add(RB(0.03,0.07,0.03,0.006,blk,[x,1.04,0.02])));g.add(B(0.5,0.03,0.03,M('#d7d9da',{m:.8}),[0,0.12,0.02]));
+  for(let i=0;i<10;i++)k.hose(g,[[-0.2+i*0.045,0.11,0.03],[-0.2+i*0.045,0.05,0.1],[-0.05+i*0.02,0.05,0.2],[0.1+i*0.01,0.03,0.3]],0.004,M('#dcebf2',{a:.5}));
+  k.hose(g,[[-0.3,0.06,0.02],[-0.5,0.04,0.2],[-0.2,0.04,0.42],[0.3,0.04,0.4],[0.42,0.06,0.1]],0.016,M('#dcebf2',{a:.5}));refs.g=g;g.add(RB(0.06,0.06,0.05,0.008,blk,[0.26,0.08,0.02]));
+  K.label('Manometer tubes 1–14',g,[0,1.14,0]);K.label('Air manifold',g,[0.34,1.02,0.02]);K.label('Tappings to the test section',g,[0.1,0.1,0.34]);return {root:R,refs,update(){}};}}});
+
+/* ---- 31. Rotor dynamics rig ---- */
+D({id:'rotor',name:'Rotor Dynamics / Balancing Rig',photo:31,view3d:{h:560,cam:{tgt:[0.25,1.1,0],yaw:0.4,pitch:0.18,dist:2.4},shadow:{c:[0,1.1,0],r:1.9},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,ss,blk,steel,white,clear}=k,R=K.group();floor(R);
+  R.add(B(1.3,0.82,0.7,ss,[0.25,0.46,0]));R.add(B(1.36,0.04,0.76,ss,[0.25,0.89,0]));R.add(B(1.3,0.1,0.66,M('#8f959b',{m:.8}),[0.25,0.05,0]));R.add(B(0.006,0.74,0.004,M('#8f959b'),[0.25,0.46,0.352]));
+  const g=K.group({p:[0.3,0.91,0]});R.add(g);refs.g=g;g.add(RB(0.78,0.03,0.42,0.008,M('#d7d9da',{m:.7,r:.4}),[0.05,0.015,0]));
+  /* shaft, bearing blocks, discs, motor */g.add(Cx(0.008,0.62,steel,[0.05,0.16,0],12));[-0.22,0.32].forEach(x=>{g.add(RB(0.04,0.16,0.1,0.006,M('#b5b9be',{m:.9,r:.35}),[x,0.1,0]));g.add(Cx(0.03,0.045,M('#8f959b',{m:1}),[x,0.16,0],18));});[-0.05,0.16].forEach(x=>{g.add(Cx(0.06,0.02,M('#c9cdd2',{m:1,r:.25}),[x,0.16,0],36));for(let i=0;i<8;i++){const a=i/8*PI*2;g.add(Cx(0.005,0.022,blk,[x,0.16+0.045*Math.sin(a),0.045*Math.cos(a)],6));}});
+  g.add(Cx(0.05,0.14,M('#33363a',{m:.5}),[-0.36,0.16,0],24));g.add(B(0.14,0.1,0.1,M('#3a3d42'),[-0.36,0.07,0]));[[0.05,0.1],[0.2,0.1]].forEach(([x])=>g.add(Cy(0.008,0.1,k.brass,[x,0.08,0.06],8)));
+  k.hose(g,[[0.05,0.03,0.08],[0.1,0.03,0.16],[0.25,0.03,0.12],[0.2,0.05,0.06]],0.004,blk);
+  /* clear guard */const cg=M('#dcebf2',{a:.08,r:.04});g.add(B(0.66,0.3,0.005,cg,[0.07,0.18,0.19]));g.add(B(0.66,0.3,0.005,cg,[0.07,0.18,-0.19]));g.add(B(0.66,0.005,0.38,cg,[0.07,0.33,0]));g.add(B(0.005,0.3,0.38,cg,[0.4,0.18,0]));g.add(B(0.005,0.3,0.38,cg,[-0.26,0.18,0]));
+  /* drive inverter */g.add(RB(0.1,0.2,0.12,0.01,M('#2a5db0',{r:.45}),[-0.5,0.14,0.02]));g.add(B(0.06,0.04,0.003,M('#0e0f11'),[-0.5,0.2,0.082]));g.add(RB(0.14,0.04,0.14,0.008,M('#d7d9da',{m:.6}),[-0.5,0.02,0.02]));
+  K.label('Shaft with balance discs',g,[0.05,0.4,0]);K.label('Bearing + proximity probes',g,[0.34,0.26,0.1]);K.label('Motor',g,[-0.36,0.3,0]);K.label('Speed drive',g,[-0.5,0.32,0.02]);return {root:R,refs,update(){}};}}});
+
+/* ---- 32. Free and forced vibration ---- */
+D({id:'vibration',name:'Free and Forced Vibration',photo:32,view3d:{h:560,cam:{tgt:[0.05,1.3,0],yaw:0.3,pitch:0.12,dist:3.0},shadow:{c:[0,1.2,0],r:2.0},build(K,s){const refs={};const k=X(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white}=k,R=K.group();floor(R);bench(R,2.4,1.0,0.9,0,0);k.pod(R,1.9,0,-0.35,1.98);
+  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;const fr=M('#26282b',{r:.45,m:.2});
+  [-0.55,0.55].forEach(x=>{g.add(B(0.05,0.04,0.44,fr,[x,0.02,0]));[-1,1].forEach(s=>g.add(Cy(0.03,0.03,blk,[x,0.0,s*0.2],12)));});
+  /* black portal frame with white back panel */const W=1.02,H=0.78,y0=0.06;[-W/2,W/2].forEach(x=>g.add(B(0.05,H,0.14,fr,[x+0.15,y0+H/2,0])));[y0+0.025,y0+H-0.025].forEach(y=>g.add(B(W,0.05,0.14,fr,[0.15,y,0])));g.add(B(W-0.06,H-0.06,0.01,M('#dfe1df',{r:.5}),[0.15,y0+H/2,-0.06]));g.add(B(0.12,0.06,0.003,M('#3a3d42'),[0.42,y0+H-0.12,-0.053]));
+  /* control box */g.add(RB(0.3,H,0.16,0.01,M('#cfd2d4',{r:.5}),[-0.52,y0+H/2,0]));g.add(B(0.1,0.035,0.004,M('#0e0f11'),[-0.52,0.62,0.082]));g.add(B(0.07,0.018,0.002,M('#39d353',{e:'#39d353'}),[-0.52,0.62,0.085]));[[0.5,'#d7dadd'],[0.44,'#d7dadd'],[0.2,'#2f9b55'],[0.14,'#c0221b']].forEach(([y,c])=>g.add(Cz(0.014,0.012,M(c),[-0.52,y,0.085],12)));g.add(B(0.05,0.05,0.003,M('#4a4f55'),[-0.6,0.76,0.082]));
+  /* beam pivoted at the left, exciter with unbalance disc, spring, damper */const bm=K.group({p:[-0.28,0.46,0.02]});g.add(bm);g.add(RB(0.06,0.1,0.06,0.006,M('#b5b9be',{m:.9}),[-0.3,0.46,0.02]));bm.add(B(0.78,0.014,0.02,steel,[0.39,0,0]));
+  bm.add(RB(0.08,0.07,0.07,0.008,blk,[0.38,0.045,0]));bm.add(Cz(0.045,0.012,M('#c0221b',{r:.4}),[0.38,0.05,0.045],26));bm.add(Cz(0.01,0.02,blk,[0.4,0.06,0.05],8));bm.add(B(0.05,0.05,0.003,M('#e2b21c'),[0.3,0.07,0.012]));
+  const sp=[];for(let i=0;i<=80;i++){const t=i/80;sp.push([0.74+0.014*Math.cos(i*0.9),0.02+t*0.26,0.014*Math.sin(i*0.9)]);}bm.add(K.node(K.tube(sp,0.003,6,0.001),M('#c0221b',{m:.3}),{}));g.add(Cy(0.012,0.06,steel,[0.46,0.77,0.02],10));
+  g.add(Cy(0.03,0.12,M('#b9922f',{m:1,r:.3}),[0.02,0.2,0.02],20));g.add(Cy(0.006,0.2,steel,[0.02,0.36,0.02],8));g.add(B(0.4,0.012,0.03,M('#d7d9da',{m:.8}),[0.25,0.12,0.02]));g.add(RB(0.04,0.08,0.04,0.006,blk,[0.2,0.42,0.02]));
+  refs.bm=bm;refs.g=g;K.label('Beam',bm,[0.2,0.06,0.03]);K.label('Exciter (unbalanced disc)',bm,[0.38,0.14,0.05]);K.label('Spring',bm,[0.8,0.16,0]);K.label('Damper',g,[0.02,0.14,0.08]);K.label('Speed control',g,[-0.52,0.9,0.05]);return {root:R,refs,update(){}};}}});
+})();
+
+/* ---- 34. H8 Impact of a jet on the hydraulic bench · 33. H314B Hare's tube ---- */
+(function(){const PI=Math.PI;
+NEW3D.push({id:'h8',name:'Impact of a Jet (H8)',photo:34,s:{},view3d:{h:560,cam:{tgt:[0,1.15,0],yaw:0.5,pitch:0.15,dist:2.4},shadow:{c:[0,0.9,0],r:1.6},build(K,s){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB}=k,R=K.group();k.floor(R);
+  const body=M('#4d5359',{m:.15,r:.45}),top=M('#e3e1da',{r:.55}),steel=M('#c9cdd2',{m:.9,r:.35}),clear=M('#dcebf2',{a:.2,r:.04}),blk=M('#1d1f22',{r:.45}),red=M('#c0221b',{r:.4});
+  /* hydraulic bench */R.add(B(1.25,0.87,0.62,body,[0,0.435,0]));R.add(B(1.27,0.05,0.64,top,[0,0.895,0]));R.add(B(0.45,0.05,0.3,M('#c9c7bf',{r:.5}),[-0.32,0.93,0]));
+  R.add(B(0.36,0.18,0.004,M('#f2f2ee'),[0.1,0.74,0.312]));R.add(Cz(0.02,0.02,M('#2fae3b',{r:.4}),[0.0,0.7,0.32],18));R.add(K.node(K.torus(0.05,0.008,24,8),red,{r:[PI/2,0,0],p:[0.45,0.7,0.33]}));
+  K.label('Hydraulic bench',R,[0.2,0.55,0.34]);
+  /* H8: clear cylinder on a base, nozzle, vane, lid with weigh beam */const g=K.group({p:[-0.3,0.95,0]});R.add(g);refs.g=g;
+  g.add(Cy(0.17,0.03,blk,[0,0.015,0],32));g.add(Cy(0.15,0.42,clear,[0,0.24,0],32));g.add(Cy(0.17,0.025,blk,[0,0.46,0],32));
+  g.add(Cy(0.012,0.2,steel,[0,0.13,0],14));g.add(Cy(0.008,0.02,steel,[0,0.24,0],12));
+  const jet=Cy(0.005,0.035,M('#7fb6e6',{a:.75}),[0,0.2675,0],10);g.add(jet);refs.jet=jet;jet.vis=false;
+  /* beam on the lid: pivot at one side, vane rod down to the vane */const beam=K.group({p:[-0.15,0.49,0]});g.add(beam);refs.beam=beam;
+  beam.add(B(0.4,0.012,0.02,steel,[0.2,0,0]));beam.add(Cy(0.004,0.18,steel,[0.15,-0.1,0],8));beam.add(Cy(0.03,0.008,M('#e9ebe8',{m:.6}),[0.15,-0.19,0],24));
+  const jk=B(0.03,0.03,0.04,M('#8f959b',{m:.8}),[0.17,0.02,0]);beam.add(jk);jk.p0=0.17;refs.jockey=jk;
+  g.add(B(0.02,0.05,0.04,blk,[-0.15,0.49,0]));g.add(B(0.004,0.06,0.03,M('#f6f6f2'),[0.26,0.5,0.02]));g.add(Cy(0.004,0.06,steel,[0.22,0.52,0],8));
+  K.label('Vane',g,[0.08,0.32,0.12]);K.label('Jockey weight on the weigh beam',g,[0.0,0.6,0.05]);K.label('10 mm nozzle',g,[0.1,0.2,0.12]);
+  return {root:R,refs,update(){}};}}});
+
+NEW3D.push({id:'h314b',name:'Hare’s Tube (H314B)',photo:33,s:{},view3d:{h:560,cam:{tgt:[0,0.6,0],yaw:0.25,pitch:0.1,dist:1.7},shadow:{c:[0,0.4,0],r:1.0},build(K,s){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB}=k,R=K.group();k.floor(R);
+  const wh=M('#efefec',{r:.6}),clear=M('#dcebf2',{a:.22,r:.04}),steel=M('#c9cdd2',{m:.9,r:.35}),blk=M('#1d1f22',{r:.45});
+  R.add(B(0.6,0.03,0.3,M('#3a3d42',{r:.5}),[0,0.015,0]));R.add(B(0.5,0.9,0.02,wh,[0,0.48,-0.08]));
+  const X=[-0.1,0.1];X.forEach((x,i)=>{R.add(Cy(0.008,0.62,clear,[x,0.5,-0.04],12));R.add(B(0.018,0.5,0.003,steel,[x+0.022,0.48,-0.065]));
+    /* beaker and liquid */R.add(Cy(0.04,0.1,clear,[x,0.08,-0.04],24));const lq=Cy(0.037,0.06,M(i?'#c9a43a':'#5b9bd5',{a:.65}),[x,0.06,-0.04],24);R.add(lq);
+    const col=Cy(0.0065,1,M(i?'#c9a43a':'#5b9bd5',{a:.8}),[x,0.1,-0.04],10);col.s=[1,0.01,1];R.add(col);refs['c'+i]=col;});
+  R.add(K.node(K.tube([[-0.1,0.81,-0.04],[-0.1,0.86,-0.04],[0,0.88,-0.04],[0.1,0.86,-0.04],[0.1,0.81,-0.04]],0.005,8,0.03),blk,{}));
+  R.add(Cy(0.015,0.16,clear,[0,0.97,-0.04],16));const pl=Cy(0.004,0.12,steel,[0,1.09,-0.04],8);R.add(pl);refs.pl=pl;R.add(B(0.02,0.012,0.012,M('#c0221b'),[0,0.86,-0.02]));
+  K.label('Syringe',R,[0.08,1.02,-0.02]);K.label('Water',R,[-0.1,0.16,0.05]);K.label('Test liquid',R,[0.1,0.16,0.05]);K.label('Tube clip',R,[0.06,0.86,0.0]);
+  return {root:R,refs,update(){}};}}});
+})();
+
+/* Interaction layer: makes the fluid, control and test rigs operable. */
+(function(){const PI=Math.PI,by=id=>NEW3D.find(d=>d.id===id),clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const DROP=['furnace'];for(let i=NEW3D.length-1;i>=0;i--)if(DROP.includes(NEW3D[i].id))NEW3D.splice(i,1);
+const SEC={polisher:'Material testing',mount:'Material testing',cutter:'Material testing',vickers:'Material testing',h8:'Fluid mechanics',h314b:'Fluid mechanics',shear:'Material testing',sieve:'Material testing',utm:'Material testing',charpy:'Material testing',torsion:'Solid mechanics',fatigue:'Solid mechanics',truss:'Solid mechanics',bending:'Solid mechanics',buckling:'Solid mechanics',beams:'Solid mechanics',frameworks:'Solid mechanics',steam:'Thermodynamics',refrig:'Thermodynamics',hx:'Thermodynamics',heat:'Thermodynamics',wind:'Fluid mechanics',pumps:'Fluid mechanics',pipes:'Fluid mechanics',hydro:'Fluid mechanics',cop:'Fluid mechanics',manometer:'Fluid mechanics',plc:'Control and process',process:'Control and process',windenergy:'Control and process',rotor:'Vibration',vibration:'Vibration'};
+NEW3D.forEach(d=>d.sec=SEC[d.id]||'Other');
+function wrap(id,o,fn){const d=by(id);if(!d)return;Object.assign(d,o);d.live=true;const b0=d.view3d.build;d.view3d.build=(K,s,st)=>{const sc=b0(K,d.s,st);const u=fn(K,d.s,sc.refs,sc.root,d);if(u)sc.update=u;return sc;};}
+const each=(n,f)=>{f(n);(n.kids||[]).forEach(k=>each(k,f));};
+/* sockets and patch leads: click one socket, then another, to join them; click a joined pair again to pull the lead */
+function wiring(K,parent,s,defs,top){const k=kit4(K),{M,Cy}=k;s.w=s.w||[];s.sel=null;const N={},leads=[];
+  defs.forEach(q=>{const n=Cy(0.012,0.014,M(q.c,{r:.4}),[q.p[0],top+0.007,q.p[1]],16);n.pick='sk:'+q.id;n.tip=q.tip||q.id;parent.add(n);parent.add(Cy(0.006,0.016,M('#0c0d0e'),[q.p[0],top+0.008,q.p[1]],10));N[q.id]={n,q,m:n.mat};});
+  const cols=['#c0221b','#1f5fb4','#e2b21c','#2f9b55','#7a46c0','#17181b'];
+  const draw=()=>{leads.forEach(l=>l.vis=false);s.w.forEach(([a,b],i)=>{const A=N[a].q.p,B=N[b].q.p,h=0.07+0.02*(i%3);const t=K.node(K.tube([[A[0],top+0.012,A[1]],[A[0],top+h,A[1]],[(A[0]+B[0])/2,top+h+0.03,(A[1]+B[1])/2+0.03],[B[0],top+h,B[1]],[B[0],top+0.012,B[1]]],0.004,6,0.03),M(cols[i%6],{r:.5}),{});parent.add(t);leads.push(t);});};
+  draw();return {has:(a,b)=>s.w.some(w=>(w[0]===a&&w[1]===b)||(w[0]===b&&w[1]===a)),
+   hit(id){id=id.slice(3);if(!s.sel){s.sel=id;N[id].n.mat=M('#ffffff',{e:'#ffd23a',r:.3});return;}const a=s.sel;N[a].n.mat=N[a].m;s.sel=null;if(a===id)return;const i=s.w.findIndex(w=>(w[0]===a&&w[1]===id)||(w[0]===id&&w[1]===a));if(i>=0)s.w.splice(i,1);else{s.w=s.w.filter(w=>!w.includes(a)&&!w.includes(id));s.w.push([a,id]);}draw();},
+   panel(w,d,labels,title){const t=K.tex(640,Math.round(640*d/w),(c,W,H)=>{c.fillStyle='#f2f2ee';c.fillRect(0,0,W,H);c.strokeStyle='#8f959b';c.lineWidth=2;c.strokeRect(4,4,W-8,H-8);c.fillStyle='#1b2433';c.font='bold 20px sans-serif';c.fillText(title,16,28);c.font='bold 15px sans-serif';c.textAlign='center';defs.forEach(q=>{const x=(q.p[0]/w+0.5)*W,y=(q.p[1]/d+0.5)*H;c.fillStyle='#3d4757';c.fillText(q.id,x,y+34);});(labels||[]).forEach(([tx,x,y])=>{c.fillStyle='#0039a6';c.textAlign='left';c.fillText(tx,x*W,y*H);});});
+     parent.add(K.node(K.plane(w-0.02,d-0.02),M('#fff',{t,r:.5}),{p:[0,top+0.001,0],r:[-PI/2,0,0]}));}};}
+const btn=(K,parent,p,col,pick,tip)=>{const k=kit4(K);const n=k.Cy(0.016,0.014,k.M(col,{r:.4}),p,18);n.pick=pick;n.tip=tip;parent.add(n);return n;};
+const knob=(K,parent,p,pid,tip,axis)=>{const k=kit4(K);const n=(axis==='z'?k.Cz:k.Cy)(0.024,0.022,k.M('#1d1f22',{r:.4}),p,20);n.pick='knob:'+pid;n.tip=tip;parent.add(n);const m=(axis==='z'?k.Cz:k.Cy)(0.008,0.026,k.M('#e9ebe8'),p,10);parent.add(m);return n;};
+
+/* ---------- PLC process trainer ---------- */
+wrap('plc',{hint:'Join each PLC output to its device and each sensor to its input: click a socket, then the socket it goes to. Then press the green RUN button. Red is STOP.',
+ hud:s=>[['PLC',s.run?'RUN':'STOP'],['Step',s.run?(s.fill?'Filling':'Draining'):'—'],['Tank level',Math.round(s.lv*100)+' %'],['Pump',s.pOn?'ON':'off'],['Drain valve',s.vOn?'OPEN':'closed'],['Leads fitted',s.w.length+' of 4']],
+ onHit(s,id){if(id.startsWith('sk:'))this._w.hit(id);else if(id==='run'){s.run=true;s.fill=true;toast('PLC in RUN. The program fills to the high-level switch, then drains to the low-level switch.');}else if(id==='stop'){s.run=false;toast('PLC stopped. Outputs are off.');}}},
+ (K,s,refs,R,d)=>{const k=kit4(K),{M,Cy}=k,pp=refs.pp;Object.assign(s,{run:false,fill:true,lv:0.3,pOn:false,vOn:false,warn:0});
+  const defs=[{id:'Q0',p:[-0.18,-0.11],c:'#1f5fb4',tip:'PLC output Q0'},{id:'Q1',p:[-0.08,-0.11],c:'#1f5fb4',tip:'PLC output Q1'},{id:'I0',p:[0.08,-0.11],c:'#2f9b55',tip:'PLC input I0'},{id:'I1',p:[0.18,-0.11],c:'#2f9b55',tip:'PLC input I1'},
+   {id:'PUMP',p:[-0.18,0.07],c:'#c0221b',tip:'Pump motor'},{id:'VALVE',p:[-0.08,0.07],c:'#c0221b',tip:'Drain solenoid valve'},{id:'LS LOW',p:[0.08,0.07],c:'#e2b21c',tip:'Low-level switch'},{id:'LS HIGH',p:[0.18,0.07],c:'#e2b21c',tip:'High-level switch'}];
+  const W=wiring(K,pp,s,defs,0.03);d._w=W;W.panel(0.5,0.36,[['PLC OUTPUTS',0.06,0.16],['PLC INPUTS',0.58,0.16],['PROCESS DEVICES',0.06,0.6],['LEVEL SWITCHES',0.58,0.6]],'PLC CONNECTIONS');
+  btn(K,pp,[-0.03,0.037,-0.03],'#2f9b55','run','RUN');btn(K,pp,[0.03,0.037,-0.03],'#c0221b','stop','STOP');
+  const g=refs.g,wat=Cy(0.052,1,M('#3b82c4',{a:.5}),[0,0.3,0.04],24);g.add(wat);const lamp=k.Cz(0.012,0.01,M('#39d353',{e:'#39d353'}),[-0.3,0.78,0.04],12);g.add(lamp);
+  return (s2,dt)=>{dt=Math.min(dt||0.016,0.05);const hi=s.lv>=0.9,lo=s.lv<=0.1;s.pOn=false;s.vOn=false;
+   if(s.run){if(s.fill&&hi&&W.has('LS HIGH','I1'))s.fill=false;if(!s.fill&&lo&&W.has('LS LOW','I0'))s.fill=true;s.pOn=s.fill&&W.has('Q0','PUMP');s.vOn=!s.fill&&W.has('Q1','VALVE');
+    if(s.fill&&s.lv>=1&&!W.has('LS HIGH','I1')){s.run=false;toast('Tank overflowed: the PLC never saw the high-level switch. Join LS HIGH to input I1.');}
+    if(s.fill&&!s.pOn&&performance.now()-s.warn>6000){s.warn=performance.now();toast('Output Q0 is on but nothing is connected to the pump. Join Q0 to PUMP.');}
+    if(!s.fill&&!s.vOn&&performance.now()-s.warn>6000){s.warn=performance.now();toast('Output Q1 is on but the drain valve is not connected. Join Q1 to VALVE.');}}
+   s.lv=clamp(s.lv+((s.pOn?0.16:0)-(s.vOn?0.2:0))*dt,0,1);const h=0.19*s.lv+0.002;wat.s=[1,h,1];wat.p[1]=0.235+h/2;lamp.mat.e=s.run?'#39d353':'#1d3b22';lamp.mat.c=s.run?'#39d353':'#27402b';};});
+
+/* ---------- Process trainer: level control loop ---------- */
+wrap('process',{params:[{id:'sp',min:0,max:100,step:1}],hint:'Close the loop with two leads: CONTROLLER OUT to PUMP DRIVE, and LEVEL TX to PV IN. Drag the black knob to change the set point and watch the level follow.',
+ hud:s=>[['Set point',s.sp+' %'],['Level (PV)',(s.lv*100).toFixed(1)+' %'],['Controller output',Math.round(s.u*100)+' %'],['Loop',s.closed?'Closed (PI)':s.open?'Open (manual)':'Not wired']],
+ onHit(s,id){if(id.startsWith('sk:'))this._w.hit(id);}},
+ (K,s,refs,R,d)=>{const k=kit4(K),{M,Cy}=k,pp=refs.pp;Object.assign(s,{sp:50,lv:0.2,u:0,I:0,closed:false,open:false});
+  const defs=[{id:'CONTROLLER OUT',p:[-0.15,-0.08],c:'#1f5fb4'},{id:'PV IN',p:[0.15,-0.08],c:'#2f9b55'},{id:'PUMP DRIVE',p:[-0.15,0.07],c:'#c0221b'},{id:'LEVEL TX',p:[0.15,0.07],c:'#e2b21c'}];
+  const W=wiring(K,pp,s,defs,0.03);d._w=W;W.panel(0.46,0.32,[['SET POINT',0.42,0.42]],'PROCESS CONTROL');knob(K,pp,[0,0.042,0.0],'sp','Set point (drag)');
+  const g=refs.g,wat=Cy(0.08,1,M('#3b82c4',{a:.4}),[0.02,0.55,0.02],30);g.add(wat);const mark=k.B(0.19,0.004,0.004,M('#c0221b'),[0.02,0.6,0.11]);g.add(mark);
+  return (s2,dt)=>{dt=Math.min(dt||0.016,0.05);s.open=W.has('CONTROLLER OUT','PUMP DRIVE');s.closed=s.open&&W.has('LEVEL TX','PV IN');
+   if(s.closed){const e=s.sp/100-s.lv;s.I=clamp(s.I+e*dt*0.6,-1,1);s.u=clamp(2.2*e+s.I,0,1);}else if(s.open){s.u=s.sp/100;s.I=0;}else{s.u=0;s.I=0;}
+   s.lv=clamp(s.lv+(0.22*s.u-0.14*Math.sqrt(Math.max(s.lv,0)))*dt,0,1);const h=0.32*s.lv+0.002;wat.s=[1,h,1];wat.p[1]=0.5+h/2;mark.p[1]=0.5+0.32*s.sp/100;};});
+
+/* ---------- Series and parallel pumps ---------- */
+wrap('pumps',{params:[{id:'thr',min:10,max:100,step:1}],hint:'Click a blue motor to start or stop that pump. Click the red valve handles: V1 pump 1 delivery, V2 pump 2 delivery, V3 pump 2 suction from the tank, V4 crossover (pump 1 into pump 2). Drag the black wheel to throttle the outlet.',
+ hud:s=>[['Arrangement',s.mode],['Flow',s.Q.toFixed(2)+' L/s'],['Pump 1 delivery',s.P1.toFixed(2)+' bar'],['Pump 2 delivery',s.P2.toFixed(2)+' bar'],['Total head',s.H.toFixed(1)+' m'],['Outlet valve',s.thr+' % open']],
+ onHit(s,id){if(id==='m0')s.on[0]=!s.on[0];else if(id==='m1')s.on[1]=!s.on[1];else if(id[0]==='v'){const i=+id[1];s.v[i]=!s.v[i];}}},
+ (K,s,refs)=>{const k=kit4(K);Object.assign(s,{on:[false,false],v:[true,false,false,false],thr:60,Q:0,P1:0,P2:0,H:0,mode:'Stopped',q:0});
+  refs.m.forEach((n,i)=>{n.pick='m'+i;n.tip=()=>'Pump '+(i+1)+': '+(s.on[i]?'running (click to stop)':'stopped (click to start)');});
+  const order=[2,3,0,1];/* handle order on the rig -> V1..V4 */const names=['V1 pump 1 delivery','V2 pump 2 delivery','V3 pump 2 suction','V4 crossover'];
+  [2,3,1,0].forEach((ri,vi)=>{const n=refs.v[ri];n.pick='v'+vi;n.tip=()=>names[vi]+': '+(s.v[vi]?'open':'closed');K.label('V'+(vi+1),n,[0,0.03,0],{});});
+  knob(K,refs.g,[0.5,0.3,0.14],'thr','Outlet valve (drag)','z');K.label('Outlet valve',refs.g,[0.56,0.36,0.14]);
+  return (s2,dt,t)=>{dt=Math.min(dt||0.016,0.05);const H0=11,kq=6,[a,b]=s.on,[V1,V2,V3,V4]=s.v;let Hs=0,kk=1,mode='No flow path';
+   if(a&&b&&V4&&V2&&!V1&&!V3){Hs=2*H0;kk=2*kq;mode='Series';}else if(a&&b&&V1&&V2&&V3&&!V4){Hs=H0;kk=kq/4;mode='Parallel';}else if(a&&V1&&!V4){Hs=H0;kk=kq;mode='Pump 1 alone';}else if(b&&V2&&V3&&!V4){Hs=H0;kk=kq;mode='Pump 2 alone';}else if(!a&&!b)mode='Stopped';
+   const c=18/Math.pow(s.thr/100,2),Qt=Hs?Math.sqrt(Hs/(kk+c)):0;s.q+=(Qt-s.q)*Math.min(1,dt*3);s.Q=s.q;s.H=s.q>0.01?Hs-kk*s.q*s.q:0;s.mode=mode;
+   const h1=a?(mode==='Parallel'?H0-kq*s.q*s.q/4:H0-kq*s.q*s.q):0,h2=b?(mode==='Series'?s.H:mode==='Parallel'?h1:mode==='Pump 2 alone'?s.H:H0):0;s.P1=Math.max(0,h1)*0.0981;s.P2=Math.max(0,h2)*0.0981;
+   const ang=p=>2.2-clamp(p/2.5,0,1)*4.4;refs.ga[0].r[2]=ang(0.2+s.q*0.05);refs.ga[1].r[2]=ang(s.P1);refs.ga[2].r[2]=ang(s.P2);
+   refs.m.forEach((n,i)=>{n.mat.e=s.on[i]?'#0a2a66':null;n.p[1]=0.25+(s.on[i]?0.0012*Math.sin(t*90+i):0);});refs.v.forEach((n,ri)=>{const vi=[3,2,0,1][ri];n.r[1]=s.v[vi]?0:PI/2;n.mat.c=s.v[vi]?'#c0221b':'#6d1512';});};});
+
+/* ---------- Pendulum impact tester ---------- */
+wrap('charpy',{hint:'Click the pendulum to raise and latch it, then click it again to release. The pointer stays at the energy the specimen absorbed.',
+ hud:s=>[['Pendulum',{down:'At rest',up:'Latched at 125°',swing:'Swinging',done:'Test done'}[s.st]],['Release angle','125°'],['Rise after impact',s.rise?s.rise.toFixed(1)+'°':'—'],['Energy absorbed',s.E?s.E.toFixed(0)+' J':'—'],['Capacity','300 J']],
+ onHit(s,id){if(id!=='pend')return;if(s.st==='down'||s.st==='done'){s.st='lift';s.E=0;s.rise=0;}else if(s.st==='up'){s.st='swing';s.w=0;s.hit=false;s.max=0;}}},
+ (K,s,refs)=>{Object.assign(s,{st:'down',th:0,w:0,E:0,rise:0,hit:false,max:0});const pen=refs.pen;each(pen,n=>{if(n.geo){n.pick='pend';n.tip=()=>s.st==='up'?'Release the pendulum':'Raise and latch the pendulum';}});
+  const TH=125*PI/180,Emax=300,eOf=th=>Emax*(1-Math.cos(th))/(1-Math.cos(TH)),W2=13;
+  return (s2,dt)=>{dt=Math.min(dt||0.016,0.03);
+   if(s.st==='lift'){s.th=Math.min(TH,s.th+dt*1.6);refs.spec.vis=true;refs.spec.p=[0,0.345,0.08];refs.spec.r=[0,0,0];if(s.th>=TH)s.st='up';}
+   else if(s.st==='swing'){for(let i=0;i<4;i++){const h=dt/4;s.w+=-W2*Math.sin(s.th)*h;const th1=s.th+s.w*h;
+      if(!s.hit&&s.th>0&&th1<=0){s.hit=true;const KE=eOf(TH),Ea=95+Math.random()*60;s.Eabs=Ea;s.w*=Math.sqrt(Math.max(0.05,1-Ea/KE));s.sv=[-1.6,1.2];}
+      s.th=th1;}if(s.hit){s.max=Math.max(s.max,-s.th);if(s.w>0&&!s.E){s.rise=s.max*180/PI;s.E=Emax-eOf(s.max);}s.w*=(1-0.5*dt);if(refs.spec.vis&&s.sv){refs.spec.p[0]+=s.sv[0]*dt;refs.spec.p[1]+=s.sv[1]*dt;s.sv[1]-=6*dt;refs.spec.r[2]+=9*dt;if(refs.spec.p[1]<0.18)refs.spec.vis=false;}
+      if(s.E&&Math.abs(s.th)<0.02&&Math.abs(s.w)<0.08){s.th=0;s.w=0;s.st='done';}}}
+   pen.r[2]=s.th;refs.ptr.r[2]=-(PI*0.75+(s.E||0)/300*PI*1.5)-PI/2;};});
+
+/* ---------- Universal testing machine ---------- */
+wrap('utm',{hint:'Click the handset to start the tensile test. The crosshead rises, the specimen stretches, necks and breaks. Click the handset again to return and fit a new specimen.',
+ hud:s=>[['Test',{idle:'Ready',run:'Running',broke:'Specimen broken'}[s.st]],['Extension',(s.e*1000).toFixed(2)+' mm'],['Load',s.F.toFixed(2)+' kN'],['Stress',s.sig.toFixed(0)+' MPa'],['Peak load',s.Fm.toFixed(2)+' kN']],
+ onHit(s,id){if(id!=='hs')return;if(s.st==='idle')s.st='run';else if(s.st==='broke'){s.st='idle';s.e=0;s.F=0;s.sig=0;s.Fm=0;}}},
+ (K,s,refs)=>{const k=kit4(K),{M,B}=k;Object.assign(s,{st:'idle',e:0,F:0,sig:0,Fm:0});each(refs.hs,n=>{if(n.geo){n.pick='hs';n.tip=()=>s.st==='idle'?'Start test':s.st==='broke'?'Return crosshead, new specimen':'Test running';}});
+  const sm=M('#c9cdd2',{m:1,r:.25}),hA=B(0.02,1,0.004,sm,[0,0,0]),hB=B(0.02,1,0.004,sm,[0,0,0]);hA.vis=hB.vis=false;refs.g.add(hA);refs.g.add(hB);
+  const L0=0.1,sigOf=e=>{const E=70000,sy=275,eu=0.11,su=320,ef=0.15;if(e<sy/E)return E*e;if(e<eu)return sy+(su-sy)*Math.sqrt((e-sy/E)/(eu-sy/E));return su-(su-250)*Math.pow((e-eu)/(ef-eu),2);};
+  return (s2,dt)=>{dt=Math.min(dt||0.016,0.05);if(s.st==='run'){s.e+=dt*0.0022;const st=s.e/L0;s.sig=sigOf(st);s.F=s.sig*80/1000;s.Fm=Math.max(s.Fm,s.F);if(st>=0.15){s.st='broke';s.F=0;s.sig=0;toast('Specimen broke after necking. Peak load '+s.Fm.toFixed(2)+' kN.');}}
+   const vis=s.e*6;refs.xh.p[1]=1.2+vis;const brk=s.st==='broke';refs.spec.vis=!brk;refs.spec.s=[1-Math.min(0.5,vis*1.2),1+vis/0.36,1];refs.spec.p[1]=0.7+vis/2;hA.vis=hB.vis=brk;if(brk){const L=0.17;hA.s=[0.6,L,1];hB.s=[0.6,L,1];hA.p=[0,0.52+L/2,0];hB.p=[0,0.88+vis-L/2,0];}};});
+
+/* ---------- Free and forced vibration ---------- */
+wrap('vibration',{params:[{id:'rpm',min:0,max:900,step:5}],hint:'Drag the black speed knob on the control box. The beam amplitude peaks when the exciter speed matches the natural frequency (about 7 Hz, 420 rev/min).',
+ hud:s=>[['Exciter speed',s.rpm+' rev/min'],['Forcing frequency',(s.rpm/60).toFixed(2)+' Hz'],['Natural frequency','7.00 Hz'],['Frequency ratio',(s.rpm/420).toFixed(2)],['Amplitude at beam end',(s.A*1000).toFixed(1)+' mm']]},
+ (K,s,refs)=>{Object.assign(s,{rpm:0,A:0,ph:0});knob(K,refs.g,[-0.52,0.33,0.09],'rpm','Exciter speed (drag)','z');K.label('Speed knob',refs.g,[-0.52,0.4,0.1]);
+  return (s2,dt)=>{dt=Math.min(dt||0.016,0.05);const r=s.rpm/420,z=0.06;const At=0.0016*r*r/Math.sqrt(Math.pow(1-r*r,2)+Math.pow(2*z*r,2));s.A+=(At-s.A)*Math.min(1,dt*2);s.ph+=dt*s.rpm/60*2*PI;refs.bm.r[2]=Math.atan(s.A/0.78*3)*Math.sin(s.ph);};});
+
+/* ---------- Wind tunnel ---------- */
+wrap('wind',{params:[{id:'spd',min:0,max:100,step:1},{id:'aoa',min:-4,max:20,step:0.5}],hint:'Drag the left knob for fan speed and the right knob for the aerofoil angle. Lift rises with angle until the aerofoil stalls near 14°.',
+ hud:s=>[['Fan speed',s.spd+' %'],['Air speed',s.V.toFixed(1)+' m/s'],['Angle of attack',s.aoa.toFixed(1)+'°'],['Lift',s.L.toFixed(2)+' N'],['Drag',s.D.toFixed(2)+' N'],['State',s.aoa>14?'Stalled':'Attached flow']]},
+ (K,s,refs)=>{Object.assign(s,{spd:0,aoa:8,V:0,L:0,D:0,acc:0});const g=refs.g;knob(K,g,[-0.54,0.13,0.17],'spd','Fan speed (drag)','z');knob(K,g,[-0.38,0.13,0.17],'aoa','Aerofoil angle (drag)','z');K.pcap(160);
+  return (s2,dt)=>{dt=Math.min(dt||0.016,0.05);s.V=0.36*s.spd;const q=0.5*1.2*s.V*s.V,S=0.0144,a=s.aoa,CL=a<=14?0.1*(a+2):Math.max(0.5,1.6-0.12*(a-14)),CD=0.02+0.0006*a*a+(a>14?0.12:0);s.L=q*S*CL;s.D=q*S*CD;refs.af.r[0]=a*PI/180;
+   s.acc+=dt*s.V*1.2;while(s.acc>1&&s.V>0){s.acc-=1;const y=refs.AX+(Math.random()-0.5)*0.14,z=(Math.random()-0.5)*0.12,v=0.25+s.V/36*0.9;K.emit({p:[-0.68+0.0,0.9+y,z],v:[v,(a>14?(Math.random()-0.5)*0.25:-a*0.004)*v,0],life:0.44/v,size:0.006,c:a>14?'#e08a1c':'#4da3ff',a:.8});}};});
+
+/* ---------- Multi-tube manometer ---------- */
+wrap('manometer',{params:[{id:'flow',min:0,max:100,step:1}],hint:'Drag the black wheel to change the air flow. Each tube shows the static pressure at its tapping: the level drops most where the section is narrowest.',
+ hud:s=>[['Air flow',s.flow+' %'],['Highest tube',(s.hi*1000).toFixed(0)+' mm'],['Lowest tube',(s.lo*1000).toFixed(0)+' mm'],['Largest difference',((s.hi-s.lo)*1000).toFixed(0)+' mm']]},
+ (K,s,refs)=>{Object.assign(s,{flow:40,hi:0,lo:0});knob(K,refs.g,[0.26,0.08,0.06],'flow','Air flow (drag)','z');K.label('Flow valve',refs.g,[0.34,0.12,0.06]);const cur=refs.w.map(()=>0.7);
+  return (s2,dt)=>{dt=Math.min(dt||0.016,0.05);const f=Math.pow(s.flow/100,2);let hi=0,lo=9;refs.w.forEach((n,i)=>{const x=i/13,shape=Math.exp(-Math.pow((x-0.42)/0.16,2))+0.25*x;const t=0.72-0.5*f*shape;cur[i]+=(t-cur[i])*Math.min(1,dt*4);n.s=[1,cur[i],1];n.p[1]=0.13+cur[i]/2;hi=Math.max(hi,cur[i]);lo=Math.min(lo,cur[i]);});s.hi=hi;s.lo=lo;};});
+})();
+
+/* Interaction layer, part 2: the remaining rigs. Models are simplified teaching models, not calibrated to the manuals. */
+(function(){const PI=Math.PI,by=id=>NEW3D.find(d=>d.id===id),clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),f1=v=>v.toFixed(1),f2=v=>v.toFixed(2),f0=v=>v.toFixed(0);
+function rig(id,o){const d=by(id);if(!d)return;d.live=true;d.hint=o.hint;d.hud=o.hud;d.params=o.params||[];d._knobs=o.knobs||[];d._btns=o.btns||[];d.onHit=function(s,hid){if(o.hit)o.hit(s,hid,this);};const b0=d.view3d.build;
+ d.view3d.build=(K,s0,st)=>{const sc=b0(K,d.s,st),s=d.s,k=kit4(K);Object.assign(s,JSON.parse(JSON.stringify(o.init||{})));const g=sc.refs.g||sc.root;
+  (o.knobs||[]).forEach(q=>{const mk=q.axis==='y'?k.Cy:k.Cz;const n=mk(0.026,0.024,k.M('#1d1f22',{r:.4}),q.p,20);n.pick='knob:'+q.id;n.tip=q.tip+' (drag)';g.add(n);g.add(mk(0.009,0.028,k.M('#e9ebe8'),q.p,10));K.label(q.tip,g,[q.p[0],q.p[1]+0.06,q.p[2]]);});
+  (o.btns||[]).forEach(q=>{const mk=q.axis==='y'?k.Cy:k.Cz;const n=mk(0.022,0.02,k.M(q.c||'#2f9b55',{r:.4}),q.p,18);n.pick=q.id;n.tip=q.tip;g.add(n);K.label(q.tip,g,[q.p[0],q.p[1]+0.055,q.p[2]]);});
+  const ex=o.setup?o.setup(K,s,sc.refs,g,k,d):null;sc.update=(s2,dt,t)=>{dt=Math.min(dt||0.016,0.05);o.step(s,dt,t,sc.refs,ex,K);};return sc;};}
+const lag=(s,key,target,dt,rate)=>{s[key]+=(target-s[key])*Math.min(1,dt*(rate||2));};
+
+/* ---- Losses in pipe systems ---- */
+rig('pipes',{params:[{id:'flow',min:0,max:100,step:1}],init:{flow:40,q:0,dh:[0,0,0,0,0,0,0]},knobs:[{id:'flow',p:[-0.78,0.42,0.07],tip:'Flow control valve'}],
+ hint:'Drag the flow control valve. Each pair of tubes is one test section: the gap between the two levels is the head lost there, and it grows with the square of the flow.',
+ hud:s=>[['Flow',f2(s.q*0.35)+' L/s'],['Smooth pipe loss',f0(s.dh[0]*1000)+' mm'],['Rough pipe loss',f0(s.dh[3]*1000)+' mm'],['Bend loss',f0(s.dh[4]*1000)+' mm'],['Valve loss',f0(s.dh[6]*1000)+' mm'],['Supply pressure',f2(0.3+1.4*s.q*s.q)+' bar']],
+ step(s,dt,t,r){lag(s,'q',s.flow/100,dt,3);const K=[0.16,0.2,0.26,0.42,0.22,0.3,0.36];K.forEach((k,i)=>{s.dh[i]=k*s.q*s.q;const up=0.62-0.05*s.q*s.q*(i/6),a=r.w[2*i],b=r.w[2*i+1];a.s=[1,up,1];a.p[1]=0.4+up/2;const dn=Math.max(0.03,up-s.dh[i]);b.s=[1,dn,1];b.p[1]=0.4+dn/2;});r.ga.r[2]=2.2-clamp((0.3+1.4*s.q*s.q)/2.5,0,1)*4.4;}});
+
+/* ---- Centre of pressure ---- */
+rig('cop',{params:[{id:'h',min:0,max:160,step:1}],init:{h:60,m:100,tilt:0,F:0,mb:0,ycp:0},knobs:[{id:'h',p:[0.3,0.12,0.2],tip:'Water depth',axis:'y'}],btns:[{id:'add',p:[-0.3,0.08,0.12],tip:'Add 50 g',c:'#c9a43a',axis:'y'},{id:'rem',p:[-0.2,0.08,0.12],tip:'Remove 50 g',c:'#8f959b',axis:'y'}],
+ hint:'Set the water depth with the knob, then add or remove 50 g masses until the balance arm sits level. The mass needed tells you where the centre of pressure is.',
+ hit(s,id){if(id==='add')s.m=Math.min(600,s.m+50);if(id==='rem')s.m=Math.max(0,s.m-50);},
+ hud:s=>[['Water depth h',s.h+' mm'],['Hanger mass',s.m+' g'],['Hydrostatic force',f2(s.F)+' N'],['Mass to balance',f0(s.mb)+' g'],['Centre of pressure',s.ycp?f0(s.ycp)+' mm below surface':'—'],['Arm',Math.abs(s.m-s.mb)<25?'Level ✓':s.m>s.mb?'Hanger side down':'Tank side down']],
+ step(s,dt,t,r){const h=s.h/1000,B=0.075,D=0.1,R2=0.2,L=0.275,rg=9810;let F,M,y;if(h<=D){F=rg*B*h*h/2;y=2*h/3;M=F*(R2-h/3);}else{const hc=h-D/2;F=rg*B*D*hc;y=hc+D*D/(12*hc);M=F*(R2-h+y);}s.F=F;s.ycp=h>0?y*1000:0;s.mb=M/(9.81*L)*1000;
+  lag(s,'tilt',clamp((s.m-s.mb)/400,-0.16,0.16),dt,2.5);r.piv.r[2]=s.tilt;const wh=Math.min(0.19,h*1.0)+0.002;r.wat.s=[1,wh,1];r.wat.p[1]=0.265+wh/2;}});
+
+/* ---- Hydrostatics bench: hydrometers ---- */
+rig('hydro',{init:{sel:0},hint:'Click a hydrometer jar to read the liquid in it. A denser liquid pushes the hydrometer higher, so less of the stem is under the surface.',
+ hit(s,id){if(id[0]==='j')s.sel=+id[1];},
+ hud:s=>{const L=[['Water',1.0],['Cooking oil',0.92],['Glycerol',1.26]][s.sel];return [['Liquid',L[0]],['Relative density',f2(L[1])],['Density',f0(L[1]*1000)+' kg/m³'],['Stem under surface',f0(60/L[1])+' mm']];},
+ setup(K,s,r,g,k){const hs=[];[-0.2,-0.1,0.0].forEach((x,i)=>{const rd=[1,0.92,1.26][i],q=K.group({p:[x,1.02+0.06*(rd-0.9),-0.2]});g.add(q);const a=k.Cy(0.004,0.22,k.M('#f4f4ee'),[0,0.1,0],8),b=k.Cy(0.012,0.07,k.M('#d7d9da',{a:.8}),[0,-0.04,0],12);[a,b].forEach(n=>{n.pick='j'+i;n.tip='Hydrometer '+(i+1);q.add(n);});hs.push(q);});return hs;},
+ step(s,dt,t,r,hs){hs.forEach((q,i)=>{q.s=i===s.sel?[1.6,1,1.6]:[1,1,1];});}});
+
+/* ---- Wind energy module ---- */
+rig('windenergy',{params:[{id:'v',min:0,max:12,step:0.1},{id:'R',min:5,max:200,step:1}],init:{v:0,R:50,n:0,V:0,I:0,P:0},knobs:[{id:'v',p:[-0.36,0.105,0.38],tip:'Wind speed',axis:'y'},{id:'R',p:[-0.2,0.105,0.44],tip:'Load resistance',axis:'y'}],
+ hint:'Raise the wind speed, then change the load resistance. Power is highest when the load matches the generator, not at the lowest or highest resistance.',
+ hud:s=>[['Wind speed',f1(s.v)+' m/s'],['Rotor speed',f0(s.n)+' rev/min'],['Voltage',f2(s.V)+' V'],['Current',f0(s.I*1000)+' mA'],['Electrical power',f2(s.P)+' W'],['Load',s.R+' Ω']],
+ step(s,dt,t,r,ex,K){const e=1.9*s.v,Ri=40;s.I=e/(Ri+s.R);s.V=s.I*s.R;s.P=s.V*s.I;lag(s,'n',s.v*190*(1-0.35*Ri/(Ri+s.R)),dt,1.5);if(s.v>0&&Math.random()<s.v*dt*4)K.emit({p:[0.1,0.9+0.2+(Math.random()-0.5)*0.12,-0.05+(Math.random()-0.5)*0.12],v:[0.15+s.v*0.06,0,0],life:0.9,size:0.006,c:'#4da3ff',a:.7});}});
+
+/* ---- Torsion ---- */
+rig('torsion',{params:[{id:'th',min:0,max:60,step:0.5}],init:{th:0,T:0,tau:0,ty:1},knobs:[{id:'th',p:[0.4,0.38,0.0],tip:'Handwheel: twist'}],
+ hint:'Turn the handwheel to twist the specimen. Torque rises in a straight line until the surface yields, then flattens.',
+ hud:s=>[['Angle of twist',f1(s.th)+'°'],['Torque',f2(s.T)+' N·m'],['Surface shear stress',f0(s.tau)+' MPa'],['Behaviour',s.th<s.ty?'Elastic':'Yielding'],['Shear modulus used','26 GPa (aluminium)']],
+ setup(K,s,r,g,k){const q=K.group({p:[0.29,0.28,0]});q.add(k.B(0.004,0.075,0.006,k.M('#c0221b'),[0,0.037,0]));g.add(q);return q;},
+ step(s,dt,t,r,q){const G=26e9,d=0.006,L=0.44,J=PI*Math.pow(d,4)/32,ty=180e6*L/(G*d/2)*180/PI;s.ty=ty;const th=s.th*PI/180,Te=G*J*th/L,Ty=G*J*(ty*PI/180)/L;s.T=s.th<ty?Te:Ty*(1+0.33*(1-Math.exp(-(s.th-ty)/12)));s.tau=s.T*(d/2)/J/1e6;q.r[0]=-th;}});
+
+/* ---- Rotating fatigue ---- */
+rig('fatigue',{params:[{id:'W',min:10,max:80,step:1}],init:{W:40,on:false,N:0,broke:false,S:0,Nf:1},knobs:[{id:'W',p:[-0.36,0.06,0.2],tip:'Load on hanger',axis:'y'}],btns:[{id:'go',p:[0.39,0.07,0.1],tip:'Start / stop motor'}],
+ hint:'Set the load on the hanger, then start the motor. Every turn reverses the bending stress; the counter runs until the specimen breaks. Heavier load, far fewer cycles.',
+ hit(s,id){if(id==='go'){if(s.broke){s.broke=false;s.N=0;}s.on=!s.on;}},
+ hud:s=>[['Motor',s.on?'Running':'Stopped'],['Hanger load',s.W+' N'],['Stress amplitude',f0(s.S)+' MPa'],['Cycles',Math.round(s.N).toLocaleString('en-US')],['Predicted life',Math.round(s.Nf).toLocaleString('en-US')],['Specimen',s.broke?'Broken':'Intact']],
+ step(s,dt){s.S=s.W*0.125*32/(PI*Math.pow(0.008,3))/1e6;s.Nf=Math.pow(900/s.S,8.2);if(s.on&&!s.broke){s.N+=dt*Math.max(50,s.Nf/12);if(s.N>=s.Nf){s.N=s.Nf;s.broke=true;s.on=false;toast('Specimen broke at '+Math.round(s.Nf).toLocaleString('en-US')+' cycles. Press start to fit a new one.');}}}});
+
+/* ---- Forces in a truss ---- */
+rig('truss',{params:[{id:'W',min:0,max:500,step:5}],init:{W:100,w:0},knobs:[{id:'W',p:[0,0.2,0.06],tip:'Screw jack load'}],
+ hint:'Turn the screw jack to load the middle joint. Diagonals near the supports go into compression, the bottom chord into tension. Negative means compression.',
+ hud:s=>[['Load W',f0(s.w)+' N'],['End diagonals',f0(-0.559*s.w)+' N'],['Inner diagonals',f0(0.559*s.w)+' N'],['Top chord',f0(-0.5*s.w)+' N'],['Bottom chord, ends',f0(0.25*s.w)+' N'],['Bottom chord, middle',f0(0.75*s.w)+' N']],
+ step(s,dt){lag(s,'w',s.W,dt,4);}});
+
+/* ---- Bending stress ---- */
+rig('bending',{params:[{id:'W',min:0,max:500,step:5}],init:{W:100,w:0},knobs:[{id:'W',p:[0.12,1.02,0.06],tip:'Load'}],
+ hint:'Increase the load. Between the two load points the bending moment is constant, so strain changes in a straight line down the section and is zero at the neutral axis.',
+ hud:s=>{const M=s.w/2*0.25,I=3.0e-8,E=69e9,e=y=>M*y/(E*I)*1e6;return [['Load',f0(s.w)+' N'],['Bending moment',f2(M)+' N·m'],['Strain, top of web',f0(e(0.026))+' µε'],['Strain, mid web',f0(e(0.006))+' µε'],['Strain, flange',f0(e(-0.012))+' µε'],['Neutral axis','12 mm above the base']];},
+ step(s,dt){lag(s,'w',s.W,dt,4);}});
+
+/* ---- Buckling ---- */
+rig('buckling',{params:[{id:'P',min:0,max:260,step:1}],init:{P:0,d:0},knobs:[{id:'P',p:[0.62,0.46,0.0],tip:'Handwheel: load'}],
+ hint:'Wind the handwheel to load the strut. The sideways deflection stays small, then runs away as the load nears the Euler buckling load.',
+ hud:s=>[['Axial load',s.P+' N'],['Euler buckling load','248 N (pinned ends)'],['Mid-span deflection',f1(s.d*1000)+' mm'],['Load / buckling load',f2(s.P/248)],['State',s.P<200?'Stable':s.P<248?'Close to buckling':'Buckled']],
+ step(s,dt,t,r){const tgt=clamp(0.0012/Math.max(0.02,1-s.P/248),0,0.07);lag(s,'d',tgt,dt,3);r.strut.s=[1,1,s.d/0.05*1+0.02];}});
+
+/* ---- Beam apparatus ---- */
+rig('beams',{init:{n:2},btns:[{id:'add',p:[0.0,0.6,0.04],tip:'Add 10 N at mid-span',c:'#c9a43a'},{id:'rem',p:[0.14,0.6,0.04],tip:'Remove 10 N',c:'#8f959b'}],
+ hint:'Add or remove 10 N at mid-span. Each support takes half the load, and the dial gauge shows the deflection, which doubles when the load doubles.',
+ hit(s,id){if(id==='add')s.n=Math.min(10,s.n+1);if(id==='rem')s.n=Math.max(0,s.n-1);},
+ hud:s=>{const W=s.n*10,d=W*1/(48*200e9*3.42e-10)*1000;return [['Load at mid-span',W+' N'],['Left reaction',f1(W/2)+' N'],['Right reaction',f1(W/2)+' N'],['Deflection',f2(d)+' mm'],['Span','1000 mm'],['Beam','Steel, 19 × 6 mm']];},
+ step(s,dt,t,r){const d=s.n*10/(48*200e9*3.42e-10);r.beam.p[1]=0.324-Math.min(0.02,d*3);}});
+
+/* ---- Pin-jointed frameworks ---- */
+rig('frameworks',{params:[{id:'W',min:0,max:300,step:5}],init:{W:50,w:0},knobs:[{id:'W',p:[0.06,0.4,0.12],tip:'Load at the free joint'}],
+ hint:'Increase the load on the free joint of the cantilever frame. The top members go into tension, the bottom members into compression.',
+ hud:s=>[['Load',f0(s.w)+' N'],['Top member at wall',f0(2.36*s.w)+' N'],['Bottom member at wall',f0(-2.36*s.w)+' N'],['Outer diagonal',f0(1.55*s.w)+' N'],['Vertical',f0(-s.w)+' N'],['Free-joint deflection',f2(s.w*0.0042)+' mm']],
+ step(s,dt){lag(s,'w',s.W,dt,4);}});
+
+/* ---- Steam plant ---- */
+rig('steam',{params:[{id:'Q',min:0,max:100,step:1}],init:{Q:0,on:false,p:0,n:0},knobs:[{id:'Q',p:[0.72,1.12,0.2],tip:'Heater power'}],btns:[{id:'go',p:[0.32,0.38,0.31],tip:'Isolator on / off',c:'#c0221b'}],
+ hint:'Switch the isolator on, then raise the heater power. Pressure builds in the boiler first; the turbine only spins once there is steam to drive it.',
+ hit(s,id){if(id==='go')s.on=!s.on;},
+ hud:s=>[['Supply',s.on?'ON':'OFF'],['Heater power',f0(s.on?s.Q*30:0)+' W'],['Boiler pressure',f2(s.p)+' bar gauge'],['Steam temperature',f0(100+28*Math.sqrt(s.p))+' °C'],['Turbine speed',f0(s.n)+' rev/min'],['Generator output',f1(s.n*s.n/9e5)+' W']],
+ step(s,dt,t,r,ex,K){lag(s,'p',s.on?s.Q/100*4:0,dt,0.25);lag(s,'n',Math.max(0,s.p-0.6)*1900,dt,0.8);if(s.p>0.4&&Math.random()<dt*s.p*8)K.emit({p:[-0.25,1.02,0.05],v:[(Math.random()-0.5)*0.05,0.18,(Math.random()-0.5)*0.05],life:1.2,size:0.02,grow:2,c:'#ffffff',a:.35});}});
+
+/* ---- Refrigeration ---- */
+rig('refrig',{params:[{id:'x',min:10,max:100,step:1}],init:{x:50,on:false,pe:5,pc:5},knobs:[{id:'x',p:[-0.02,0.08,0.26],tip:'Expansion valve'}],btns:[{id:'go',p:[0.3,0.3,0.26],tip:'Compressor on / off'}],
+ hint:'Start the compressor, then open or close the expansion valve. The two pressures move apart as the cycle settles; closing the valve lowers the evaporating pressure and temperature.',
+ hit(s,id){if(id==='go')s.on=!s.on;},
+ hud:s=>{const te=-26+8.2*(s.pe-1),tc=-26+8.2*(s.pc-1)*0.92+14;return [['Compressor',s.on?'Running':'Off'],['Evaporating pressure',f2(s.pe)+' bar'],['Condensing pressure',f2(s.pc)+' bar'],['Evaporator temperature',f1(te)+' °C'],['Condenser temperature',f1(tc)+' °C'],['COP (cooling)',s.on&&s.pc-s.pe>0.5?f1(clamp((te+273)/(tc-te)*0.55,0.5,9)):'—']];},
+ step(s,dt){lag(s,'pe',s.on?1.2+2.2*s.x/100:5,dt,0.5);lag(s,'pc',s.on?9.5-1.5*s.x/100:5,dt,0.5);}});
+
+/* ---- Heat exchanger ---- */
+rig('hx',{params:[{id:'mh',min:0.5,max:4,step:0.1},{id:'mc',min:0.5,max:4,step:0.1}],init:{mh:2,mc:2,cf:true},knobs:[{id:'mh',p:[0.2,0.3,0.34],tip:'Hot flow'},{id:'mc',p:[0.32,0.3,0.34],tip:'Cold flow'}],btns:[{id:'dir',p:[-0.2,0.2,0.34],tip:'Swap parallel / counter flow',c:'#1f5fb4'}],
+ hint:'Change the hot and cold flows, and swap between parallel and counter flow. Counter flow gives the larger temperature change for the same flows.',
+ hit(s,id){if(id==='dir')s.cf=!s.cf;},
+ hud:s=>{const Ch=s.mh/60*4186,Cc=s.mc/60*4186,Cmin=Math.min(Ch,Cc),Cr=Cmin/Math.max(Ch,Cc),NTU=95/Cmin,e=s.cf?(Cr>0.999?NTU/(1+NTU):(1-Math.exp(-NTU*(1-Cr)))/(1-Cr*Math.exp(-NTU*(1-Cr)))):(1-Math.exp(-NTU*(1+Cr)))/(1+Cr),Q=e*Cmin*(60-20);return [['Arrangement',s.cf?'Counter flow':'Parallel flow'],['Hot in → out','60.0 → '+f1(60-Q/Ch)+' °C'],['Cold in → out','20.0 → '+f1(20+Q/Cc)+' °C'],['Heat transferred',f0(Q)+' W'],['Effectiveness',f0(e*100)+' %'],['Flows',f1(s.mh)+' / '+f1(s.mc)+' L/min']];},
+ step(){}});
+
+/* ---- Heat transfer: linear conduction ---- */
+rig('heat',{params:[{id:'Q',min:0,max:60,step:1}],init:{Q:20,q:0},knobs:[{id:'Q',p:[0.2,0.2,0.04],tip:'Heater power'}],
+ hint:'Raise the heater power and wait. The temperatures along the brass bar settle on a straight line: its slope gives the thermal conductivity.',
+ hud:s=>{const g=s.q/(121*4.9e-4);return [['Heater power',f1(s.q)+' W'],['T1 (hot end)',f1(22+g*0.09+4)+' °C'],['T4 (middle)',f1(22+g*0.045+4)+' °C'],['T7 (cold end)',f1(26)+' °C'],['Gradient',f0(g)+' K/m'],['k of brass','121 W/m·K']];},
+ setup(K,s,r,g,k){const m=k.M('#c9a43a',{m:1,r:.3});const n=k.Cx(0.016,0.062,m,[-0.085,0.09,0.3],14);g.add(n);return m;},
+ step(s,dt,t,r,m){lag(s,'q',s.Q,dt,0.4);const a=clamp(s.q/60,0,1);m.e='#'+['00','33','66','99','cc'][Math.round(a*4)]+'1000';}});
+
+/* ---- Sieve shaker ---- */
+rig('sieve',{init:{on:false,t:0},btns:[{id:'go',p:[0,0.13,0.21],tip:'Start / stop'}],
+ hint:'Start the shaker. The sample works its way down the stack; after about 10 minutes of shaking the masses on each sieve stop changing.',
+ hit(s,id){if(id==='go'){if(s.t>=600)s.t=0;s.on=!s.on;}},
+ hud:s=>{const k=1-Math.exp(-s.t/150),R=[4,11,24,31,18,9,3].map(x=>x*k);return [['Shaker',s.on?'Running':s.t>=600?'Finished':'Stopped'],['Shaking time',f0(s.t/60)+' min '+f0(s.t%60)+' s'],['Retained 4.75 mm',f1(R[0])+' %'],['Retained 1.18 mm',f1(R[2])+' %'],['Retained 300 µm',f1(R[4])+' %'],['Still on top sieve',f1(100-R.reduce((a,b)=>a+b,0)+R[0])+' %']];},
+ step(s,dt,t,r){if(s.on){s.t+=dt*40;if(s.t>=600){s.t=600;s.on=false;toast('Sieving complete. Weigh each sieve to get the grading curve.');}}r.g.p[0]=s.on?0.003*Math.sin(t*60):0;}});
+
+/* ---- Direct shear ---- */
+rig('shear',{params:[{id:'N',min:50,max:400,step:10}],init:{N:100,on:false,x:0},knobs:[{id:'N',p:[0.05,0.6,0.0],tip:'Normal load',axis:'y'}],btns:[{id:'go',p:[-0.6,0.2,0.19],tip:'Start / reset shearing'}],
+ hint:'Set the normal load on the hanger, then start shearing. Shear force climbs to a peak and falls back; repeat at other loads to find cohesion and friction angle.',
+ hit(s,id){if(id==='go'){if(s.x>=8){s.x=0;s.on=false;}else s.on=!s.on;}},
+ hud:s=>{const sig=s.N/0.0036/1000,tp=5+sig*Math.tan(32*PI/180),u=s.x/1.6,tau=tp*(u<1?Math.sin(u*PI/2):1-0.18*(1-Math.exp(-(u-1)*1.5)));s.tau=tau;return [['Normal load',s.N+' N'],['Normal stress',f1(sig)+' kPa'],['Horizontal displacement',f2(s.x)+' mm'],['Shear stress',f1(tau)+' kPa'],['Peak for this load',f1(tp)+' kPa'],['Model soil','c 5 kPa, φ 32°']];},
+ step(s,dt){if(s.on){s.x+=dt*0.9;if(s.x>=8){s.x=8;s.on=false;}}}});
+
+/* ---- Rotor dynamics ---- */
+rig('rotor',{params:[{id:'n',min:0,max:3000,step:10}],init:{n:0,bal:false,a:0},knobs:[{id:'n',p:[-0.5,0.26,0.09],tip:'Shaft speed'}],btns:[{id:'bal',p:[0.16,0.36,0.0],tip:'Fit / remove balance mass',c:'#c9a43a',axis:'y'}],
+ hint:'Raise the shaft speed through the critical speed (about 1,650 rev/min) and watch the vibration peak. Fit the balance mass and run through again.',
+ hit(s,id){if(id==='bal')s.bal=!s.bal;},
+ hud:s=>[['Shaft speed',s.n+' rev/min'],['Critical speed','1650 rev/min'],['Speed ratio',f2(s.n/1650)],['Vibration at the probe',f0(s.a)+' µm peak'],['Balance mass',s.bal?'Fitted':'Not fitted'],['Region',s.n<1500?'Below critical':s.n<1800?'At critical':'Above critical']],
+ step(s,dt){const r=s.n/1650,z=0.05,e=s.bal?6:42;lag(s,'a',e*r*r/Math.sqrt(Math.pow(1-r*r,2)+Math.pow(2*z*r,2)),dt,2);}});
+})();
+
+/* H52-type series and parallel pumps: rebuilt from the maker's datasheet picture and demonstration video (layout, valve action, what moves). */
+(function(){const PI=Math.PI,clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const CAL=[{k:'H0',label:'Shut-off head of one pump',unit:'m',def:12,min:2,max:40,step:0.1},{k:'Qm',label:'Flow of one pump at zero head',unit:'L/s',def:1.3,min:0.2,max:5,step:0.01},{k:'ks',label:'Inlet line loss factor',unit:'m per (L/s)²',def:0.5,min:0,max:10,step:0.05},{k:'kd',label:'Delivery line loss factor, valve fully open',unit:'m per (L/s)²',def:2.4,min:0.2,max:30,step:0.1},{k:'z1',label:'Suction gauge zero offset',unit:'bar',def:0,min:-0.5,max:0.5,step:0.01},{k:'z2',label:'Pump 1 gauge zero offset',unit:'bar',def:0,min:-0.5,max:0.5,step:0.01},{k:'z3',label:'Pump 2 gauge zero offset',unit:'bar',def:0,min:-0.5,max:0.5,step:0.01},{k:'kf',label:'Flow meter factor',unit:'× reading',def:1,min:0.8,max:1.2,step:0.001}];
+const dev={id:'pumps',name:'Series and Parallel Pumps',photo:26,sec:'Fluid mechanics',live:true,s:{},cal:{},
+ params:[{id:'suc',min:0,max:100,step:1},{id:'del',min:5,max:100,step:1}],
+ hint:'Use the controls under the model, or work on the rig itself: click a blue motor to start or stop that pump, click valves V2, V3 and V4 to open or shut them, and drag V1 and V5. The three set-up buttons arrange the valves for you.',
+ hud:s=>[['Arrangement',s.mode+(s.cav?' · cavitating':'')],['Flow',s.Q.toFixed(2)+' L/s'],['Suction',s.ps.toFixed(2)+' bar'],['Pump 1 delivery',s.p1.toFixed(2)+' bar'],['Pump 2 delivery',s.p2.toFixed(2)+' bar'],['Total head',s.H.toFixed(1)+' m']],
+ daq:{title:'Pump characteristics',cal:CAL,x:{k:'Q',label:'Flow, L/s'},y:{k:'H',label:'Total head, m'},series:s=>s.mode,
+  cols:[{k:'mode',label:'Arrangement'},{k:'del',label:'Delivery valve',unit:'%',dp:0},{k:'Q',label:'Flow',unit:'L/s',dp:3},{k:'ps',label:'Suction',unit:'bar',dp:2},{k:'p1',label:'Pump 1',unit:'bar',dp:2},{k:'p2',label:'Pump 2',unit:'bar',dp:2},{k:'H',label:'Total head',unit:'m',dp:2},{k:'Pw',label:'Water power',unit:'W',dp:1}],
+  read:s=>({mode:s.mode,del:s.del,Q:s.Q,ps:s.ps,p1:s.p1,p2:s.p2,H:s.H,Pw:9.81*s.Q*s.H}),ok:s=>s.Q>0.005},
+ controls:[{t:'toggle',label:'Pump 1',get:s=>s.on[0],set:(s,v)=>s.on[0]=v,on:'Running',off:'Stopped'},{t:'toggle',label:'Pump 2',get:s=>s.on[1],set:(s,v)=>s.on[1]=v,on:'Running',off:'Stopped'},
+  {t:'toggle',label:'V2 · pump 2 suction',get:s=>s.v2,set:(s,v)=>s.v2=v,on:'Open',off:'Shut'},{t:'toggle',label:'V3 · crossover',get:s=>s.v3,set:(s,v)=>s.v3=v,on:'Open',off:'Shut'},{t:'toggle',label:'V4 · pump 1 delivery',get:s=>s.v4,set:(s,v)=>s.v4=v,on:'Open',off:'Shut'},
+  {t:'range',label:'V1 · inlet valve',unit:'% open',min:0,max:100,step:1,get:s=>s.suc,set:(s,v)=>s.suc=v},{t:'range',label:'V5 · delivery valve',unit:'% open',min:5,max:100,step:1,get:s=>s.del,set:(s,v)=>s.del=v},
+  {t:'preset',label:'Set up: single pump',fn:s=>{s.on=[true,false];s.v2=false;s.v3=false;s.v4=true;s.suc=100;}},{t:'preset',label:'Set up: parallel',fn:s=>{s.on=[true,true];s.v2=true;s.v3=false;s.v4=true;s.suc=100;}},{t:'preset',label:'Set up: series',fn:s=>{s.on=[true,true];s.v2=false;s.v3=true;s.v4=false;s.suc=100;}},{t:'preset',label:'Stop both pumps',fn:s=>{s.on=[false,false];}}],
+ onHit(s,id){if(id==='st0')s.on[0]=!s.on[0];else if(id==='st1')s.on[1]=!s.on[1];else if(id==='V2')s.v2=!s.v2;else if(id==='V3')s.v3=!s.v3;else if(id==='V4')s.v4=!s.v4;},
+ view3d:{h:560,cam:{tgt:[-0.05,1.2,0.05],yaw:0.3,pitch:0.28,dist:1.9},shadow:{c:[0,1.1,0],r:1.8},
+ build(K,s0,st){const s=dev.s,k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white}=k,R=K.group();floor(R);bench(R,2.2,1.1,0.9,0,0);
+  Object.assign(s,{on:[false,false],v2:false,v3:false,v4:true,suc:100,del:60,q:0,Q:0,ps:0,p1:0,p2:0,H:0,mode:'Stopped',w:[0,0],warn:0});
+  const g=K.group({p:[0,0.9,0]});R.add(g);const pvc=M('#5a5f68',{r:.5}),clr=M('#dcebf2',{a:.28,r:.04}),red=M('#c0221b',{r:.45}),brz=M('#b08a4a',{m:1,r:.35}),Y=0.13;
+  /* plinth */[[-0.48,0.25],[0.48,0.25],[-0.48,-0.25],[0.48,-0.25]].forEach(([x,z])=>g.add(Cy(0.024,0.03,blk,[x,0.015,z],12)));g.add(RB(1.04,0.1,0.572,0.02,white,[0,0.08,0]));
+  const np=K.tex(512,96,(c,w,h)=>{c.fillStyle='#b9bdc0';c.fillRect(0,0,w,h);c.fillStyle='#2a2c2f';c.fillRect(14,14,68,68);c.font='bold 26px sans-serif';c.fillText('H52',100,44);c.font='bold 22px sans-serif';c.fillText('SERIES AND PARALLEL PUMPS',100,76);});g.add(K.node(K.plane(0.34,0.064),M('#fff',{t:np,m:.4,r:.4}),{p:[-0.32,0.08,0.287]}));
+  const y=v=>Y+v;/* pipe helper: clear pipe with grey sockets at the ends */
+  const pipe=(P,r)=>{g.add(K.node(K.tube(P.map(p=>[p[0],y(p[1]),p[2]]),r||0.014,10,0.03),clr,{}));[P[0],P[P.length-1]].forEach(p=>g.add(K.node(K.sphere((r||0.014)*1.5,10),pvc,{p:[p[0],y(p[1]),p[2]]})));};
+  const tee=p=>g.add(K.node(K.sphere(0.024,12),pvc,{p:[p[0],y(p[1]),p[2]]}));
+  /* reservoir */const TX=-0.33,TZ=-0.1;g.add(Cy(0.14,0.03,pvc,[TX,y(0.015),TZ],36));g.add(Cy(0.13,0.36,clr,[TX,y(0.21),TZ],36));g.add(Cy(0.126,0.24,M('#3b82c4',{a:.32}),[TX,y(0.15),TZ],32));g.add(Cy(0.15,0.016,white,[TX,y(0.398),TZ],36));g.add(Cy(0.012,0.02,brz,[TX+0.06,y(0.41),TZ-0.05],10));
+  /* pumps: clear volute, bronze impeller you can see turning, blue motor behind, starter box beside it */
+  const PX=[0.02,0.32],imp=[],sw=[];PX.forEach((x,i)=>{g.add(Cz(0.092,0.012,M('#8f959b',{m:.8,r:.4}),[x,y(0.13),0.03],36));{const cs=Cz(0.09,0.05,clr,[x,y(0.13),0.062],36);cs.pick='st'+i;cs.tip=()=>'Pump '+(i+1)+': '+(s.on[i]?'running (click to stop)':'stopped (click to start)');g.add(cs);}g.add(K.node(K.torus(0.09,0.008,8,36),pvc,{p:[x,y(0.13),0.088],r:[PI/2,0,0]}));
+    const q=K.group({p:[x,y(0.13),0.06]});g.add(q);q.add(Cz(0.06,0.012,brz,[0,0,0],28));for(let j=0;j<6;j++){const a=j/6*PI*2;q.add(B(0.052,0.008,0.022,brz,[0.03*Math.cos(a),0.03*Math.sin(a),0.008],{r:[0,0,a+0.5]}));}q.add(Cz(0.014,0.03,steel,[0,0,0.004],12));imp.push(q);
+    {const mt=Cz(0.078,0.2,M('#1f5fb4',{m:.3,r:.4}),[x,y(0.13),-0.08],28);mt.pick='st'+i;mt.tip=()=>'Pump '+(i+1)+': '+(s.on[i]?'running (click to stop)':'stopped (click to start)');g.add(mt);}for(let j=0;j<8;j++)g.add(Cz(0.083,0.006,M('#1a50a0',{m:.3,r:.4}),[x,y(0.13),-0.16+j*0.022],28));g.add(Cz(0.08,0.03,M('#17458c',{m:.3}),[x,y(0.13),-0.195],28));g.add(RB(0.07,0.04,0.08,0.008,M('#1f5fb4',{m:.3}),[x,y(0.225),-0.08]));g.add(B(0.14,0.03,0.2,M('#3a3d42'),[x,y(0.03),-0.08]));
+    const bx=RB(0.07,0.1,0.06,0.01,white,[x-0.13,y(0.05),-0.06]);g.add(bx);const rk=B(0.03,0.04,0.008,M('#2f9b55',{r:.4}),[x-0.13,y(0.06),-0.028]);rk.pick='st'+i;rk.tip=()=>'Pump '+(i+1)+' starter: '+(s.on[i]?'ON (click to stop)':'OFF (click to start)');bx.pick='st'+i;bx.tip=rk.tip;g.add(rk);sw.push(rk);K.label('Pump '+(i+1),g,[x,y(0.3),-0.08]);
+    g.add(K.node(K.tube([[x-0.13,y(0.1),-0.06],[x-0.1,y(0.2),-0.1],[x-0.03,y(0.25),-0.08]],0.006,8,0.05),blk,{}));});
+  /* suction line along the front, with the tank outlet, inlet valve V1, suction gauge, V2 */
+  const ZS=0.2;pipe([[TX,0.03,TZ+0.13],[TX,0.03,ZS],[TX,0.13,ZS]]);pipe([[TX,0.13,ZS],[PX[1],0.13,ZS]]);PX.forEach(x=>{pipe([[x,0.13,ZS],[x,0.13,0.09]],0.013);tee([x,0.13,ZS]);});
+  /* delivery: pump outlets rise from the casing, P1 through V4, into the delivery line that runs left to the return riser */
+  const ZD=0.062,YD=0.33;PX.forEach(x=>pipe([[x+0.07,0.2,ZD],[x+0.07,YD,ZD]],0.013));pipe([[PX[1]+0.07,YD,ZD],[-0.47,YD,ZD]]);tee([PX[0]+0.07,YD,ZD]);
+  pipe([[-0.47,YD,ZD],[-0.47,0.5,ZD],[-0.47,0.5,TZ],[TX-0.06,0.5,TZ],[TX-0.06,0.42,TZ]]);
+  /* crossover: pump 1 outlet to pump 2 inlet, through V3 */
+  const XC=0.19;pipe([[PX[0]+0.07,0.24,ZD],[XC,0.24,ZD],[XC,0.24,ZS],[XC,0.13,ZS]],0.013);tee([PX[0]+0.07,0.24,ZD]);tee([XC,0.13,ZS]);
+  /* valves */const valve=(p,ax,id,tip,knob)=>{const vb=RB(0.06,0.06,0.06,0.008,pvc,[p[0],y(p[1]),p[2]]);vb.pick=knob?'knob:'+knob:id;vb.tip=tip;g.add(vb);const hg=K.group({p:[p[0],y(p[1])+(ax==='y'?0:0.036),p[2]+(ax==='y'?0.036:0)]});g.add(hg);const h=B(ax==='y'?0.03:0.11,ax==='y'?0.11:0.02,ax==='y'?0.02:0.03,red,[0,0,0]);h.pick=knob?'knob:'+knob:id;h.tip=tip;hg.add(h);K.label(id,g,[p[0],y(p[1])+0.085,p[2]+0.02]);return {hg,ax,h};};
+  const V1=valve([-0.2,0.13,ZS],'x','V1',()=>'V1 inlet valve: '+s.suc+' % open (drag)','suc'),V2=valve([0.105,0.13,ZS],'x','V2',()=>'V2 pump 2 suction from the tank: '+(s.v2?'open':'shut')),V3=valve([XC,0.24,0.13],'z','V3',()=>'V3 crossover, pump 1 into pump 2: '+(s.v3?'open':'shut')),V4=valve([PX[0]+0.07,0.29,ZD],'y','V4',()=>'V4 pump 1 delivery: '+(s.v4?'open':'shut')),V5=valve([-0.47,0.42,ZD],'y','V5',()=>'V5 delivery valve: '+s.del+' % open (drag)','del');
+  V3.h.s=[0.24,1,4.1];/* handle lies along z when open */
+  /* gauges, facing the front */const gauge=(p,r,lab)=>{g.add(Cy(0.008,0.05,brz,[p[0],y(p[1])-r-0.02,p[2]-0.02],8));g.add(Cz(r,0.035,M('#2a2c2f',{m:.5}),[p[0],y(p[1]),p[2]],32));const ft=K.tex(256,256,(c,w,h)=>{c.clearRect(0,0,w,h);c.fillStyle='#f7f7f3';c.beginPath();c.arc(w/2,h/2,w/2,0,7);c.fill();c.strokeStyle='#222';c.fillStyle='#222';const n=lab.n;for(let i=0;i<=n*5;i++){const a=PI*0.75+i/(n*5)*PI*1.5;c.lineWidth=i%5?1.5:3.5;c.beginPath();c.moveTo(w/2+(i%5?108:96)*Math.cos(a),h/2+(i%5?108:96)*Math.sin(a));c.lineTo(w/2+120*Math.cos(a),h/2+120*Math.sin(a));c.stroke();}c.font='bold 20px sans-serif';c.textAlign='center';for(let i=0;i<=n;i++){const a=PI*0.75+i/n*PI*1.5;c.fillText(lab.f(i),w/2+76*Math.cos(a),h/2+76*Math.sin(a)+7);}c.font='bold 18px sans-serif';c.fillText('bar',w/2,h/2+62);});
+    g.add(K.node(K.plane(r*1.86,r*1.86),M('#fff',{t:ft,at:.5,r:.4}),{p:[p[0],y(p[1]),p[2]+0.019]}));const q=K.group({p:[p[0],y(p[1]),p[2]+0.021]});q.add(B(0.005,r*0.78,0.002,M('#c0221b'),[0,r*0.3,0]));q.add(Cz(0.008,0.004,blk,[0,0,0],10));g.add(q);return {q,min:lab.min,max:lab.max};};
+  const G1=gauge([-0.36,0.25,ZS+0.02],0.075,{n:5,min:-1,max:1.5,f:i=>(-1+i*0.5).toFixed(1).replace('.0','')}),G2=gauge([PX[0]+0.07,0.47,ZD],0.07,{n:5,min:0,max:2.5,f:i=>(i*0.5).toFixed(1).replace('.0','')}),G3=gauge([PX[1]+0.07,0.47,ZD],0.07,{n:5,min:0,max:2.5,f:i=>(i*0.5).toFixed(1).replace('.0','')});
+  g.add(Cy(0.008,0.1,brz,[-0.36,y(0.17),ZS],8));PX.forEach(x=>g.add(Cy(0.008,0.1,brz,[x+0.07,y(0.37),ZD],8)));
+  K.label('Suction gauge',g,[-0.36,y(0.36),ZS]);K.label('Reservoir',g,[TX,y(0.46),TZ]);
+  /* digital flow meter on the return riser, as on the lab unit */g.add(RB(0.09,0.07,0.05,0.008,blk,[-0.47,y(0.46),ZD+0.03]));const fm=K.tex(128,64,(c,w,h)=>{c.fillStyle='#b7c9a5';c.fillRect(0,0,w,h);});g.add(K.node(K.plane(0.07,0.035),M('#fff',{t:fm,e:'#1d2a16'}),{p:[-0.47,y(0.465),ZD+0.057]}));K.label('Flow meter',g,[-0.47,y(0.56),ZD]);
+  const setN=(G,p)=>{G.q.r[2]=-(PI*0.75+clamp((p-G.min)/(G.max-G.min),0,1)*PI*1.5)-PI/2;};const hT=(V,open)=>{const a=open?0:PI/2;if(V.ax==='x')V.hg.r[1]=a;else if(V.ax==='z')V.hg.r[1]=a;else V.hg.r[2]=a;};
+  K.pcap(60);let fmT=0,ph=0;const bm=M('#2f8fe6',{e:'#0f4f9a',r:.3}),beads=[];for(let i=0;i<44;i++){const n=K.node(K.sphere(0.0085,8),bm,{p:[0,-5,0]});n.noCast=true;g.add(n);beads.push(n);}
+  const S0=[TX,0.13,ZS],P1i=[PX[0],0.13,ZS],P1c=[PX[0],0.13,0.09],P2i=[PX[1],0.13,ZS],P2c=[PX[1],0.13,0.09],O1=[PX[0]+0.07,0.2,ZD],O1t=[PX[0]+0.07,0.24,ZD],D1=[PX[0]+0.07,YD,ZD],O2=[PX[1]+0.07,0.2,ZD],D2=[PX[1]+0.07,YD,ZD],DL=[-0.47,YD,ZD],RT=[-0.47,0.5,ZD],RB2=[-0.47,0.5,TZ],RI=[TX-0.06,0.5,TZ],RE=[TX-0.06,0.42,TZ],TK=[TX,0.03,TZ+0.13],TF=[TX,0.03,ZS],XJ=[XC,0.13,ZS];
+  const ROUTE={'Pump 1 alone':[[TK,TF,S0,P1i,P1c],[O1,D1,DL,RT,RB2,RI,RE]],'Pump 2 alone':[[TK,TF,S0,P1i,P2i,P2c],[O2,D2,DL,RT,RB2,RI,RE]],'Parallel':[[TK,TF,S0,P1i,P1c],[P1i,P2i,P2c],[O1,D1,DL,RT,RB2,RI,RE],[O2,D2,D1]],'Series':[[TK,TF,S0,P1i,P1c],[O1,O1t,[XC,0.24,ZD],[XC,0.24,ZS],XJ,P2i,P2c],[O2,D2,DL,RT,RB2,RI,RE]]};
+  const along=(P,dist)=>{for(let i=0;i<P.length-1;i++){const a=P[i],b=P[i+1],L=Math.hypot(b[0]-a[0],b[1]-a[1],b[2]-a[2]);if(dist<=L){const t=dist/L;return [a[0]+(b[0]-a[0])*t,y(a[1]+(b[1]-a[1])*t),a[2]+(b[2]-a[2])*t];}dist-=L;}return null;},plen=P=>{let L=0;for(let i=0;i<P.length-1;i++)L+=Math.hypot(P[i+1][0]-P[i][0],P[i+1][1]-P[i][1],P[i+1][2]-P[i][2]);return L;};
+  return {root:R,update(s2,dt,t){dt=Math.min(dt||0.016,0.05);const c=dev.cal,H0=c.H0,a1=H0/(c.Qm*c.Qm),[A,Bp]=s.on,so=s.suc>2;let Hs=0,a=1,mode='Stopped';
+    if(A&&Bp&&so&&s.v3&&!s.v4&&!s.v2){Hs=2*H0;a=2*a1;mode='Series';}else if(A&&Bp&&so&&s.v2&&s.v4&&!s.v3){Hs=H0;a=a1/4;mode='Parallel';}else if(A&&!Bp&&so&&s.v4&&!s.v3){Hs=H0;a=a1;mode='Pump 1 alone';}else if(Bp&&!A&&so&&s.v2&&!s.v3){Hs=H0;a=a1;mode='Pump 2 alone';}else if(A||Bp)mode='No flow path';
+    const ks=c.ks/Math.pow(Math.max(s.suc,3)/100,2),kd=c.kd/Math.pow(s.del/100,2),Qc=Math.sqrt(9.2/ks);let Qt=Hs?Math.sqrt(Hs/(a+ks+kd)):0;const cav=Qt>Qc;if(cav)Qt=Qc;s.cav=cav;s.q+=(Qt-s.q)*Math.min(1,dt*3);const Q=s.q;s.mode=mode;s.Q=Q*c.kf;
+    const bar=h=>h*0.0981,hs=-ks*Q*Q-0.15*(Q>0.01?1:0);let h1=0,h2=0;if(mode==='Series'){h1=hs+H0-a1*Q*Q;h2=h1+H0-a1*Q*Q;}else if(mode==='Parallel'){h1=h2=hs+H0-a1*Q*Q/4;}else if(mode==='Pump 1 alone'){h1=hs+H0-a1*Q*Q;h2=h1;}else if(mode==='Pump 2 alone'){h2=hs+H0-a1*Q*Q;h1=0;}else{h1=A?H0:0;h2=Bp?H0:0;}
+    s.ps=bar(Q>0.005?hs:0)+c.z1;s.p1=bar(Math.max(0,h1))+c.z2;s.p2=bar(Math.max(0,h2))+c.z3;s.H=Q>0.005?(mode==='Pump 1 alone'?h1:h2)-hs:0;setN(G1,s.ps);setN(G2,s.p1);setN(G3,s.p2);
+    [0,1].forEach(i=>{s.w[i]+=((s.on[i]?9:0)-s.w[i])*Math.min(1,dt*2.5);imp[i].r[2]-=s.w[i]*dt;sw[i].mat.c=s.on[i]?'#39d353':'#27402b';sw[i].mat.e=s.on[i]?'#1f8f3a':null;});
+    hT(V1,s.suc>50);V1.hg.r[1]=(1-s.suc/100)*PI/2;hT(V2,s.v2);V3.hg.r[1]=s.v3?0:PI/2;hT(V4,s.v4);V5.hg.r[2]=(1-s.del/100)*PI/2*0.9;
+    /* water beads glide along the pipes that carry flow */ph+=dt*(0.12+Q*0.35);const RT2=Q>0.01?ROUTE[mode]:null;let bi=0;if(RT2){const tot=RT2.reduce((a,P)=>a+plen(P),0),gap=tot/beads.length;RT2.forEach(P=>{const L=plen(P),n=Math.max(1,Math.round(L/gap));for(let j=0;j<n&&bi<beads.length;j++){const q=along(P,((j/n)*L+ph)%L);if(q){beads[bi].p=q;beads[bi].vis=true;bi++;}}});}for(;bi<beads.length;bi++)beads[bi].vis=false;
+    if((s.cav||s.ps<-0.6)&&Q>0.01&&Math.random()<dt*40)K.emit({p:[PX[0]+(Math.random()-0.5)*0.05,0.9+y(0.13)+(Math.random()-0.5)*0.05,0.085],v:[0,0.05,0],life:0.5,size:0.012,c:'#ffffff',a:.8});
+    if((s.cav||s.ps<-0.6)&&Q>0.01&&performance.now()-s.warn>9000){s.warn=performance.now();toast('Cavitation: the inlet valve is throttled so far that the suction pressure has fallen low enough for bubbles to form at the pump inlet.');}
+    if(A&&Bp&&s.v3&&s.v4&&performance.now()-s.warn>9000){s.warn=performance.now();toast('V3 and V4 are both open, so pump 1 delivers two ways at once. For series shut V4; for parallel shut V3.');}
+    fmT+=dt;if(fmT>0.25){fmT=0;fm.draw(cx=>{cx.fillStyle='#b7c9a5';cx.fillRect(0,0,128,64);cx.fillStyle='#1d2a16';cx.font='bold 30px monospace';cx.fillText(s.Q.toFixed(2),14,40);cx.font='bold 12px sans-serif';cx.fillText('L/s',92,56);});}}};}}};
+const i=NEW3D.findIndex(d=>d.id==='pumps');if(i>=0)NEW3D[i]=dev;else NEW3D.push(dev);
+})();
+
+window.M3D=NEW3D;})();
 /* Small helpers shared by the device files. */
 (function(){
 const K={};window.LK=K;
@@ -5694,8 +6542,7 @@ LAB.open=function(cfg,d3){
   const key='icelab.lab.'+cfg.id;
   try{const o=JSON.parse(localStorage.getItem(key)||'null');if(o){LAB.rows=o.rows||{};LAB.done=o.done||{};LAB.cal=o.cal||{};}else{LAB.rows={};LAB.done={};LAB.cal={};}}catch(e){LAB.rows={};LAB.done={};LAB.cal={};}
   LAB.save=()=>{try{localStorage.setItem(key,JSON.stringify({rows:LAB.rows,done:LAB.done,cal:LAB.cal}));}catch(e){}};
-  const el=$('lab');el.hidden=false;
-  $('labName').textContent=cfg.title;$('labSrc').textContent=cfg.manual;
+  const el=$('lab');if(el){el.hidden=false;$('labName').textContent=cfg.title;$('labSrc').textContent=cfg.manual;}
   LAB.tab='proc';render();
 };
 LAB.close=function(){LAB.cur=null;const el=$('lab');if(el)el.hidden=true;};
@@ -5717,7 +6564,7 @@ requestAnimationFrame(loop);
 let acc=0;function tick(dt){acc+=dt;if(acc<0.2)return;acc=0;drawLive();}
 
 /* ---------- drawing ---------- */
-function render(){const c=LAB.cur;if(!c)return;
+function render(){const c=LAB.cur;if(!c||!$('labExp')||!$('labBody'))return;
   $('labExp').innerHTML=c.experiments.map((e,i)=>`<option value="${i}" ${i===LAB.exp?'selected':''}>${esc(e.title)}</option>`).join('');
   document.querySelectorAll('#labTabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===LAB.tab));
   $('labSpeed').value=String(LAB.speed);
@@ -6946,7 +7793,36 @@ const BR={
  plc(L){PLC.power=true;PLC.run=false;PLC.ext=L.mode==='EXTERNAL';PLC.umb=true;PLC.leads=true;for(let i=0;i<8;i++)PLC.X[i]=L.X[i]?1:0;for(let i=0;i<6;i++){PLC.Y[i]=L.Y[i]?1:0;PLC.out[i]=L.act[i]?1:0;}
    const P=PLC.P;P.h1=Math.max(0,30+(L.t1-0.15)*100/0.65);P.h2=Math.max(0,30+(L.t2-0.15)*70/0.65);P.res=L.res*5500;P.q=(L.flow||0)/60*1000;}
 };
-Object.keys(MAP).forEach(bid=>{const c=LAB.defs[MAP[bid]];if(!c)return;c.post=null;c.sync=function(L,b,d3){const f=BR[bid];if(!f||!d3||!d3.d)return;d3.br=d3.br||{};try{f.call(d3.d,L,b,d3.br);}catch(e){}try{dirty=true;}catch(e){}};});
+/* ---------- the new 3D models (M3D) on the benches ---------- */
+const M3=window.M3D||[];const m3=id=>M3.find(x=>x.id===id);
+const V3={h52:'pumps',h16:'pipes',h314:'hydro',h11:'cop',bernoulli:'manometer',h8:'h8',plc:'plc',tensile:'utm',charpy:'charpy',metallography:'polisher',vickers:'vickers',tm1016v:'vibration',torsion:'torsion',fatigue:'fatigue',
+  td1060v:'steam',td360:'hx',td1002:'heat',windtunnel:'wind',wind:'windenergy',whirling:'rotor',frameworks:'frameworks',beams:'beams',buckling:'buckling',ce117:'process'};
+Object.keys(V3).forEach(bid=>{const d=DEVMAP[bid],m=m3(V3[bid]);if(!d||!m||!m.view3d)return;const v=m.view3d;
+  d.view3d=Object.assign({},v,{views:undefined,viewLabels:undefined,xray:false,build(K,s,st){const sc=v.build.call(v,K,m.s,st);m._refs=sc.refs;return sc;}});d._m3d=m;d._had3d=false;});
+/* in free bench mode the 3D model follows the bench */
+const Q=()=>typeof BENCH!=='undefined'?BENCH.Q:0;
+const FREE={
+ h52(b,s){if(!s.on)return;s.on[0]=!!b.P1;s.on[1]=!!b.P2;s.del=Math.max(5,b.v5);s.suc=b.v1;const V=b.V||[];s.v2=!!V[0];s.v3=!!V[2];s.v4=!!V[1];},
+ h16(b,s){s.flow=cl(Q()/0.42*100,0,100);},bernoulli(b,s){s.flow=cl(Q()/0.42*100,0,100);},
+ h314(b,s){s.sel={water:0,salt:0,oil:1,gly:2}[b.liq]||0;},
+ h11(b,s,r){s.h=Math.round(cl((200-b.h)*0.8,0,160));s.m=b.W;if(r&&r.piv)r.piv.r[2]=b.ang||0;},
+ h8(b,s,r){if(!r)return;if(r.beam)r.beam.r[2]=(b.ang||0)*0.5;if(r.jet)r.jet.vis=Q()>0.01;if(r.jockey)r.jockey.p[0]=r.jockey.p0+cl(b.y,0,230)/1000;},
+ plc(b,s){if(typeof PLC==='undefined')return;s.run=PLC.run;s.lv=cl(PLC.P.h1/200,0,1);s.pOn=!!PLC.out[0];s.vOn=!!PLC.out[3];},
+ tensile(b,s){const want=b.broken?'broke':(b.running?'run':(b.u>0?s.st:'idle'));if(want==='run'&&s.st==='idle')s.st='run';if(want==='idle'&&s.st!=='idle'){s.st='idle';s.e=0;s.F=0;s.sig=0;s.Fm=0;}},
+ charpy(b,s){if(b.phase==='swing'&&(s.st==='down'||s.st==='up'||s.st==='lift'||s.st==='done')){s.st='swing';s.w=0;s.hit=false;s.max=0;}},
+ tm1016v(b,s,r){s.rpm=b.on&&b.mode==='forced'?Math.round(b.f*60):0;if(r&&r.bm)r.bm.r[2]=Math.atan((b.th||0)*0.5*25/0.78);},
+ torsion(b,s){s.th=Math.min(60,b.th||0);},
+ fatigue(b,s){s.on=!!b.run;s.N=b.N||0;s.broke=b.done==='frac';s.W=cl(Math.round(b.W*2),10,80);},
+ td1060v(b,s){s.on=!!b.iso;s.Q=b.heat?Math.min(100,(b.PH||0)/30):0;},
+ td360(b,s){s.mh=cl(b.hf||b.Fh,0.5,4);s.mc=cl(b.cf||b.Fc,0.5,4);s.cf=b.arr==='cnt';},
+ td1002(b,s){s.Q=b.heat?b.P:0;},
+ wind(b,s){s.v=cl(b.vr*1.5,0,12);s.R=cl(b.R,5,200);},windtunnel(b,s){s.spd=b.fan;s.aoa=cl(b.aoa,-4,20);},whirling(b,s){s.n=cl(b.rpm,0,3000);},ce117(b,s){s.sp=b.sp;}
+};
+(function tick(){try{const d=typeof cur!=='undefined'?cur:null;if(d&&d._m3d&&!(LAB.cur&&LAB.d3&&LAB.d3.d===d)){const f=FREE[d.id];if(f)f(d.s,d._m3d.s,d._m3d._refs);}}catch(e){}requestAnimationFrame(tick);})();
+
+Object.keys(MAP).forEach(bid=>{const c=LAB.defs[MAP[bid]];if(!c)return;const s3=c.sync,p3=c.post;c.post=null;
+  c.sync=function(L,b,d3){const f=BR[bid];if(!d3||!d3.d)return;d3.br=d3.br||{};if(f)try{f.call(d3.d,L,b,d3.br);}catch(e){}
+    const m=d3.d._m3d;if(m){try{if(s3)s3(L,m.s,{d:m,s:m.s,refs:m._refs});if(p3)p3(L,m.s,m._refs);}catch(e){}}try{dirty=true;}catch(e){}};});
 
 const LABHTML=`<section class="panel labwrap" id="lab" hidden aria-label="Lab manual simulation"><div class="lb-head"><div><div class="lb-kick">Lab manual mode · run the machine as the manual says</div><div class="lb-name" id="labName"></div><div class="lb-src" id="labSrc"></div></div>
 <div class="lb-run"><label>Experiment <select id="labExp"></select></label><label>Time speed <select id="labSpeed"><option value="1">Real time</option><option value="5">× 5</option><option value="20">× 20</option><option value="60">1 min per s</option><option value="600">10 min per s</option><option value="3600">1 h per s</option><option value="36000">10 h per s</option></select></label><span class="lb-clock">Machine time <b id="labClock">0:00</b></span><button type="button" class="lb-mini" data-x="reset">Reset machine</button></div></div>
@@ -6971,7 +7847,7 @@ function apply(d){const wb=document.querySelector('#view .wb');const lab=documen
   if(lab)lab.hidden=!on;try{window.dispatchEvent(new Event('resize'));}catch(e){}}
 let _it;const mo=new MutationObserver(()=>{clearTimeout(_it);_it=setTimeout(inject,30);});
 const vw=document.getElementById('view');if(vw)mo.observe(vw,{childList:true});
-addEventListener('hashchange',()=>setTimeout(inject,60));setTimeout(inject,60);
+addEventListener('hashchange',()=>setTimeout(inject,60));try{if(typeof cur!=='undefined'&&cur&&cur._m3d&&!document.getElementById('d3')){cur=null;route();}}catch(e){}setTimeout(inject,60);
 
 })();
 

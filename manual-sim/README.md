@@ -70,3 +70,10 @@ Each person's recorded results and calibration settings stay in their own browse
 - **Free bench** is the original bench.
 
 After changing any file here, run `python3 manual-sim/build.py`.
+
+## 3D models
+
+`models3d/` holds the new 3D models of the devices, built from the lab photos. `build.py` puts them on the matching benches as the **3D bench** view; **Schematic** shows the 2D drawing.
+
+- In Lab manual mode the 3D model follows the simulation.
+- In Free bench it follows the bench controls.

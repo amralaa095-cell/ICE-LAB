@@ -30,7 +30,36 @@ const BR={
  plc(L){PLC.power=true;PLC.run=false;PLC.ext=L.mode==='EXTERNAL';PLC.umb=true;PLC.leads=true;for(let i=0;i<8;i++)PLC.X[i]=L.X[i]?1:0;for(let i=0;i<6;i++){PLC.Y[i]=L.Y[i]?1:0;PLC.out[i]=L.act[i]?1:0;}
    const P=PLC.P;P.h1=Math.max(0,30+(L.t1-0.15)*100/0.65);P.h2=Math.max(0,30+(L.t2-0.15)*70/0.65);P.res=L.res*5500;P.q=(L.flow||0)/60*1000;}
 };
-Object.keys(MAP).forEach(bid=>{const c=LAB.defs[MAP[bid]];if(!c)return;c.post=null;c.sync=function(L,b,d3){const f=BR[bid];if(!f||!d3||!d3.d)return;d3.br=d3.br||{};try{f.call(d3.d,L,b,d3.br);}catch(e){}try{dirty=true;}catch(e){}};});
+/* ---------- the new 3D models (M3D) on the benches ---------- */
+const M3=window.M3D||[];const m3=id=>M3.find(x=>x.id===id);
+const V3={h52:'pumps',h16:'pipes',h314:'hydro',h11:'cop',bernoulli:'manometer',h8:'h8',plc:'plc',tensile:'utm',charpy:'charpy',metallography:'polisher',vickers:'vickers',tm1016v:'vibration',torsion:'torsion',fatigue:'fatigue',
+  td1060v:'steam',td360:'hx',td1002:'heat',windtunnel:'wind',wind:'windenergy',whirling:'rotor',frameworks:'frameworks',beams:'beams',buckling:'buckling',ce117:'process'};
+Object.keys(V3).forEach(bid=>{const d=DEVMAP[bid],m=m3(V3[bid]);if(!d||!m||!m.view3d)return;const v=m.view3d;
+  d.view3d=Object.assign({},v,{views:undefined,viewLabels:undefined,xray:false,build(K,s,st){const sc=v.build.call(v,K,m.s,st);m._refs=sc.refs;return sc;}});d._m3d=m;d._had3d=false;});
+/* in free bench mode the 3D model follows the bench */
+const Q=()=>typeof BENCH!=='undefined'?BENCH.Q:0;
+const FREE={
+ h52(b,s){if(!s.on)return;s.on[0]=!!b.P1;s.on[1]=!!b.P2;s.del=Math.max(5,b.v5);s.suc=b.v1;const V=b.V||[];s.v2=!!V[0];s.v3=!!V[2];s.v4=!!V[1];},
+ h16(b,s){s.flow=cl(Q()/0.42*100,0,100);},bernoulli(b,s){s.flow=cl(Q()/0.42*100,0,100);},
+ h314(b,s){s.sel={water:0,salt:0,oil:1,gly:2}[b.liq]||0;},
+ h11(b,s,r){s.h=Math.round(cl((200-b.h)*0.8,0,160));s.m=b.W;if(r&&r.piv)r.piv.r[2]=b.ang||0;},
+ h8(b,s,r){if(!r)return;if(r.beam)r.beam.r[2]=(b.ang||0)*0.5;if(r.jet)r.jet.vis=Q()>0.01;if(r.jockey)r.jockey.p[0]=r.jockey.p0+cl(b.y,0,230)/1000;},
+ plc(b,s){if(typeof PLC==='undefined')return;s.run=PLC.run;s.lv=cl(PLC.P.h1/200,0,1);s.pOn=!!PLC.out[0];s.vOn=!!PLC.out[3];},
+ tensile(b,s){const want=b.broken?'broke':(b.running?'run':(b.u>0?s.st:'idle'));if(want==='run'&&s.st==='idle')s.st='run';if(want==='idle'&&s.st!=='idle'){s.st='idle';s.e=0;s.F=0;s.sig=0;s.Fm=0;}},
+ charpy(b,s){if(b.phase==='swing'&&(s.st==='down'||s.st==='up'||s.st==='lift'||s.st==='done')){s.st='swing';s.w=0;s.hit=false;s.max=0;}},
+ tm1016v(b,s,r){s.rpm=b.on&&b.mode==='forced'?Math.round(b.f*60):0;if(r&&r.bm)r.bm.r[2]=Math.atan((b.th||0)*0.5*25/0.78);},
+ torsion(b,s){s.th=Math.min(60,b.th||0);},
+ fatigue(b,s){s.on=!!b.run;s.N=b.N||0;s.broke=b.done==='frac';s.W=cl(Math.round(b.W*2),10,80);},
+ td1060v(b,s){s.on=!!b.iso;s.Q=b.heat?Math.min(100,(b.PH||0)/30):0;},
+ td360(b,s){s.mh=cl(b.hf||b.Fh,0.5,4);s.mc=cl(b.cf||b.Fc,0.5,4);s.cf=b.arr==='cnt';},
+ td1002(b,s){s.Q=b.heat?b.P:0;},
+ wind(b,s){s.v=cl(b.vr*1.5,0,12);s.R=cl(b.R,5,200);},windtunnel(b,s){s.spd=b.fan;s.aoa=cl(b.aoa,-4,20);},whirling(b,s){s.n=cl(b.rpm,0,3000);},ce117(b,s){s.sp=b.sp;}
+};
+(function tick(){try{const d=typeof cur!=='undefined'?cur:null;if(d&&d._m3d&&!(LAB.cur&&LAB.d3&&LAB.d3.d===d)){const f=FREE[d.id];if(f)f(d.s,d._m3d.s,d._m3d._refs);}}catch(e){}requestAnimationFrame(tick);})();
+
+Object.keys(MAP).forEach(bid=>{const c=LAB.defs[MAP[bid]];if(!c)return;const s3=c.sync,p3=c.post;c.post=null;
+  c.sync=function(L,b,d3){const f=BR[bid];if(!d3||!d3.d)return;d3.br=d3.br||{};if(f)try{f.call(d3.d,L,b,d3.br);}catch(e){}
+    const m=d3.d._m3d;if(m){try{if(s3)s3(L,m.s,{d:m,s:m.s,refs:m._refs});if(p3)p3(L,m.s,m._refs);}catch(e){}}try{dirty=true;}catch(e){}};});
 
 const LABHTML=`<section class="panel labwrap" id="lab" hidden aria-label="Lab manual simulation"><div class="lb-head"><div><div class="lb-kick">Lab manual mode · run the machine as the manual says</div><div class="lb-name" id="labName"></div><div class="lb-src" id="labSrc"></div></div>
 <div class="lb-run"><label>Experiment <select id="labExp"></select></label><label>Time speed <select id="labSpeed"><option value="1">Real time</option><option value="5">× 5</option><option value="20">× 20</option><option value="60">1 min per s</option><option value="600">10 min per s</option><option value="3600">1 h per s</option><option value="36000">10 h per s</option></select></label><span class="lb-clock">Machine time <b id="labClock">0:00</b></span><button type="button" class="lb-mini" data-x="reset">Reset machine</button></div></div>
@@ -55,6 +84,6 @@ function apply(d){const wb=document.querySelector('#view .wb');const lab=documen
   if(lab)lab.hidden=!on;try{window.dispatchEvent(new Event('resize'));}catch(e){}}
 let _it;const mo=new MutationObserver(()=>{clearTimeout(_it);_it=setTimeout(inject,30);});
 const vw=document.getElementById('view');if(vw)mo.observe(vw,{childList:true});
-addEventListener('hashchange',()=>setTimeout(inject,60));setTimeout(inject,60);
+addEventListener('hashchange',()=>setTimeout(inject,60));try{if(typeof cur!=='undefined'&&cur&&cur._m3d&&!document.getElementById('d3')){cur=null;route();}}catch(e){}setTimeout(inject,60);
 
 })();

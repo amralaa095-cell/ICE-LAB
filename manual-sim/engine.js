@@ -32,8 +32,7 @@ LAB.open=function(cfg,d3){
   const key='icelab.lab.'+cfg.id;
   try{const o=JSON.parse(localStorage.getItem(key)||'null');if(o){LAB.rows=o.rows||{};LAB.done=o.done||{};LAB.cal=o.cal||{};}else{LAB.rows={};LAB.done={};LAB.cal={};}}catch(e){LAB.rows={};LAB.done={};LAB.cal={};}
   LAB.save=()=>{try{localStorage.setItem(key,JSON.stringify({rows:LAB.rows,done:LAB.done,cal:LAB.cal}));}catch(e){}};
-  const el=$('lab');el.hidden=false;
-  $('labName').textContent=cfg.title;$('labSrc').textContent=cfg.manual;
+  const el=$('lab');if(el){el.hidden=false;$('labName').textContent=cfg.title;$('labSrc').textContent=cfg.manual;}
   LAB.tab='proc';render();
 };
 LAB.close=function(){LAB.cur=null;const el=$('lab');if(el)el.hidden=true;};
@@ -55,7 +54,7 @@ requestAnimationFrame(loop);
 let acc=0;function tick(dt){acc+=dt;if(acc<0.2)return;acc=0;drawLive();}
 
 /* ---------- drawing ---------- */
-function render(){const c=LAB.cur;if(!c)return;
+function render(){const c=LAB.cur;if(!c||!$('labExp')||!$('labBody'))return;
   $('labExp').innerHTML=c.experiments.map((e,i)=>`<option value="${i}" ${i===LAB.exp?'selected':''}>${esc(e.title)}</option>`).join('');
   document.querySelectorAll('#labTabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===LAB.tab));
   $('labSpeed').value=String(LAB.speed);
