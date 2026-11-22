@@ -61,7 +61,7 @@ def head2(m,title,kicker):
     </div>
     <div style="font-size:12px;color:#5c6f7c;text-align:right;line-height:1.5">Circle = zoomed side view<br>Red border = stop and check</div>
   </div>'''
-def foot(m,n): return f'<div id="foot" style="margin:auto 48px 40px;display:flex;justify-content:space-between;font-size:12px;color:#5c6f7c;border-top:1px solid #dfe3ea;padding-top:10px"><span>{m["no"]} · {m["name"]} · ICE Lab, AUBH</span><span>{n}</span></div>'
+def foot(m,n): return f'<div id="foot" style="margin:auto 48px 40px;display:flex;justify-content:space-between;font-size:12px;color:#5c6f7c;border-top:1px solid #dfe3ea;padding-top:10px"><span>{m["no"]} · {m["name"]} · Manufacturing Lab, AUBH</span><span>{n}</span></div>'
 def build(m,out):
     url=f"https://amralaa095-cell.github.io/ICE-LAB/Manufacturing.dc.html#{m['no']}"
     leg=m['leg']
@@ -77,7 +77,7 @@ def build(m,out):
     hh=385 if len(leg)<=8 else 356
     front=f'''  <div style="background:#0039a6;color:#fff;padding:40px 48px 30px;display:flex;justify-content:space-between;align-items:flex-start;gap:24px">
     <div>
-      <div style="font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;opacity:.85">ICE Lab · AUBH · Manufacturing</div>
+      <div style="font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;opacity:.85">Manufacturing Lab · AUBH</div>
       <div style="font-family:'Playfair Display',Georgia,serif;font-weight:800;font-size:54px;line-height:1.05;margin-top:10px">Quick Start Guide</div>
       <div style="margin-top:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <span style="background:#cc092f;font-weight:800;font-size:18px;padding:5px 12px;border-radius:4px">{m['no']}</span>
