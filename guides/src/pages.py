@@ -87,7 +87,7 @@ def build(m,out):
     </div>
     <div style="background:#fff;border-radius:10px;padding:10px;width:132px;flex-shrink:0;text-align:center">
       {crop(m['no'],1500,2160,540,540,112,"QR code to the "+m['no']+" machine page","margin:0 auto;")}
-      <div style="color:#1b2433;font-size:11px;font-weight:700;line-height:1.25;margin-top:6px">Scan: machine page, booking &amp; simulator</div>
+      <div style="color:#1b2433;font-size:11px;font-weight:700;line-height:1.25;margin-top:6px">Scan: machine page &amp; booking</div>
     </div>
   </div>
   <div style="padding:20px 48px 0">
@@ -116,7 +116,7 @@ def build(m,out):
     chk=''.join(f'<div style="display:flex;gap:10px;align-items:center;font-size:14px;padding:5px 0"><span style="width:16px;height:16px;border:2px solid #fff;border-radius:3px;flex-shrink:0"></span>{x}</div>' for x in m['leave'])
     leave=f'''<div style="margin:0 48px;background:#0039a6;color:#fff;border-radius:12px;padding:20px 24px;display:flex;gap:28px;align-items:center">
   <div style="flex-grow:1"><div style="font-family:'Playfair Display',Georgia,serif;font-weight:800;font-size:24px;margin-bottom:6px">Before you leave</div>{chk}</div>
-  <div style="background:#fff;border-radius:10px;padding:10px;width:130px;text-align:center;flex-shrink:0">{crop(m['no'],1500,2160,540,540,110,"QR code to the "+m['no']+" machine page","margin:0 auto;")}<div style="color:#1b2433;font-size:11px;font-weight:700;margin-top:6px;line-height:1.25">Book again &amp; try the simulator</div></div>
+  <div style="background:#fff;border-radius:10px;padding:10px;width:130px;text-align:center;flex-shrink:0">{crop(m['no'],1500,2160,540,540,110,"QR code to the "+m['no']+" machine page","margin:0 auto;")}<div style="color:#1b2433;font-size:11px;font-weight:700;margin-top:6px;line-height:1.25">Scan to book again</div></div>
 </div>'''
     p3=head2(m,m['titles'][1],f"{m['no']} · Steps 7–9")+grid(''.join(card(m,i,*s) for i,s in enumerate(st[6:],7))+tcard)+leave+foot(m,3)
     return [front,back,p3]

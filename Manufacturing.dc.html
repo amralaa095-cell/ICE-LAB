@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 30 virtual benches with data analysis and calibration, and the Manufacturing Lab with its own machine simulations.">
+<meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 30 virtual benches with data analysis and calibration, and the Manufacturing Lab machines.">
 <meta name="theme-color" content="#0039a6">
 <link rel="icon" type="image/png" href="img/ice-mark.png">
 <meta property="og:title" content="ICE Lab · American University of Bahrain">
@@ -36,11 +36,11 @@ a{color:#0039a6}a:hover{color:#3d4757}
 <div style="padding: 30px 0 22px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px">
 <p style="margin: 0; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #5c6f7c">American University of Bahrain · Manufacturing Lab</p>
 <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: clamp(28px, 9vw, 54px); line-height: 1; ">Manufacturing Lab</h1>
-<p style="margin: 0; max-width: 74ch; color: #3d4757">Eleven desktop machines for making real parts: manual lathes and mills, a drilling machine, CNC mill and lathe, a laser cutter and a hot-wire cutter. Each machine can be booked for a session in the lab, or practised first on its simulation.</p>
+<p style="margin: 0; max-width: 74ch; color: #3d4757">Eleven desktop machines for making real parts: manual lathes and mills, a drilling machine, CNC mill and lathe, a laser cutter and a hot-wire cutter. Each machine can be booked for a session in the lab, and has a quick start guide.</p>
 <ul style="margin: 6px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; color: #3d4757">
 <li style="padding: 4px 10px; border: 1px solid #c5cddd; border-radius: 999px">11 machines</li>
 <li style="padding: 4px 10px; border: 1px solid #c5cddd; border-radius: 999px">6 manual · 5 CNC</li>
-<li style="padding: 4px 10px; border: 1px solid #c5cddd; border-radius: 999px">every machine has a simulation</li>
+<li style="padding: 4px 10px; border: 1px solid #c5cddd; border-radius: 999px">a quick start guide for each</li>
 </ul>
 </div>
 
@@ -61,10 +61,9 @@ a{color:#0039a6}a:hover{color:#3d4757}
 <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #5c6f7c"><span style="color: #3d4757">Tooling:</span> {{m.extra}}</p>
 <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #5c6f7c"><span style="color: #3d4757">Booking:</span> {{m.rule}}</p>
 <div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 12px; font-weight: 600; letter-spacing: .04em; color: #8a5a00">Required PPE</span><ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{m.ppe}}" as="p" hint-placeholder-count="3"><li title="{{p.t}} {{p.s}}" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 999px; border: 1px solid #ecd798; background: #fff8e3; font-size: 12.5px; color: #1b2433"><span aria-hidden="true" style="font-size: 15px; line-height: 1">{{p.e}}</span><span>{{p.t}}</span><span style="font-family: 'Raleway', 'Changa', system-ui, sans-serif; font-size: 12px; color: #5c6f7c">{{p.s}}</span></li></sc-for></ul></div>
-<p style="margin: 0; font-size: 13px; line-height: 1.5; color: #5c6f7c"><span style="color: #3d4757">Simulation:</span> {{m.simName}}</p>
-<div style="margin-top: auto; padding-top: 6px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="margin-top: auto; padding-top: 6px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px">
 <a href="{{m.book}}" class="mf-btn" style="display: flex; align-items: center; justify-content: center; height: 44px; border-radius: 8px; background: linear-gradient(135deg, #0039a6, #0039a6); color: #ffffff; text-decoration: none; font-weight: 600; font-size: 15px">Book</a>
-<a href="{{m.sim}}" class="mf-btn mf-out" style="display: flex; align-items: center; justify-content: center; height: 44px; border-radius: 8px; border: 1px solid #c5cddd; background: #ffffff; color: #1b2433; text-decoration: none; font-weight: 600; font-size: 15px">Simulation</a>
+
 </div>
 </article>
 </sc-for>
