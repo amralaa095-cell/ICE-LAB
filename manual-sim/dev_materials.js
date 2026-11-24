@@ -1,4 +1,4 @@
-/* Materials testing and metallography devices, each written from its ICE Lab manual (MECH241L). */
+/* Materials testing devices, each written from its ICE Lab manual (MECH241L). */
 (function(){const {tog,rng,sel,btn,rd,col}=LK,U=LAB.util,g=9.81,PI=Math.PI;
 const jit=(v,a)=>v+(Math.random()-0.5)*2*a;
 
@@ -206,70 +206,4 @@ LAB.def({id:'vickers',on3d:'vickers',title:'Vickers Hardness Tester',manual:'Vic
  sync(){}
 });})();
 
-/* =====================================================================================
-   Metallography: METCO cutter, Bainmount press, Bainpol polisher, microscope · shared METCO / Microscope manual
-   ===================================================================================== */
-(function(){
-const SPEC={ar:['Steel, as received (sample)',8.2],ht:['Steel, after heat treatment – annealed (sample)',5.6]};
-const GRITS=[120,240,400,600,1200];
-let IMG={};
-function micro(s){const k=[s.spec,s.etch>0?Math.round(Math.min(s.etch,40)/5):0,s.scr,Math.round(s.focus*20),s.light].join('|');if(IMG[k])return IMG[k];
-  const G=SPEC[s.spec][1],NA=Math.pow(2,G-1)*15.5;/* grains per mm² at 1× → per field */const Wmm=0.8;/* field width at 100× = 0.8 mm of specimen */
-  const n=Math.max(8,Math.round(NA*Wmm*Wmm));let seed=s.spec==='ar'?7:13;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
-  const P=[];for(let i=0;i<n;i++)P.push([rnd(),rnd()]);const N=200,c=document.createElement('canvas');c.width=c.height=N;const x=c.getContext('2d'),im=x.createImageData(N,N);
-  const cell=Math.max(1,Math.ceil(Math.sqrt(n)/2)),grid={};P.forEach((p,i)=>{const key=Math.floor(p[0]*cell)+','+Math.floor(p[1]*cell);(grid[key]=grid[key]||[]).push(i);});
-  const near=(u,v)=>{let b=1e9,b2=1e9,bi=0;const gx=Math.floor(u*cell),gy=Math.floor(v*cell);for(let dx=-2;dx<=2;dx++)for(let dy=-2;dy<=2;dy++){(grid[(gx+dx)+','+(gy+dy)]||[]).forEach(i=>{const d=(P[i][0]-u)**2+(P[i][1]-v)**2;if(d<b){b2=b;b=d;bi=i;}else if(d<b2)b2=d;});}return [bi,Math.sqrt(b2)-Math.sqrt(b)];};
-  const et=s.etch,contrast=et<=0?0:et<5?0.3:et<=20?1:et<=35?0.7:0.35,dark=et>30?0.25:0;
-  for(let j=0;j<N;j++)for(let i=0;i<N;i++){const [id,gap]=near(i/N,j/N);let v=205+((id*37)%23)-11;if(gap<0.09/Math.sqrt(n)*(1+dark*2))v-=150*contrast;v-=dark*120;
-    if(s.scr>0&&((i*0.7+j*0.3+((i*13+j*7)%5))%Math.max(3,14-s.scr*2))<1)v-=30*Math.min(1,s.scr/3);v=v*(0.4+0.6*s.light);const o=(j*N+i)*4;im.data[o]=v;im.data[o+1]=v*0.98;im.data[o+2]=v*0.94;im.data[o+3]=255;}
-  x.putImageData(im,0,0);const blur=Math.min(6,Math.abs(s.focus-0.62)*40);const url=c.toDataURL('image/jpeg',0.85);
-  /* planimetric count inside a circle of 0.79 mm² (79.8 mm at 100×) */let inside=0,inter=0;const R0=0.5;P.forEach(p=>{const r=Math.hypot(p[0]-0.5,p[1]-0.5);const rg=0.5/Math.sqrt(n);if(r<R0-rg)inside++;else if(r<R0+rg)inter++;});
-  const area=PI*(R0*Wmm)**2;IMG[k]={url,blur,inside,inter,area};return IMG[k];}
-LAB.def({id:'metallo',on3d:['polisher','cutter','mount'],title:'Metallography: cutting, mounting, grinding, polishing, etching and microscopy',manual:'METCO Abrasive Cutting Machine / Bainmount Twin H / Bainpol / Microscope Plus / METSCOPE PRO (one shared procedure document) · MECH241L',
- about:'One procedure covers the abrasive cutter, the hot mounting press, the grinding and polishing machine, etching and the metallurgical microscope. Grain size is found with the ASTM E112 planimetric method.',
- constants:['Specimen about 10 mm long, cut cleanly with the sectioning machine.','Hot mounting: specimen face-down, mould filled with powder, heat and pressure, cure 5–10 minutes, cool under pressure.','Grind on emery papers to remove cutting marks, rinse in the ultrasonic cleaner; polish with diamond paste until mirror-like; etch briefly (e.g. nitric acid), rinse with water then alcohol, dry; avoid over-etching.','Microscope objective 100×; coarse then fine focus; adjust light, diaphragm and condenser.','ASTM grain size: N_AE = 2^(G−1), N_AE grains per square inch at 100×.'],
- assume:['Grit sequence 120, 240, 400, 600, 1200; each step removes the previous scratches after about 1 minute.','Mounting: 150–180 °C at 20–30 kN. Etch: 2% nital, about 5–20 s is right; over 30 s is over-etched.','Field of view 0.8 mm of specimen at 100×; the counting circle is 79.8 mm across on the image (5 000 mm² at 100×, 0.5 mm² on the specimen).','Samples: as received about ASTM 8, annealed about ASTM 5.5.'],
- issues:['The five METCO and microscope manuals in the pack are the same document.','Steps 3c and 4c say “(see” and the reference is missing: the grit progression and polishing cycles are not given.'],
- init:()=>({spec:'ar',stage:0,cool:false,cut:false,feed:0,pw:false,powder:false,T:22,P:0,cure:0,cooled:false,mounted:false,grit:0,gt:0,scr:6,rinse:false,polish:0,etch:0,rinsed:false,onstage:false,obj:100,focus:0,light:0.5,count:null,done:{}}),
- step(s,dt){if(s.cutting){s.feed+=dt/20;if(!s.cool){s.burn=true;}if(s.feed>=1){s.cutting=false;s.cut=true;LAB.msg('Cut finished. The specimen is about 10 mm long.');}}
-   if(s.pw){U.lag(s,'T',s.Tset||22,dt,40);if(s.T>145&&s.P>15&&s.powder)s.cure+=dt;}else U.lag(s,'T',22,dt,60);
-   if(s.grinding){s.gt+=dt;if(s.gt>60){s.scr=Math.max(5-s.grit,s.scr-1);s.gt=0;s.grinding=false;LAB.msg('Grinding on P'+GRITS[s.grit]+' done.');}}
-   if(s.polishing){s.polish+=dt;if(s.polish>90&&s.scr<=1){s.scr=0;}if(s.polish>240){s.polishing=false;}}
-   if(s.etching){s.etch+=dt;}},
- controls:[sel('spec','Specimen',Object.keys(SPEC).map(k=>[k,SPEC[k][0]]),'1. Cutting',{set:(s,v)=>{const n=LAB.defs.metallo.init();Object.assign(s,n,{spec:v});}}),
-   tog('cool','Coolant','1. Cutting','On','Off'),btn('Clamp the bar and cut a 10 mm piece',s=>{if(!s.cut){s.cutting=true;s.feed=0;}},'1. Cutting'),
-   tog('powder','Specimen face-down in the mould, filled with mounting powder','2. Hot mounting','Filled','Empty'),tog('pw','Press heater','2. Hot mounting','On','Off'),
-   rng('Tset','Mould temperature set point',20,200,1,'°C',0,'2. Hot mounting'),rng('P','Mould pressure',0,40,0.5,'kN',1,'2. Hot mounting'),
-   btn('Cool under pressure, then eject the mount',s=>{if(s.cure<300){LAB.msg('Not cured yet: hold the temperature and pressure for 5–10 minutes.');return;}if(s.P<15){LAB.msg('Keep the pressure on while it cools.');}s.pw=false;s.cooled=true;s.mounted=true;},'2. Hot mounting'),
-   sel('grit','Emery paper',GRITS.map((g,i)=>[i,'P'+g]),'3. Grinding'),btn('Grind (about 1 minute)',s=>{if(!s.mounted){LAB.msg('Mount the specimen first.');return;}s.grinding=true;s.gt=0;s.rinse=false;},'3. Grinding'),btn('Rinse in the ultrasonic cleaner',s=>{s.rinse=true;},'3. Grinding'),
-   btn('Polish with diamond paste',s=>{if(s.grit<4||s.scr>1){LAB.msg('Finish grinding through the papers first: scratches from coarse grinding will not polish out.');}s.polishing=true;},'4. Polishing'),
-   btn('Apply etchant (swab)',s=>{if(s.scr>0)LAB.msg('The surface is not mirror-like yet: polish first.');s.etching=true;s.rinsed=false;},'5. Etching'),btn('Rinse with water, then alcohol, and dry',s=>{s.etching=false;s.rinsed=true;},'5. Etching'),
-   tog('onstage','Specimen on the microscope stage, surface up, normal to the axis','6. Microscope','On stage','Off'),rng('focus','Coarse focus',0,1,0.005,'',3,'6. Microscope'),rng('fine','Fine focus',-0.02,0.02,0.0005,'',4,'6. Microscope',{set:(s,v)=>{s.focus=s.focus-(s.fine||0)+v;s.fine=v;}}),rng('light','Light intensity',0,1,0.01,'',2,'6. Microscope'),
-   btn('Count grains in the circle (planimetric)',s=>{if(!s.onstage)return;const m=micro(s);s.count={in:m.inside,int:m.inter,area:m.area};},'7. Grain size')],
- readings:[rd('cut','Cut progress','%',0,s=>s.feed*100,0,{cal:false}),rd('T','Mould temperature','°C',0,s=>s.T,0.3),rd('cure','Curing time at temperature and pressure','min',1,s=>s.cure/60,0,{cal:false}),
-   rd('scr','Surface','',0,s=>!s.mounted?'—':s.scr>3?'Coarse scratches':s.scr>1?'Fine scratches':s.scr>0?'Very fine scratches':'Mirror-like',0,{cal:false}),rd('et','Etch time','s',0,s=>s.etch,0,{cal:false}),
-   rd('ni','Grains inside the circle','',0,s=>s.count?s.count.in:null,0,{cal:false}),rd('nx','Grains cut by the circle','',0,s=>s.count?s.count.int:null,0,{cal:false})],
- warnings:[{when:s=>s.cutting&&!s.cool,msg:'Cutting without coolant overheats (burns) the specimen and changes its microstructure.'},{when:s=>s.pw&&s.T>200,msg:'Mould temperature too high for the mounting powder.'},{when:s=>s.etch>30&&!s.rinsed,msg:'Over-etching: rinse now. Over-etching obscures the microstructure.'},{when:s=>s.etching&&s.etch>3&&s.etch<25,msg:'Etching… rinse when the surface turns dull (about 5–20 s).',level:'info'}],
- instPanel:s=>{if(!s.onstage||!s.rinsed)return s.onstage?'<div class="lb-trace"><b>Microscope</b><p>Prepare and etch the specimen first; an unetched polished surface shows no grain boundaries.</p></div>':'';const m=micro(s);
-   return `<div class="lb-trace"><b>Microscope view, 100×</b><div class="lb-micro"><img alt="Simulated microstructure at 100×" src="${m.url}" style="filter:blur(${m.blur.toFixed(1)}px)"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="none" stroke="#e8463a" stroke-width="0.6"/></svg></div><p class="lb-note">Simulated image. The red circle is the planimetric counting area (5 000 mm² at 100×).</p></div>`;},
- panelKey:s=>[s.onstage,s.rinsed,s.spec,Math.round(Math.min(s.etch,40)/5),s.scr,Math.round(s.focus*20),s.light].join(),
- experiments:[{id:'met1',title:'Specimen preparation and grain size (ASTM E112)',aim:'Prepare metallographic specimens before and after heat treatment, examine the microstructure and find the ASTM grain size.',steps:[
-   {t:'Select the specimen and cut it cleanly with the sectioning machine (about 10 mm long).',check:s=>s.cut&&!s.burn,hint:'coolant on'},
-   {t:'Place the specimen face-down in the mounting press and fill the mould with mounting powder.',check:s=>s.powder},
-   {t:'Close the press and apply the temperature and pressure for the powder.',check:s=>s.T>145&&s.P>15},
-   {t:'Hold for the curing time (usually 5–10 minutes).',check:s=>s.cure>=300},
-   {t:'Allow the mould to cool under pressure before removing the mounted sample.',check:s=>s.mounted},
-   {t:'Grind on the emery papers in turn to remove the cutting marks; rinse in the ultrasonic cleaner.',check:s=>s.mounted&&s.scr<=1&&s.rinse},
-   {t:'Polish with diamond paste until the surface is smooth and mirror-like.',check:s=>s.scr===0},
-   {t:'Apply the etchant briefly, then rinse with water and alcohol and dry. Avoid over-etching.',check:s=>s.rinsed&&s.etch>=5&&s.etch<=30},
-   {t:'Place the etched specimen on the stage, surface up and normal to the optical axis; choose the 100× objective.',check:s=>s.onstage},
-   {t:'Focus with the coarse knob, then the fine knob; adjust the light for best contrast.',check:s=>Math.abs(s.focus-0.62)<0.01&&s.light>0.5},
-   {t:'Observe and document the microstructure; count the grains (planimetric) and record.',rec:true,check:(s,R)=>R.length>=1},
-   {t:'Repeat for the second specimen (after heat treatment) and compare.',rec:true,check:(s,R)=>new Set(R.map(r=>r.sp)).size>=2}],
-  table:[col('sp','Specimen','',0,(v,s)=>SPEC[s.spec][0]),col('ni','Grains inside','',0,v=>v.ni),col('nx','Grains intercepted','',0,v=>v.nx),{k:'NA',label:'N_A (per mm² on the specimen)',unit:'1/mm²',dp:0},{k:'NAE',label:'N_AE (per in² at 100×)',unit:'',dp:1},{k:'G',label:'ASTM grain size G',unit:'',dp:1},col('q','Preparation','',0,(v,s)=>s.etch>30?'Over-etched':s.etch<5?'Under-etched':s.burn?'Burnt during cutting':'Good')],
-  calc:[r=>{const NA=(r.ni+r.nx/2)/(PI*0.4*0.4);const NAE=NA/15.5;return {NA,NAE,G:1+Math.log2(NAE)};}],
-  guard:s=>!s.count?'Count the grains in the circle first.':null,
-  summary:R=>R.map(r=>[r.sp,'G = '+r.G.toFixed(1)]),charts:[]}],
- sync(){}
-});})();
 })();

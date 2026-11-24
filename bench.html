@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
-<meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 30 virtual benches with data analysis and calibration, and the Manufacturing Lab machines.">
+<meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 29 virtual benches with data analysis and calibration, and the Manufacturing Lab machines.">
 <meta name="theme-color" content="#050A1A">
 <link rel="icon" type="image/png" href="img/ice-mark.png">
 <meta property="og:title" content="ICE Lab · American University of Bahrain">
@@ -942,52 +942,7 @@ DEV({id:'fatigue',man:'MECH241L §3 Rotating fatigue (HSM19D): steel, aluminium 
   theory:'Each revolution reverses the bending stress at the neck surface (R = −1). Steels show an endurance limit; aluminium and brass do not. Check the load arm against your lab manual.',
   proc:['Measure the neck diameter and fit the specimen.','Zero the counter, choose the pulley and start the motor.','Apply the dead load W.','Record cycles to failure when the micro switch stops the motor.','Repeat at decreasing loads and plot the S–N curve.']});
 
-/* ---- Metallography ---- */
-const MG_STEPS=['As sectioned','Ground P240','Ground P600','Ground P1200','Polished 1 µm','Etched (nital)'];
-function mgD(T,t){return 18+110*Math.pow(clamp((T-750)/300,0,1),1.6)*Math.sqrt(t);}
-function mgBuild(s){const N=280,W=[900,450,225][[100,200,400].indexOf(s.mag)];const d=mgD(s.T,s.t);const n=clamp(Math.round((W/d)**2),10,520);
-  srand(Math.round(s.T*7+s.t*131+s.mag));const pts=[];for(let i=0;i<n;i++)pts.push([rnd()*N,rnd()*N,0.72+rnd()*0.22]);
-  const cs=Math.max(8,Math.floor(N/Math.sqrt(n))),gw=Math.ceil(N/cs),grid=Array.from({length:gw*gw},()=>[]);pts.forEach((p,i)=>grid[Math.min(gw-1,Math.floor(p[1]/cs))*gw+Math.min(gw-1,Math.floor(p[0]/cs))].push(i));
-  const id=new Int32Array(N*N);for(let y=0;y<N;y++)for(let x=0;x<N;x++){const gx=Math.floor(x/cs),gy=Math.floor(y/cs);let best=-1,bd=1e18;
-    for(let r=1;r<=3&&(best<0||r<=2);r++){for(let j=gy-r;j<=gy+r;j++)for(let i=gx-r;i<=gx+r;i++){if(i<0||j<0||i>=gw||j>=gw)continue;const cell=grid[j*gw+i];for(let k=0;k<cell.length;k++){const p=pts[cell[k]],dd=(p[0]-x)**2+(p[1]-y)**2;if(dd<bd){bd=dd;best=cell[k];}}}}id[y*N+x]=best;}
-  s.id=id;s.N=N;s.W=W;s.n=n;s.pts=pts;s.lines=null;mgImg(s);}
-function mgImg(s){const N=s.N,id=s.id,pts=s.pts,cv=document.createElement('canvas');cv.width=N;cv.height=N;const c2=cv.getContext('2d'),img=c2.createImageData(N,N);
-  const et=s.et,con=clamp(et/8,0,1),over=clamp((et-14)/16,0,1);
-  for(let y=0;y<N;y++)for(let x=0;x<N;x++){const k=y*N+x,g=id[k];const edge=(x<N-1&&id[k+1]!==g)||(y<N-1&&id[k+N]!==g);const base=lerp(205,pts[g][2]*255*(1-over*0.35),con);const v=edge?lerp(200,55,con):base;
-    img.data[k*4]=v;img.data[k*4+1]=v-4;img.data[k*4+2]=v-10;img.data[k*4+3]=255;}c2.putImageData(img,0,0);s.img=cv;}
-DEV({id:'metallography',man:'MECH241L §6 Metallographic observations: grind, polish, etch; ASTM E112 planimetric grain size (N_AE = 2^(G−1) grains per in² at 100×), before and after heat treatment.',sec:'mat',model:'Microscope',short:'Metallography',name:'Specimen preparation and grain size',full:'Grinding/polishing station, etch and metallurgical microscope',
-  lede:'Prepare an annealed steel specimen step by step: grind, polish and etch, watching scratches disappear and grain boundaries appear. Then overlay test lines, count intercepts and find the ASTM E112 grain size.',
-  params:[{id:'T',label:'Annealing temperature',min:750,max:1050,step:25,val:900,unit:'°C',dec:0,lock:s=>s.step>0},{id:'t',label:'Annealing time',type:'seg',num:true,val:1,options:[[0.5,'0.5 h'],[1,'1 h'],[2,'2 h']],lock:s=>s.step>0},
-    {id:'et',label:'Etching time',min:2,max:30,step:1,val:8,unit:'s',dec:0,lock:s=>s.step>=5},{id:'mag',label:'Magnification',type:'seg',num:true,val:100,options:[[100,'100×'],[200,'200×'],[400,'400×']]}],
-  init(s){s.step=0;s.prog=0;s.auto=false;mgBuild(s);},
-  onParam(s,id){if(id==='mag'||id==='T'||id==='t')mgBuild(s);if(id==='et')mgImg(s);},
-  actions:[{id:'auto',primary:true,label:s=>s.step>=5?'Prepare a new specimen':s.auto?'Preparing…':'Run full preparation',dis:s=>s.auto,fn(s){if(s.step>=5){s.step=0;s.lines=null;}s.auto=true;s.prog=0;}},
-    {id:'next',label:s=>s.step<5?'Next step: '+MG_STEPS[s.step+1]:'Prepared',dis:s=>s.step>=5||s.auto||s.prog>0,fn(s){s.prog=0.001;}},
-    {id:'ln',label:'Overlay test lines',dis:s=>s.step<5,fn(s){const N=s.N,L=[[[10,N*0.25],[N-10,N*0.25]],[[10,N*0.5],[N-10,N*0.5]],[[10,N*0.75],[N-10,N*0.75]],[[N*0.1,N*0.1],[N*0.9,N*0.9]],[[N*0.1,N*0.9],[N*0.9,N*0.1]]];
-      let cnt=0,len=0;const marks=[];L.forEach(([a,b])=>{const dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy),n=Math.ceil(l*2);len+=l;let prev=s.id[Math.round(a[1])*N+Math.round(a[0])];
-        for(let i=1;i<=n;i++){const x=Math.round(a[0]+dx*i/n),y=Math.round(a[1]+dy*i/n),g=s.id[Math.min(N-1,y)*N+Math.min(N-1,x)];if(g!==prev){cnt++;marks.push([a[0]+dx*i/n,a[1]+dy*i/n]);prev=g;}}});
-      if(s.et<4)cnt=Math.round(cnt*(0.55+s.et*0.1));s.lines={L,cnt,len:len*s.W/N,marks};}}],
-  status:s=>s.step<5?[MG_STEPS[s.step],'info']:s.et<4?['Under-etched: faint boundaries','warn']:s.et>18?['Over-etched: dark grains','warn']:s.n<50?['Few grains: raise magnification','warn']:['Ready to count','ok'],
-  tick(s,dt){if(!(s.prog>0)&&!s.auto)return false;if(s.auto&&!(s.prog>0)){if(s.step>=5){s.auto=false;return true;}s.prog=0.001;}s.prog+=dt/1.4;if(s.prog>=1){s.step++;s.prog=0;if(s.step>=5)s.auto=false;}return true;},
-  rig(ctx,w,h,s){const cx=w*0.6,cy=h/2,R=Math.min(w*0.37,h/2-18);const sx=12,sw=Math.min(130,w*0.28);
-    MG_STEPS.forEach((n,i)=>{const y=30+i*44;const done=s.step>i||(s.step===i&&i===0),act=s.step+1===i&&s.prog>0;box(ctx,sx,y,sw,30,done||s.step>=i?C['panel-2']:C.panel,C.ink);if(act)box(ctx,sx,y,sw*s.prog,30,C.accent);txt(ctx,n,sx+8,y+15,{s:10,c:C.ink});if(s.step>=i)txt(ctx,'✓',sx+sw-12,y+15,{s:11,c:C.ok,w:500});});
-    ctx.save();ctx.beginPath();ctx.arc(cx,cy,R,0,PI*2);ctx.clip();ctx.fillStyle='#cfd2cc';ctx.fillRect(cx-R,cy-R,2*R,2*R);
-    const st=s.step+(s.prog>0?s.prog:0);if(st>=4.999){ctx.drawImage(s.img,cx-R,cy-R,2*R,2*R);}
-    else{srand(55);const nS=[120,80,45,18,3][Math.floor(st)]||0,wS=[3,2,1.2,0.8,0.5][Math.floor(st)]||0.5;ctx.strokeStyle='rgba(60,60,60,0.45)';ctx.lineWidth=wS;for(let i=0;i<nS;i++){const y=cy-R+rnd()*2*R,a=(rnd()-0.5)*0.3+(Math.floor(st)%2?0.6:-0.2);ctx.beginPath();ctx.moveTo(cx-R,y);ctx.lineTo(cx+R,y+Math.tan(a)*2*R);ctx.stroke();}
-      if(st>=4){ctx.globalAlpha=s.prog;ctx.drawImage(s.img,cx-R,cy-R,2*R,2*R);ctx.globalAlpha=1;}}
-    const k=2*R/s.N;if(s.lines){s.lines.L.forEach(([a,b])=>poly(ctx,[[cx-R+a[0]*k,cy-R+a[1]*k],[cx-R+b[0]*k,cy-R+b[1]*k]],'#c0451a',1.5));s.lines.marks.forEach(p=>dot(ctx,cx-R+p[0]*k,cy-R+p[1]*k,2.4,'#f0b429','#111',0.8));}
-    const bpx=100/s.W*2*R;poly(ctx,[[cx-bpx/2,cy+R-20],[cx+bpx/2,cy+R-20]],'#111',3);txt(ctx,'100 µm',cx,cy+R-32,{a:'center',c:'#111',s:10,w:500});ctx.restore();dot(ctx,cx,cy,R,null,C.ink,3);},
-  ro(s){const l=s.lines,ell=l?l.len/l.cnt:null,Gn=ell?-6.6457*Math.log10(ell/1000)-3.298:null;const NA=s.n/((s.W/1000)**2),NAE=NA*0.064516;return [['Field width',s.W,'µm'],['Grains in field',s.n,''],['N_AE (planimetric)',f(NAE,1),'per in² at 100×'],['G = 1 + log₂N_AE',f(1+Math.log2(NAE),1),''],['Intercepts N',l?l.cnt:'—',''],['Line length',l?f(l.len,0):'—','µm'],['Mean intercept ℓ',ell?f(ell,1):'—','µm'],['ASTM G',Gn!=null?f(Gn,1):'—','']];},
-  chartTitle:'Mean intercept vs annealing temperature',
-  chart(s){let ym=40;s.rows.forEach(r=>ym=Math.max(ym,r.d.l));return {x:[725,1075],y:[0,niceMax(ym*1.2)],xl:'annealing temperature (°C)',yl:'mean intercept ℓ (µm)',
-    series:[0.5,1,2].map((t,i)=>({pts:s.rows.filter(r=>r.d.t===t).map(r=>[r.d.T,r.d.l]),kind:'dots',color:[C.cold,C.trace,C.fit][i],r:4.5})),legend:[['0.5 h',C.cold],['1 h',C.trace],['2 h',C.fit]]};},
-  log:{cols:['T (°C)','t (h)','Etch (s)','Mag.','Grains in field','N_A (per mm²)','N_AE (per in² at 100×)','G planimetric','Intercepts','ℓ (µm)','G intercept'],btn:'Record count',
-    row(s){const l=s.lines;if(!l)return 'Prepare the specimen and overlay the test lines first.';const ell=l.len/l.cnt,Gn=-6.6457*Math.log10(ell/1000)-3.298;const NA=s.n/((s.W/1000)**2),NAE=NA*0.064516,Gp=1+Math.log2(NAE);return {c:[s.T,s.t,s.et,s.mag+'×',s.n,NA.toFixed(0),NAE.toFixed(1),Gp.toFixed(1),l.cnt,ell.toFixed(1),Gn.toFixed(1)],d:{T:s.T,t:s.t,l:ell}};}},
-  result(s){return 'Under-etched specimens hide boundaries, so the intercept count falls and G reads too coarse. Aim for 50 or more intercepts per field.';},
-  eq:'N_L = N / L_T &nbsp; ℓ = 1 / N_L<br>G = −6.6457·log₁₀ ℓ(mm) − 3.298 (ASTM E112)<br>grain growth: d² − d₀² = k₀·e^(−Q/RT)·t',
-  theory:'Each grinding step removes the damage of the previous one; the final polish leaves a mirror surface with no contrast. Nital attacks grain boundaries first, revealing the structure.',
-  proc:['Section and mount the annealed specimen.','Grind on P240, P600 and P1200, rotating 90° between papers.','Polish with 1 µm diamond.','Etch in 2% nital, rinse, dry.','Overlay test lines, count intercepts on five fields and calculate G.']});
-/* ---- materials testing in 3D: tensile UTM, pendulum impact, Vickers, rotating fatigue, metallography ---- */
+/* ---- materials testing in 3D: tensile UTM, pendulum impact, Vickers, rotating fatigue ---- */
 (function(){
 const dark=()=>document.documentElement.getAttribute('data-theme')==='dark'||(!document.documentElement.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
 const base=(K,R)=>{const M=K.mat,flM=M('#e9eae6',{r:.9});if(!window.G3_STUDIO)R.add(K.node(K.plane(6,5),flM,{r:[-Math.PI/2,0,0]}));return ()=>{flM.c=dark()?'#4d5258':'#e9eae6';};};
@@ -1080,18 +1035,6 @@ d.view3d={h:520,cam:{tgt:[0,0.55,0],yaw:0.4,pitch:0.2,dist:1.25},
     return {root:R,update(s,dt,t){fl();rot.r[0]=s.ph||0;const n=Math.max(1,Math.round((s.W||0)/5));wts.forEach((w,i)=>w.vis=i<n);
       const brk=s.done==='frac';tip.p=[0.15,brk?0.5:0.6,0];tip.r=[0,0,brk?0.3:0];sp.s=[1,brk?0.6:1,1];const c=String(Math.floor(s.N||0));if(c!==lc){lc=c;lcdDraw(cT,c.padStart(8,'0'),'#ff9a5a');}}};}};})();
 
-/* ===== metallography: grinder/polisher, etch, microscope ===== */
-(function(){const d=DEVMAP.metallography;if(!d)return;
-d.view3d={h:520,cam:{tgt:[0,0.95,0],yaw:0.3,pitch:0.35,dist:1.9},views:{all:{tgt:[0,0.95,0],yaw:0.3,pitch:0.35,dist:1.9}},viewLabels:{all:'Preparation bench'},
-  build(K,s,G){const R=K.group(),M=K.mat,B=(w,h,dd,m,p,o)=>K.node(K.box(w,h,dd),m,Object.assign({p},o||{}));const fl=base(K,R);
-    const TOP=0.9;R.add(B(1.8,0.05,0.7,M('#d9d6cf',{r:.7}),[0,TOP-0.025,0]));[[-0.85,-0.3],[0.85,-0.3],[-0.85,0.3],[0.85,0.3]].forEach(([x,z])=>R.add(B(0.04,TOP-0.05,0.04,M(MATC.frame),[x,(TOP-0.05)/2,z])));
-    const wh=[];[-0.55,-0.2].forEach((x,i)=>{R.add(B(0.3,0.12,0.3,M('#e6e6e1',{r:.4}),[x,TOP+0.06,0]));const w=K.group({p:[x,TOP+0.125,0]});R.add(w);w.add(K.node(K.cyl(0.11,0.11,0.01,32),M(i?'#e9e2d0':'#4b4b4b',{r:.8}),{pick:'next',tip:i?'Polishing cloth (diamond 6 µm → 1 µm)':'Grinding wheel (SiC papers P240 → P1200)'}));w.add(B(0.2,0.002,0.01,M('#999'),[0,0.006,0]));wh.push(w);});
-    R.add(K.node(K.cyl(0.06,0.06,0.04,20,false),M('#e3f1fa',{a:.3}),{p:[0.15,TOP+0.02,0.05],pick:'auto',tip:'Etchant dish (2 % nital)'}));
-    const mic=K.group({p:[0.55,TOP,0]});R.add(mic);mic.add(B(0.2,0.05,0.25,M('#333'),[0,0.025,0]));mic.add(B(0.05,0.35,0.06,M('#333'),[0,0.2,-0.08]));mic.add(B(0.12,0.012,0.12,M('#555'),[0,0.12,0]));mic.add(K.node(K.cyl(0.015,0.015,0.12,14),M('#222'),{r:[0.7,0,0],p:[0,0.38,0.0],pick:'ln',tip:'Metallurgical microscope: eyepiece'}));
-    const sm=K.node(K.cyl(0.015,0.015,0.02,18),M('#b9bec3',{m:1,r:.2}),{pick:'auto',tip:'Mounted specimen'});R.add(sm);const tag=K.label('',R,[0,TOP+0.5,0],{cls:'v3tag'});
-    return {root:R,update(s,dt,t){fl();const st=s.step||0,act=(s.prog||0)>0;wh.forEach((w,i)=>{const on=act&&((i===0&&st<3)||(i===1&&st>=3));w.r[1]+=on?dt*12:0;});
-      const pos=st>=4?[0.55,TOP+0.135,0]:st===3&&!act?[0.15,TOP+0.03,0.05]:st>=3?[-0.2,TOP+0.14,0.05]:[-0.55,TOP+0.14,0.05];sm.p=pos;
-      tag.el.textContent=(typeof MG_STEPS!=='undefined'?(MG_STEPS[Math.min(st,MG_STEPS.length-1)]||''):'')+(act?' …':'');}};}};})();
 })();
 /* ================= SOLID MECHANICS ================= */
 /* ---- Torsion ---- */
@@ -4218,7 +4161,6 @@ const MAN={
   charpy:{ref:'MECH241L §4 · Charpy impact',eq:['d_n=d-d_{\\text{notch}}','A=d_n\\,b','K=\\dfrac{E_a}{A}'],note:'V-notch specimen: \\(d_n\\) depth at the notch, \\(b\\) width, \\(E_a\\) energy absorbed (Table 4.2).'},
   vickers:{ref:'MECH241L §5 · Vickers hardness',eq:['d=\\dfrac{d_1+d_2}{2}','\\mathrm{HV}=\\dfrac{1.854\\,F}{d^{2}}'],note:'Select the load on the weight knob, dwell 10–15 s, report as HV/load (Table 5.1).'},
   fatigue:{ref:'MECH241L §3 · Rotating fatigue (HSM19D)',eq:['\\sigma=\\dfrac{32\\,F\\,L}{\\pi D^{3}}'],note:'Steel, aluminium and brass; Tables 3.2–3.3 and \\(\\log\\sigma\\) against \\(\\log N\\).'},
-  metallography:{ref:'MECH241L §6 · Metallographic observations',eq:['N_{AE}=2^{\\,G-1}'],note:'Grind, polish, etch; ASTM E112 planimetric grain size, \\(N_{AE}\\) grains per in² at 100×, before and after heat treatment.'},
   torsion:{ref:'MECH241L §2 · Torsion test (PA Hilton)',eq:['\\dfrac{T}{J}=\\dfrac{G\\,\\theta}{L}','J=\\dfrac{\\pi d^{4}}{32}'],note:'Load strictly in the elastic region; Table 2.2: load, torque, HDA200 twist and actual twist.'},
   tm1016v:{ref:'MECH490L §4 · Free and forced vibration',eq:['\\omega_n=\\sqrt{\\dfrac{k}{m}}','f_n=\\dfrac{\\omega_n}{2\\pi}'],note:'Experiment 1 rigid beam and spring with added mass (Table 4.4, holder 0.2 kg + 5 × 400 g); Experiment 2 damping (Table 4.5: undamped, fully open, fully shut; forced vibration in 0.25 Hz steps from speed ratio 0.75, 0.1 Hz near resonance).'},
   h8:{ref:'MECH451L §4 · Impact of a jet',eq:['F=39.24\\,y','u=\\dfrac{\\dot m}{0.07854}','u_0=\\sqrt{u^{2}-0.6867}'],note:'Symmetrical experiment (Table 4.5) and asymmetrical experiment (Table 4.6).'},
@@ -4250,7 +4192,6 @@ tensile:['\\sigma=\\dfrac{F}{A_0}','\\varepsilon=\\dfrac{\\Delta L}{L_0}','E=\\d
 charpy:['E_0=m g R\\,(1-\\cos\\alpha)','E_{\\text{absorbed}}=m g R\\,(\\cos\\beta-\\cos\\alpha)-E_{\\text{friction}}','v_{\\text{impact}}=\\sqrt{2 g R\\,(1-\\cos\\alpha)}',T('Charpy: 3-point bend, 40 mm span; Izod: cantilever, 22 mm above vice')],
 vickers:['\\mathrm{HV}=\\dfrac{2F\\sin(136^{\\circ}/2)}{d^{2}}=\\dfrac{1.8544\\,F}{d^{2}}','d=\\dfrac{d_1+d_2}{2}\\quad'+T('(F in kgf, d in mm)'),'\\text{UTS (MPa)}\\approx3.3\\times\\mathrm{HV}\\;'+T(' (steels)')],
 fatigue:['M=W L\\quad'+T('(L = 100 mm load arm)'),'\\sigma=\\dfrac{32\\,M}{\\pi d^{3}}','\\sigma_a=\\sigma_f\'\\,(2N_f)^{b}\\;'+T(' (Basquin)')],
-metallography:['N_L=\\dfrac{N}{L_T}','\\ell=\\dfrac{1}{N_L}','G=-6.6457\\,\\log_{10}\\ell_{(\\text{mm})}-3.298\\;'+T(' (ASTM E112)'),'d^{2}-d_0^{2}=k_0\\,e^{-Q/RT}\\,t\\;'+T(' (grain growth)')],
 torsion:['\\dfrac{T}{J}=\\dfrac{\\tau}{r}=\\dfrac{G\\,\\theta}{L}','J=\\dfrac{\\pi d^{4}}{32}','T_y=\\dfrac{\\tau_y J}{R}','T_p=\\dfrac{2\\pi}{3}\\,\\tau_y R^{3}=\\dfrac{4}{3}\\,T_y'],
 frameworks:['\\sum F_x=0,\\ \\sum F_y=0\\;'+T(' at every joint'),'F=\\varepsilon E A','A=28.3\\ \\text{mm}^{2}\\;'+T(' (Ø6 steel)'),'m+r=2j\\;'+T(' (statically determinate)')],
 beams:['I=\\dfrac{b h^{3}}{12}','\\delta=\\dfrac{P a\\,(3L^{2}-4a^{2})}{48EI}\\;'+T(' simply supported, gauge at midspan (a ≤ L/2)'),'\\delta=\\dfrac{P a^{2}(3L-a)}{6EI}\\;'+T(' cantilever, gauge at tip'),'\\sigma_{\\max}=\\dfrac{M\\,(h/2)}{I}'],
@@ -4885,15 +4826,6 @@ if(has('wind')){const d=DEVMAP.wind;
         params:[{id:'V',label:'Open-circuit EMF V_oc',unit:'V',guess:r=>{const m=r.reduce((a,q)=>q.P>a.P?q:a,{P:0,R:10});return Math.sqrt(4*m.R*m.P/1000);}},{id:'Ri',label:'Internal resistance R_i',unit:'Ω',guess:r=>r.reduce((a,q)=>q.P>a.P?q:a,{P:0,R:10}).R}],
         f:(p,r)=>1000*p[0]*p[0]*r.R/((r.R+Math.abs(p[1]))**2),derive:p=>[{label:'Open-circuit EMF V_oc',v:Math.abs(p[0]),unit:'V'},{label:'Internal resistance R_i',v:Math.abs(p[1]),unit:'Ω'},{label:'Maximum power V_oc²/(4R_i)',v:1000*p[0]*p[0]/(4*Math.abs(p[1])),unit:'mW'}]}]};}
 
-/* grain growth (metallography) */
-if(has('metallography')){const d=DEVMAP.metallography;
-  d.lab={cols:[{id:'t',label:'Annealing time t',unit:'h'},{id:'l',label:'Mean intercept ℓ',unit:'µm'}],bench:s=>s.rows.filter(r=>r.d.T===s.T).map(r=>({t:r.d.t,l:r.d.l})),
-    setup:s=>[['Annealing temperature',s.T,'°C']],
-    models:[{id:'n2',name:'Parabolic growth: ℓ² − ℓ₀² = k·t',eq:'\\ell^2-\\ell_0^2 = k\\,t',x:'t',y:'l',zero:false,params:[{id:'l0',label:'Initial size ℓ₀',unit:'µm',guess:r=>Math.min(...r.map(q=>q.l))},{id:'k',label:'Rate k',unit:'µm²/h',guess:()=>100}],f:(p,r)=>Math.sqrt(Math.max(0,p[0]*p[0]+p[1]*r.t)),
-        derive:p=>[{label:'Initial size ℓ₀',v:Math.abs(p[0]),unit:'µm'},{label:'Rate constant k',v:p[1],unit:'µm²/h'}],note:'Ideal (curvature-driven) grain growth has n = 2. Repeat at several temperatures and plot ln k against 1/T for the activation energy.'},
-      {id:'nf',name:'General growth law: ℓⁿ − ℓ₀ⁿ = k·t',eq:'\\ell^n-\\ell_0^n = k\\,t',x:'t',y:'l',zero:false,params:[{id:'l0',label:'ℓ₀',unit:'µm',guess:r=>Math.min(...r.map(q=>q.l))},{id:'k',label:'k',unit:'µmⁿ/h',guess:()=>100},{id:'n',label:'Exponent n',unit:'',guess:()=>2}],
-        f:(p,r)=>Math.pow(Math.max(0,Math.pow(Math.abs(p[0]),p[2])+p[1]*r.t),1/p[2]),derive:p=>[{label:'Growth exponent n',v:p[2],unit:'',ref:2,refLabel:'ideal grain growth'}]}]};}
-
 /* Vickers: indentation size effect */
 if(has('vickers')){const d=DEVMAP.vickers;
   d.lab={cols:[{id:'F',label:'Test load F',unit:'kgf'},{id:'HV',label:'Hardness HV',unit:''}],bench:s=>s.rows.filter(r=>r.d.mat===s.mat).map(r=>({F:r.d.F,HV:r.d.hv})),
@@ -5269,29 +5201,6 @@ window.kit4=function(K){const refs={};const k=window.kit3(K),{M,B,Cy,Cz,Cx,RB}=k
   return k;};
 const D=(o)=>NEW3D.push(Object.assign({s:{}},o));
 
-/* ---- 1. Automatic grinder-polisher ---- */
-D({id:'polisher',name:'Automated Polishing Machine',photo:1,view3d:{h:560,cam:{tgt:[0,1.08,0],yaw:0.45,pitch:0.22,dist:2.2},shadow:{c:[0,1,0],r:1.6},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,ss,blk,steel}=k,R=K.group();floor(R);k.stable(R,1.5,0.75,0.9);
-  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;const body=M('#dfe1e0',{r:.5});
-  g.add(RB(0.64,0.2,0.5,0.03,body,[0,0.1,0]));g.add(K.node(K.plane(0.6,0.12),M('#fff',{t:k.stripe(),r:.5}),{p:[0,0.09,0.251]}));g.add(RB(0.64,0.03,0.5,0.012,M('#2a2c2f',{r:.4}),[0,0.215,0]));
-  [-0.15,0.15].forEach(x=>{g.add(Cy(0.135,0.03,M('#111214',{r:.5}),[x,0.235,0.04],40));g.add(Cy(0.115,0.012,M('#3a3d42',{m:.5,r:.35}),[x,0.246,0.04],40));g.add(K.node(K.torus(0.135,0.008,8,40),M('#0c0d0e',{r:.5}),{p:[x,0.25,0.04]}));});
-  k.estopZ(g,[0.25,0.1,0.25]);
-  /* head on a rear column */g.add(RB(0.12,0.3,0.12,0.02,body,[0.15,0.37,-0.2],{r:[0,PI/2,0]}));g.add(RB(0.3,0.2,0.26,0.03,M('#c8cacb',{r:.5}),[0.13,0.58,-0.08]));g.add(K.node(K.plane(0.14,0.1),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[0.17,0.6,0.052],r:[-0.25,0,0]}));
-  g.add(Cy(0.02,0.14,steel,[0.15,0.42,0.04]));g.add(Cy(0.08,0.035,steel,[0.15,0.34,0.04],30));for(let i=0;i<6;i++){const a=i/6*PI*2;g.add(Cy(0.016,0.05,M('#8f959b',{m:1,r:.4}),[0.15+0.052*Math.cos(a),0.3,0.04+0.052*Math.sin(a)],12));}
-  /* water arm and dispenser */g.add(K.node(K.tube([[-0.15,0.22,-0.2],[-0.15,0.42,-0.2],[-0.15,0.42,-0.02],[-0.15,0.33,0.0]],0.008,8,0.04),steel,{}));g.add(RB(0.16,0.18,0.14,0.015,M('#d9dbda',{r:.5}),[-0.48,0.09,0.0]));g.add(Cy(0.04,0.2,M('#e3f1fa',{a:.35,r:.05}),[-0.62,0.1,0.1]));
-  /* desiccators */[[0.52,0.02,0.12],[0.6,0.26,0.085]].forEach(([x,z,r])=>{g.add(Cy(r,0.07,M('#e6f1f6',{a:.35,r:.05}),[x,0.035,z],30));g.add(K.node(K.sphere(r,20),M('#e6f1f6',{a:.28,r:.05}),{p:[x,0.07,z],s:[1,0.75,1]}));g.add(K.node(K.sphere(0.02,10),M('#e6f1f6',{a:.5}),{p:[x,0.07+r*0.78,z]}));});
-  K.label('Polishing platens',g,[0,0.3,0.2]);K.label('Specimen mover head',g,[0.3,0.72,0]);K.label('Desiccators',g,[0.58,0.26,0.1]);return {root:R,refs,update(){}};}}});
-
-/* ---- 2. Twin mounting press ---- */
-D({id:'mount',name:'Specimen Mounting Press',photo:2,view3d:{h:560,cam:{tgt:[0,0.95,0],yaw:0.4,pitch:0.2,dist:2.6},shadow:{c:[0,0.8,0],r:1.8},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,ss,blk,steel}=k,R=K.group();floor(R);k.stable(R,0.95,0.75,0.82,0,0,0.22);
-  const g=K.group({p:[0,0.82,0]});R.add(g);refs.g=g;const body=M('#cfd3d6',{r:.45});
-  g.add(RB(0.6,0.26,0.46,0.05,body,[0,0.13,0]));g.add(K.node(K.prismX([[0.23,0.26],[-0.23,0.26],[-0.23,0.4],[0.1,0.4]],-0.3,0.3),body,{}));
-  g.add(K.node(K.plane(0.56,0.11),M('#fff',{t:k.stripe(),r:.5}),{p:[0,0.1,0.232]}));g.add(K.node(K.plane(0.16,0.1),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[-0.14,0.21,0.233]}));
-  [-0.15,0.15].forEach(x=>{g.add(Cy(0.075,0.16,M('#d5d8da',{m:.9,r:.25}),[x,0.47,-0.04],30));g.add(Cy(0.065,0.05,blk,[x,0.575,-0.04],30));g.add(Cy(0.02,0.05,blk,[x,0.62,-0.04]));
-    for(let i=0;i<3;i++){const a=i/3*PI*2+0.4;g.add(K.node(K.cyl(0.008,0.008,0.09,8),steel,{p:[x+0.045*Math.cos(a),0.655,-0.04+0.045*Math.sin(a)],r:[Math.sin(a)*-1.2,0,Math.cos(a)*1.2]}));g.add(K.node(K.sphere(0.022,12),blk,{p:[x+0.09*Math.cos(a),0.672,-0.04+0.09*Math.sin(a)]}));}});
-  /* resin jugs on the shelf */[['#f2f2ee',-0.28],['#f2f2ee',0],['#f0b6ae',0.28]].forEach(([c,x])=>{R.add(RB(0.2,0.26,0.16,0.03,M(c,{r:.5}),[x,0.36,0.05]));R.add(Cy(0.035,0.04,M('#e8e8e4',{r:.5}),[x,0.51,0.05],16));R.add(B(0.14,0.1,0.004,M('#2f5fa8',{r:.5}),[x,0.33,0.132]));});
-  /* sink with spring tap behind */const s=K.group({p:[-1.05,0,-0.35]});R.add(s);s.add(B(0.9,0.5,0.6,ss,[0,0.6,0]));s.add(B(0.8,0.02,0.5,M('#8f959b',{m:.9,r:.4}),[0,0.852,0]));s.add(B(0.9,0.6,0.03,ss,[0,0.3,0.28]));s.add(K.node(K.tube([[0.25,0.85,-0.22],[0.25,1.3,-0.22],[0.25,1.36,-0.05],[0.25,1.12,0.02]],0.012,10,0.07),steel,{}));for(let i=0;i<14;i++)s.add(K.node(K.torus(0.02,0.004,6,12),steel,{p:[0.25,0.9+i*0.028,-0.22]}));
-  K.label('Mould cylinders',g,[0,0.74,0]);K.label('Mounting resin',R,[0,0.56,0.14]);return {root:R,refs,update(){}};}}});
-
 /* ---- 3. Vickers hardness tester with microscopes ---- */
 D({id:'vickers',name:'Vickers Hardness Tester',photo:3,view3d:{h:560,cam:{tgt:[0,1.15,0],yaw:0.35,pitch:0.18,dist:2.4},shadow:{c:[0,1.1,0],r:1.8},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white}=k,R=K.group();floor(R);bench(R,2.2,1.0,0.9,0,0);k.pod(R,1.8,0,-0.35);
   const g=K.group({p:[0,0.9,0.05]});R.add(g);refs.g=g;
@@ -5301,16 +5210,6 @@ D({id:'vickers',name:'Vickers Hardness Tester',photo:3,view3d:{h:560,cam:{tgt:[0
   g.add(K.node(K.prismX([[0.12,0.0],[-0.02,0.0],[-0.02,0.26],[0.08,0.2]],-0.1,0.1),white,{p:[0,0,0.2]}));g.add(K.node(K.plane(0.15,0.13),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[0,0.105,0.305],r:[-0.55,0,0]}));
   const scope=(x,ry)=>{const q=K.group({p:[x,0.9,0.1],r:[0,ry,0]});R.add(q);q.add(RB(0.2,0.05,0.28,0.02,white,[0,0.025,0],{r:[0,PI/2,0]}));q.add(RB(0.08,0.3,0.1,0.02,white,[0,0.18,-0.09],{r:[0,PI/2,0]}));q.add(RB(0.14,0.1,0.2,0.03,white,[0,0.33,-0.02],{r:[0,PI/2,0]}));q.add(B(0.16,0.012,0.16,blk,[0,0.17,0.03]));q.add(Cy(0.022,0.06,blk,[0,0.25,0.03]));[-0.03,0.03].forEach(a=>q.add(K.node(K.cyl(0.016,0.016,0.1,12),blk,{p:[a,0.41,0.08],r:[0.8,0,0]})));q.add(Cx(0.025,0.14,blk,[0,0.1,-0.09],16));};scope(-0.62,0.4);scope(0.62,-0.5);
   K.label('Indenter + objectives',g,[0.16,0.44,0.06]);K.label('Test stage',g,[0.14,0.28,0.1]);K.label('Microscope',R,[0.62,1.38,0.1]);return {root:R,refs,update(){}};}}});
-
-/* ---- 4. Abrasive cut-off machine ---- */
-D({id:'cutter',name:'Abrasive Cutting Machine',photo:4,view3d:{h:560,cam:{tgt:[0,1.12,0],yaw:0.35,pitch:0.14,dist:2.4},shadow:{c:[0,1,0],r:1.7},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,blk,steel}=k,R=K.group();floor(R);k.stable(R,1.25,0.8,0.85);
-  const g=K.group({p:[0,0.85,0]});R.add(g);refs.g=g;const grey=M('#b9bdc0',{r:.5}),dark=M('#2c2f33',{r:.45});
-  g.add(RB(1.0,0.2,0.62,0.02,dark,[0.02,0.1,0]));const yt=K.tex(512,48,(c,w,h)=>{c.fillStyle='#e8c21a';c.fillRect(0,0,w,h);c.fillStyle='#17181b';c.font='italic bold 34px sans-serif';c.fillText('ABRASIVE CUTTER',150,37);});g.add(K.node(K.plane(0.98,0.07),M('#fff',{t:yt,r:.5}),{p:[0.02,0.17,0.312]}));
-  /* control cabinet */g.add(RB(0.34,0.56,0.6,0.02,grey,[-0.33,0.48,0]));g.add(B(0.34,0.1,0.004,M('#1c63b8',{r:.5}),[-0.33,0.26,0.302]));g.add(B(0.25,0.2,0.006,M('#e9ebea',{r:.5}),[-0.33,0.5,0.302]));g.add(K.node(K.plane(0.2,0.15),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[-0.33,0.5,0.306]}));k.estopZ(g,[-0.33,0.69,0.3]);[['#1d1f22',-0.43],['#2f9b55',-0.33],['#c0221b',-0.23]].forEach(([c,x])=>g.add(Cz(0.02,0.02,M(c,{r:.4}),[x,0.34,0.305],14)));
-  /* cutting hood with window */g.add(RB(0.66,0.42,0.6,0.05,M('#3a3d42',{r:.4,m:.3}),[0.19,0.41,0]));g.add(B(0.4,0.22,0.006,M('#0c0d0e',{r:.15,m:.4}),[0.17,0.44,0.302]));g.add(B(0.03,0.2,0.04,blk,[0.5,0.44,0.31]));g.add(B(0.26,0.035,0.004,M('#f08a1c',{r:.5}),[0.3,0.25,0.302]));
-  /* vice handles on top, coolant hose */g.add(B(0.2,0.012,0.14,M('#b9bdc0',{m:.6}),[0.2,0.63,-0.05]));[0.12,0.3].forEach(x=>{g.add(Cy(0.02,0.07,blk,[x,0.67,-0.05]));g.add(B(0.07,0.05,0.03,blk,[x,0.7,-0.05]));});g.add(K.node(K.sphere(0.07,16),blk,{p:[-0.3,0.78,0],s:[1.4,0.4,1]}));
-  R.add(K.node(K.tube([[0.55,1.3,0.1],[0.75,1.3,0.15],[0.8,0.95,0.2],[0.6,0.6,0.3],[0.62,0.2,0.3]],0.01,8,0.15),M('#2f74c0',{r:.4}),{}));
-  K.label('Control cabinet',g,[-0.33,0.84,0.2]);K.label('Cutting chamber',g,[0.2,0.7,0.3]);return {root:R,refs,update(){}};}}});
 
 /* ---- 5. Muffle furnace ---- */
 D({id:'furnace',name:'Muffle Furnace',photo:5,view3d:{h:560,cam:{tgt:[0,1.2,0],yaw:0.4,pitch:0.16,dist:2.5},shadow:{c:[0,1.1,0],r:1.7},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,blk,steel}=k,R=K.group();floor(R);k.stable(R,1.2,0.8,0.82);
@@ -5646,7 +5545,7 @@ NEW3D.push({id:'h314b',name:'Hare’s Tube (H314B)',photo:33,s:{},view3d:{h:560,
 /* Interaction layer: makes the fluid, control and test rigs operable. */
 (function(){const PI=Math.PI,by=id=>NEW3D.find(d=>d.id===id),clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const DROP=['furnace'];for(let i=NEW3D.length-1;i>=0;i--)if(DROP.includes(NEW3D[i].id))NEW3D.splice(i,1);
-const SEC={polisher:'Material testing',mount:'Material testing',cutter:'Material testing',vickers:'Material testing',h8:'Fluid mechanics',h314b:'Fluid mechanics',shear:'Material testing',sieve:'Material testing',utm:'Material testing',charpy:'Material testing',torsion:'Solid mechanics',fatigue:'Solid mechanics',truss:'Solid mechanics',bending:'Solid mechanics',buckling:'Solid mechanics',beams:'Solid mechanics',frameworks:'Solid mechanics',steam:'Thermodynamics',refrig:'Thermodynamics',hx:'Thermodynamics',heat:'Thermodynamics',wind:'Fluid mechanics',pumps:'Fluid mechanics',pipes:'Fluid mechanics',hydro:'Fluid mechanics',cop:'Fluid mechanics',manometer:'Fluid mechanics',plc:'Control and process',process:'Control and process',windenergy:'Control and process',rotor:'Vibration',vibration:'Vibration'};
+const SEC={vickers:'Material testing',h8:'Fluid mechanics',h314b:'Fluid mechanics',shear:'Material testing',sieve:'Material testing',utm:'Material testing',charpy:'Material testing',torsion:'Solid mechanics',fatigue:'Solid mechanics',truss:'Solid mechanics',bending:'Solid mechanics',buckling:'Solid mechanics',beams:'Solid mechanics',frameworks:'Solid mechanics',steam:'Thermodynamics',refrig:'Thermodynamics',hx:'Thermodynamics',heat:'Thermodynamics',wind:'Fluid mechanics',pumps:'Fluid mechanics',pipes:'Fluid mechanics',hydro:'Fluid mechanics',cop:'Fluid mechanics',manometer:'Fluid mechanics',plc:'Control and process',process:'Control and process',windenergy:'Control and process',rotor:'Vibration',vibration:'Vibration'};
 NEW3D.forEach(d=>d.sec=SEC[d.id]||'Other');
 function wrap(id,o,fn){const d=by(id);if(!d)return;Object.assign(d,o);d.live=true;const b0=d.view3d.build;d.view3d.build=(K,s,st)=>{const sc=b0(K,d.s,st);const u=fn(K,d.s,sc.refs,sc.root,d);if(u)sc.update=u;return sc;};}
 const each=(n,f)=>{f(n);(n.kids||[]).forEach(k=>each(k,f));};
@@ -6785,7 +6684,7 @@ LAB.defs.td1060v.experiments.forEach(e=>e.calc.push(calcSsc()));
 })();
 })();
 
-/* Materials testing and metallography devices, each written from its ICE Lab manual (MECH241L). */
+/* Materials testing devices, each written from its ICE Lab manual (MECH241L). */
 (function(){const {tog,rng,sel,btn,rd,col}=LK,U=LAB.util,g=9.81,PI=Math.PI;
 const jit=(v,a)=>v+(Math.random()-0.5)*2*a;
 
@@ -6993,72 +6892,6 @@ LAB.def({id:'vickers',on3d:'vickers',title:'Vickers Hardness Tester',manual:'Vic
  sync(){}
 });})();
 
-/* =====================================================================================
-   Metallography: METCO cutter, Bainmount press, Bainpol polisher, microscope · shared METCO / Microscope manual
-   ===================================================================================== */
-(function(){
-const SPEC={ar:['Steel, as received (sample)',8.2],ht:['Steel, after heat treatment – annealed (sample)',5.6]};
-const GRITS=[120,240,400,600,1200];
-let IMG={};
-function micro(s){const k=[s.spec,s.etch>0?Math.round(Math.min(s.etch,40)/5):0,s.scr,Math.round(s.focus*20),s.light].join('|');if(IMG[k])return IMG[k];
-  const G=SPEC[s.spec][1],NA=Math.pow(2,G-1)*15.5;/* grains per mm² at 1× → per field */const Wmm=0.8;/* field width at 100× = 0.8 mm of specimen */
-  const n=Math.max(8,Math.round(NA*Wmm*Wmm));let seed=s.spec==='ar'?7:13;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
-  const P=[];for(let i=0;i<n;i++)P.push([rnd(),rnd()]);const N=200,c=document.createElement('canvas');c.width=c.height=N;const x=c.getContext('2d'),im=x.createImageData(N,N);
-  const cell=Math.max(1,Math.ceil(Math.sqrt(n)/2)),grid={};P.forEach((p,i)=>{const key=Math.floor(p[0]*cell)+','+Math.floor(p[1]*cell);(grid[key]=grid[key]||[]).push(i);});
-  const near=(u,v)=>{let b=1e9,b2=1e9,bi=0;const gx=Math.floor(u*cell),gy=Math.floor(v*cell);for(let dx=-2;dx<=2;dx++)for(let dy=-2;dy<=2;dy++){(grid[(gx+dx)+','+(gy+dy)]||[]).forEach(i=>{const d=(P[i][0]-u)**2+(P[i][1]-v)**2;if(d<b){b2=b;b=d;bi=i;}else if(d<b2)b2=d;});}return [bi,Math.sqrt(b2)-Math.sqrt(b)];};
-  const et=s.etch,contrast=et<=0?0:et<5?0.3:et<=20?1:et<=35?0.7:0.35,dark=et>30?0.25:0;
-  for(let j=0;j<N;j++)for(let i=0;i<N;i++){const [id,gap]=near(i/N,j/N);let v=205+((id*37)%23)-11;if(gap<0.09/Math.sqrt(n)*(1+dark*2))v-=150*contrast;v-=dark*120;
-    if(s.scr>0&&((i*0.7+j*0.3+((i*13+j*7)%5))%Math.max(3,14-s.scr*2))<1)v-=30*Math.min(1,s.scr/3);v=v*(0.4+0.6*s.light);const o=(j*N+i)*4;im.data[o]=v;im.data[o+1]=v*0.98;im.data[o+2]=v*0.94;im.data[o+3]=255;}
-  x.putImageData(im,0,0);const blur=Math.min(6,Math.abs(s.focus-0.62)*40);const url=c.toDataURL('image/jpeg',0.85);
-  /* planimetric count inside a circle of 0.79 mm² (79.8 mm at 100×) */let inside=0,inter=0;const R0=0.5;P.forEach(p=>{const r=Math.hypot(p[0]-0.5,p[1]-0.5);const rg=0.5/Math.sqrt(n);if(r<R0-rg)inside++;else if(r<R0+rg)inter++;});
-  const area=PI*(R0*Wmm)**2;IMG[k]={url,blur,inside,inter,area};return IMG[k];}
-LAB.def({id:'metallo',on3d:['polisher','cutter','mount'],title:'Metallography: cutting, mounting, grinding, polishing, etching and microscopy',manual:'METCO Abrasive Cutting Machine / Bainmount Twin H / Bainpol / Microscope Plus / METSCOPE PRO (one shared procedure document) · MECH241L',
- about:'One procedure covers the abrasive cutter, the hot mounting press, the grinding and polishing machine, etching and the metallurgical microscope. Grain size is found with the ASTM E112 planimetric method.',
- constants:['Specimen about 10 mm long, cut cleanly with the sectioning machine.','Hot mounting: specimen face-down, mould filled with powder, heat and pressure, cure 5–10 minutes, cool under pressure.','Grind on emery papers to remove cutting marks, rinse in the ultrasonic cleaner; polish with diamond paste until mirror-like; etch briefly (e.g. nitric acid), rinse with water then alcohol, dry; avoid over-etching.','Microscope objective 100×; coarse then fine focus; adjust light, diaphragm and condenser.','ASTM grain size: N_AE = 2^(G−1), N_AE grains per square inch at 100×.'],
- assume:['Grit sequence 120, 240, 400, 600, 1200; each step removes the previous scratches after about 1 minute.','Mounting: 150–180 °C at 20–30 kN. Etch: 2% nital, about 5–20 s is right; over 30 s is over-etched.','Field of view 0.8 mm of specimen at 100×; the counting circle is 79.8 mm across on the image (5 000 mm² at 100×, 0.5 mm² on the specimen).','Samples: as received about ASTM 8, annealed about ASTM 5.5.'],
- issues:['The five METCO and microscope manuals in the pack are the same document.','Steps 3c and 4c say “(see” and the reference is missing: the grit progression and polishing cycles are not given.'],
- init:()=>({spec:'ar',stage:0,cool:false,cut:false,feed:0,pw:false,powder:false,T:22,P:0,cure:0,cooled:false,mounted:false,grit:0,gt:0,scr:6,rinse:false,polish:0,etch:0,rinsed:false,onstage:false,obj:100,focus:0,light:0.5,count:null,done:{}}),
- step(s,dt){if(s.cutting){s.feed+=dt/20;if(!s.cool){s.burn=true;}if(s.feed>=1){s.cutting=false;s.cut=true;LAB.msg('Cut finished. The specimen is about 10 mm long.');}}
-   if(s.pw){U.lag(s,'T',s.Tset||22,dt,40);if(s.T>145&&s.P>15&&s.powder)s.cure+=dt;}else U.lag(s,'T',22,dt,60);
-   if(s.grinding){s.gt+=dt;if(s.gt>60){s.scr=Math.max(5-s.grit,s.scr-1);s.gt=0;s.grinding=false;LAB.msg('Grinding on P'+GRITS[s.grit]+' done.');}}
-   if(s.polishing){s.polish+=dt;if(s.polish>90&&s.scr<=1){s.scr=0;}if(s.polish>240){s.polishing=false;}}
-   if(s.etching){s.etch+=dt;}},
- controls:[sel('spec','Specimen',Object.keys(SPEC).map(k=>[k,SPEC[k][0]]),'1. Cutting',{set:(s,v)=>{const n=LAB.defs.metallo.init();Object.assign(s,n,{spec:v});}}),
-   tog('cool','Coolant','1. Cutting','On','Off'),btn('Clamp the bar and cut a 10 mm piece',s=>{if(!s.cut){s.cutting=true;s.feed=0;}},'1. Cutting'),
-   tog('powder','Specimen face-down in the mould, filled with mounting powder','2. Hot mounting','Filled','Empty'),tog('pw','Press heater','2. Hot mounting','On','Off'),
-   rng('Tset','Mould temperature set point',20,200,1,'°C',0,'2. Hot mounting'),rng('P','Mould pressure',0,40,0.5,'kN',1,'2. Hot mounting'),
-   btn('Cool under pressure, then eject the mount',s=>{if(s.cure<300){LAB.msg('Not cured yet: hold the temperature and pressure for 5–10 minutes.');return;}if(s.P<15){LAB.msg('Keep the pressure on while it cools.');}s.pw=false;s.cooled=true;s.mounted=true;},'2. Hot mounting'),
-   sel('grit','Emery paper',GRITS.map((g,i)=>[i,'P'+g]),'3. Grinding'),btn('Grind (about 1 minute)',s=>{if(!s.mounted){LAB.msg('Mount the specimen first.');return;}s.grinding=true;s.gt=0;s.rinse=false;},'3. Grinding'),btn('Rinse in the ultrasonic cleaner',s=>{s.rinse=true;},'3. Grinding'),
-   btn('Polish with diamond paste',s=>{if(s.grit<4||s.scr>1){LAB.msg('Finish grinding through the papers first: scratches from coarse grinding will not polish out.');}s.polishing=true;},'4. Polishing'),
-   btn('Apply etchant (swab)',s=>{if(s.scr>0)LAB.msg('The surface is not mirror-like yet: polish first.');s.etching=true;s.rinsed=false;},'5. Etching'),btn('Rinse with water, then alcohol, and dry',s=>{s.etching=false;s.rinsed=true;},'5. Etching'),
-   tog('onstage','Specimen on the microscope stage, surface up, normal to the axis','6. Microscope','On stage','Off'),rng('focus','Coarse focus',0,1,0.005,'',3,'6. Microscope'),rng('fine','Fine focus',-0.02,0.02,0.0005,'',4,'6. Microscope',{set:(s,v)=>{s.focus=s.focus-(s.fine||0)+v;s.fine=v;}}),rng('light','Light intensity',0,1,0.01,'',2,'6. Microscope'),
-   btn('Count grains in the circle (planimetric)',s=>{if(!s.onstage)return;const m=micro(s);s.count={in:m.inside,int:m.inter,area:m.area};},'7. Grain size')],
- readings:[rd('cut','Cut progress','%',0,s=>s.feed*100,0,{cal:false}),rd('T','Mould temperature','°C',0,s=>s.T,0.3),rd('cure','Curing time at temperature and pressure','min',1,s=>s.cure/60,0,{cal:false}),
-   rd('scr','Surface','',0,s=>!s.mounted?'—':s.scr>3?'Coarse scratches':s.scr>1?'Fine scratches':s.scr>0?'Very fine scratches':'Mirror-like',0,{cal:false}),rd('et','Etch time','s',0,s=>s.etch,0,{cal:false}),
-   rd('ni','Grains inside the circle','',0,s=>s.count?s.count.in:null,0,{cal:false}),rd('nx','Grains cut by the circle','',0,s=>s.count?s.count.int:null,0,{cal:false})],
- warnings:[{when:s=>s.cutting&&!s.cool,msg:'Cutting without coolant overheats (burns) the specimen and changes its microstructure.'},{when:s=>s.pw&&s.T>200,msg:'Mould temperature too high for the mounting powder.'},{when:s=>s.etch>30&&!s.rinsed,msg:'Over-etching: rinse now. Over-etching obscures the microstructure.'},{when:s=>s.etching&&s.etch>3&&s.etch<25,msg:'Etching… rinse when the surface turns dull (about 5–20 s).',level:'info'}],
- instPanel:s=>{if(!s.onstage||!s.rinsed)return s.onstage?'<div class="lb-trace"><b>Microscope</b><p>Prepare and etch the specimen first; an unetched polished surface shows no grain boundaries.</p></div>':'';const m=micro(s);
-   return `<div class="lb-trace"><b>Microscope view, 100×</b><div class="lb-micro"><img alt="Simulated microstructure at 100×" src="${m.url}" style="filter:blur(${m.blur.toFixed(1)}px)"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="none" stroke="#e8463a" stroke-width="0.6"/></svg></div><p class="lb-note">Simulated image. The red circle is the planimetric counting area (5 000 mm² at 100×).</p></div>`;},
- panelKey:s=>[s.onstage,s.rinsed,s.spec,Math.round(Math.min(s.etch,40)/5),s.scr,Math.round(s.focus*20),s.light].join(),
- experiments:[{id:'met1',title:'Specimen preparation and grain size (ASTM E112)',aim:'Prepare metallographic specimens before and after heat treatment, examine the microstructure and find the ASTM grain size.',steps:[
-   {t:'Select the specimen and cut it cleanly with the sectioning machine (about 10 mm long).',check:s=>s.cut&&!s.burn,hint:'coolant on'},
-   {t:'Place the specimen face-down in the mounting press and fill the mould with mounting powder.',check:s=>s.powder},
-   {t:'Close the press and apply the temperature and pressure for the powder.',check:s=>s.T>145&&s.P>15},
-   {t:'Hold for the curing time (usually 5–10 minutes).',check:s=>s.cure>=300},
-   {t:'Allow the mould to cool under pressure before removing the mounted sample.',check:s=>s.mounted},
-   {t:'Grind on the emery papers in turn to remove the cutting marks; rinse in the ultrasonic cleaner.',check:s=>s.mounted&&s.scr<=1&&s.rinse},
-   {t:'Polish with diamond paste until the surface is smooth and mirror-like.',check:s=>s.scr===0},
-   {t:'Apply the etchant briefly, then rinse with water and alcohol and dry. Avoid over-etching.',check:s=>s.rinsed&&s.etch>=5&&s.etch<=30},
-   {t:'Place the etched specimen on the stage, surface up and normal to the optical axis; choose the 100× objective.',check:s=>s.onstage},
-   {t:'Focus with the coarse knob, then the fine knob; adjust the light for best contrast.',check:s=>Math.abs(s.focus-0.62)<0.01&&s.light>0.5},
-   {t:'Observe and document the microstructure; count the grains (planimetric) and record.',rec:true,check:(s,R)=>R.length>=1},
-   {t:'Repeat for the second specimen (after heat treatment) and compare.',rec:true,check:(s,R)=>new Set(R.map(r=>r.sp)).size>=2}],
-  table:[col('sp','Specimen','',0,(v,s)=>SPEC[s.spec][0]),col('ni','Grains inside','',0,v=>v.ni),col('nx','Grains intercepted','',0,v=>v.nx),{k:'NA',label:'N_A (per mm² on the specimen)',unit:'1/mm²',dp:0},{k:'NAE',label:'N_AE (per in² at 100×)',unit:'',dp:1},{k:'G',label:'ASTM grain size G',unit:'',dp:1},col('q','Preparation','',0,(v,s)=>s.etch>30?'Over-etched':s.etch<5?'Under-etched':s.burn?'Burnt during cutting':'Good')],
-  calc:[r=>{const NA=(r.ni+r.nx/2)/(PI*0.4*0.4);const NAE=NA/15.5;return {NA,NAE,G:1+Math.log2(NAE)};}],
-  guard:s=>!s.count?'Count the grains in the circle first.':null,
-  summary:R=>R.map(r=>[r.sp,'G = '+r.G.toFixed(1)]),charts:[]}],
- sync(){}
-});})();
 })();
 
 /* CE111 PLC Process with the CE123 PLC Trainer · "PLC Process Trainer (CE111).pdf" (Chapter 11).
@@ -7227,7 +7060,7 @@ LAB.plc={parse,scan,newMem};
 (function(){
 if(typeof DEVMAP==='undefined'||!window.LAB)return;
 const MAP={h52:'h52',h11:'h11',bernoulli:'venturi',h314:'h314',h8:'h8',h16:'h16',tm1016v:'tm1016v',td360:'td360',td1002:'td1002',td1060v:'td1060v',
-  tensile:'utm',charpy:'charpy',vickers:'vickers',fatigue:'hsm19d',metallography:'metallo',torsion:'torsion',plc:'ce111'};
+  tensile:'utm',charpy:'charpy',vickers:'vickers',fatigue:'hsm19d',torsion:'torsion',plc:'ce111'};
 /* the hydraulic bench flow follows the lab simulation while lab manual mode is on */
 let LQ={};['h8','bernoulli','h16'].forEach(k=>{const o=BFN[k];BFN[k]=()=>{if(LAB.cur&&LAB.d3&&LAB.d3.d===DEVMAP[k]&&LQ[k]!=null)return LQ[k];return o?o():BQ[k]*Math.pow(BENCH.v/100,0.8);};});
 const act=(d,id)=>{const a=(d.actions||[]).find(x=>x.id===id);if(a)try{a.fn(d.s,d);}catch(e){}};
@@ -7249,14 +7082,13 @@ const BR={
    if(br.placed!==L.placed){if(L.placed&&!b.loaded)act(this,'load');br.placed=L.placed;}},
  vickers(L,b,br){b.mat={A:'ms',B:'brass',C:'cu',D:'ts',E:'ms'}[L.spec];const F=[1,5,10,20,30,50];b.F=F.reduce((a,x)=>Math.abs(x-L.load)<Math.abs(a-L.load)?x:a);b.dw=cl(L.dwell,5,30);if(br.ph!==L.phase){if(L.phase==='load'&&(b.ph==='idle'||b.ph==='view'))act(this,'go');br.ph=L.phase;}},
  fatigue(L,b){b.mat={st:'steel',al:'al',br:'brass'}[L.mat];b.run=!!L.on;b.N=L.N;b.done=L.broke?'frac':null;},
- metallography(L,b){b.step=L.rinsed&&L.etch>=5?5:L.scr===0?4:L.mounted&&L.scr<=1?3:L.mounted&&L.scr<=3?2:L.mounted?1:0;b.et=cl(L.etch||8,2,30);b.auto=false;b.prog=0;},
  torsion(L,b){b.mat={st:'steel',al:'al',br:'brass'}[L.mat];b.d=L.d;b.L=L.L;b.th=L.tw;b.run=false;b.brk=false;},
  plc(L){PLC.power=true;PLC.run=false;PLC.ext=L.mode==='EXTERNAL';PLC.umb=true;PLC.leads=true;for(let i=0;i<8;i++)PLC.X[i]=L.X[i]?1:0;for(let i=0;i<6;i++){PLC.Y[i]=L.Y[i]?1:0;PLC.out[i]=L.act[i]?1:0;}
    const P=PLC.P;P.h1=Math.max(0,30+(L.t1-0.15)*100/0.65);P.h2=Math.max(0,30+(L.t2-0.15)*70/0.65);P.res=L.res*5500;P.q=(L.flow||0)/60*1000;}
 };
 /* ---------- the new 3D models (M3D) on the benches ---------- */
 const M3=window.M3D||[];const m3=id=>M3.find(x=>x.id===id);
-const V3={h52:'pumps',h16:'pipes',h314:'hydro',h11:'cop',bernoulli:'manometer',h8:'h8',plc:'plc',tensile:'utm',charpy:'charpy',metallography:'polisher',vickers:'vickers',tm1016v:'vibration',torsion:'torsion',fatigue:'fatigue',
+const V3={h52:'pumps',h16:'pipes',h314:'hydro',h11:'cop',bernoulli:'manometer',h8:'h8',plc:'plc',tensile:'utm',charpy:'charpy',vickers:'vickers',tm1016v:'vibration',torsion:'torsion',fatigue:'fatigue',
   td1060v:'steam',td360:'hx',td1002:'heat',windtunnel:'wind',wind:'windenergy',whirling:'rotor',frameworks:'frameworks',beams:'beams',buckling:'buckling',ce117:'process'};
 Object.keys(V3).forEach(bid=>{const d=DEVMAP[bid],m=m3(V3[bid]);if(!d||!m||!m.view3d)return;const v=m.view3d;
   d.view3d=Object.assign({},v,{views:undefined,viewLabels:undefined,xray:false,build(K,s,st){const sc=v.build.call(v,K,m.s,st);m._refs=sc.refs;return sc;}});d._m3d=m;d._had3d=false;});

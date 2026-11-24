@@ -14,29 +14,6 @@ window.kit4=function(K){const refs={};const k=window.kit3(K),{M,B,Cy,Cz,Cx,RB}=k
   return k;};
 const D=(o)=>NEW3D.push(Object.assign({s:{}},o));
 
-/* ---- 1. Automatic grinder-polisher ---- */
-D({id:'polisher',name:'Automated Polishing Machine',photo:1,view3d:{h:560,cam:{tgt:[0,1.08,0],yaw:0.45,pitch:0.22,dist:2.2},shadow:{c:[0,1,0],r:1.6},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,ss,blk,steel}=k,R=K.group();floor(R);k.stable(R,1.5,0.75,0.9);
-  const g=K.group({p:[0,0.9,0]});R.add(g);refs.g=g;const body=M('#dfe1e0',{r:.5});
-  g.add(RB(0.64,0.2,0.5,0.03,body,[0,0.1,0]));g.add(K.node(K.plane(0.6,0.12),M('#fff',{t:k.stripe(),r:.5}),{p:[0,0.09,0.251]}));g.add(RB(0.64,0.03,0.5,0.012,M('#2a2c2f',{r:.4}),[0,0.215,0]));
-  [-0.15,0.15].forEach(x=>{g.add(Cy(0.135,0.03,M('#111214',{r:.5}),[x,0.235,0.04],40));g.add(Cy(0.115,0.012,M('#3a3d42',{m:.5,r:.35}),[x,0.246,0.04],40));g.add(K.node(K.torus(0.135,0.008,8,40),M('#0c0d0e',{r:.5}),{p:[x,0.25,0.04]}));});
-  k.estopZ(g,[0.25,0.1,0.25]);
-  /* head on a rear column */g.add(RB(0.12,0.3,0.12,0.02,body,[0.15,0.37,-0.2],{r:[0,PI/2,0]}));g.add(RB(0.3,0.2,0.26,0.03,M('#c8cacb',{r:.5}),[0.13,0.58,-0.08]));g.add(K.node(K.plane(0.14,0.1),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[0.17,0.6,0.052],r:[-0.25,0,0]}));
-  g.add(Cy(0.02,0.14,steel,[0.15,0.42,0.04]));g.add(Cy(0.08,0.035,steel,[0.15,0.34,0.04],30));for(let i=0;i<6;i++){const a=i/6*PI*2;g.add(Cy(0.016,0.05,M('#8f959b',{m:1,r:.4}),[0.15+0.052*Math.cos(a),0.3,0.04+0.052*Math.sin(a)],12));}
-  /* water arm and dispenser */g.add(K.node(K.tube([[-0.15,0.22,-0.2],[-0.15,0.42,-0.2],[-0.15,0.42,-0.02],[-0.15,0.33,0.0]],0.008,8,0.04),steel,{}));g.add(RB(0.16,0.18,0.14,0.015,M('#d9dbda',{r:.5}),[-0.48,0.09,0.0]));g.add(Cy(0.04,0.2,M('#e3f1fa',{a:.35,r:.05}),[-0.62,0.1,0.1]));
-  /* desiccators */[[0.52,0.02,0.12],[0.6,0.26,0.085]].forEach(([x,z,r])=>{g.add(Cy(r,0.07,M('#e6f1f6',{a:.35,r:.05}),[x,0.035,z],30));g.add(K.node(K.sphere(r,20),M('#e6f1f6',{a:.28,r:.05}),{p:[x,0.07,z],s:[1,0.75,1]}));g.add(K.node(K.sphere(0.02,10),M('#e6f1f6',{a:.5}),{p:[x,0.07+r*0.78,z]}));});
-  K.label('Polishing platens',g,[0,0.3,0.2]);K.label('Specimen mover head',g,[0.3,0.72,0]);K.label('Desiccators',g,[0.58,0.26,0.1]);return {root:R,refs,update(){}};}}});
-
-/* ---- 2. Twin mounting press ---- */
-D({id:'mount',name:'Specimen Mounting Press',photo:2,view3d:{h:560,cam:{tgt:[0,0.95,0],yaw:0.4,pitch:0.2,dist:2.6},shadow:{c:[0,0.8,0],r:1.8},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,ss,blk,steel}=k,R=K.group();floor(R);k.stable(R,0.95,0.75,0.82,0,0,0.22);
-  const g=K.group({p:[0,0.82,0]});R.add(g);refs.g=g;const body=M('#cfd3d6',{r:.45});
-  g.add(RB(0.6,0.26,0.46,0.05,body,[0,0.13,0]));g.add(K.node(K.prismX([[0.23,0.26],[-0.23,0.26],[-0.23,0.4],[0.1,0.4]],-0.3,0.3),body,{}));
-  g.add(K.node(K.plane(0.56,0.11),M('#fff',{t:k.stripe(),r:.5}),{p:[0,0.1,0.232]}));g.add(K.node(K.plane(0.16,0.1),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[-0.14,0.21,0.233]}));
-  [-0.15,0.15].forEach(x=>{g.add(Cy(0.075,0.16,M('#d5d8da',{m:.9,r:.25}),[x,0.47,-0.04],30));g.add(Cy(0.065,0.05,blk,[x,0.575,-0.04],30));g.add(Cy(0.02,0.05,blk,[x,0.62,-0.04]));
-    for(let i=0;i<3;i++){const a=i/3*PI*2+0.4;g.add(K.node(K.cyl(0.008,0.008,0.09,8),steel,{p:[x+0.045*Math.cos(a),0.655,-0.04+0.045*Math.sin(a)],r:[Math.sin(a)*-1.2,0,Math.cos(a)*1.2]}));g.add(K.node(K.sphere(0.022,12),blk,{p:[x+0.09*Math.cos(a),0.672,-0.04+0.09*Math.sin(a)]}));}});
-  /* resin jugs on the shelf */[['#f2f2ee',-0.28],['#f2f2ee',0],['#f0b6ae',0.28]].forEach(([c,x])=>{R.add(RB(0.2,0.26,0.16,0.03,M(c,{r:.5}),[x,0.36,0.05]));R.add(Cy(0.035,0.04,M('#e8e8e4',{r:.5}),[x,0.51,0.05],16));R.add(B(0.14,0.1,0.004,M('#2f5fa8',{r:.5}),[x,0.33,0.132]));});
-  /* sink with spring tap behind */const s=K.group({p:[-1.05,0,-0.35]});R.add(s);s.add(B(0.9,0.5,0.6,ss,[0,0.6,0]));s.add(B(0.8,0.02,0.5,M('#8f959b',{m:.9,r:.4}),[0,0.852,0]));s.add(B(0.9,0.6,0.03,ss,[0,0.3,0.28]));s.add(K.node(K.tube([[0.25,0.85,-0.22],[0.25,1.3,-0.22],[0.25,1.36,-0.05],[0.25,1.12,0.02]],0.012,10,0.07),steel,{}));for(let i=0;i<14;i++)s.add(K.node(K.torus(0.02,0.004,6,12),steel,{p:[0.25,0.9+i*0.028,-0.22]}));
-  K.label('Mould cylinders',g,[0,0.74,0]);K.label('Mounting resin',R,[0,0.56,0.14]);return {root:R,refs,update(){}};}}});
-
 /* ---- 3. Vickers hardness tester with microscopes ---- */
 D({id:'vickers',name:'Vickers Hardness Tester',photo:3,view3d:{h:560,cam:{tgt:[0,1.15,0],yaw:0.35,pitch:0.18,dist:2.4},shadow:{c:[0,1.1,0],r:1.8},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white}=k,R=K.group();floor(R);bench(R,2.2,1.0,0.9,0,0);k.pod(R,1.8,0,-0.35);
   const g=K.group({p:[0,0.9,0.05]});R.add(g);refs.g=g;
@@ -46,16 +23,6 @@ D({id:'vickers',name:'Vickers Hardness Tester',photo:3,view3d:{h:560,cam:{tgt:[0
   g.add(K.node(K.prismX([[0.12,0.0],[-0.02,0.0],[-0.02,0.26],[0.08,0.2]],-0.1,0.1),white,{p:[0,0,0.2]}));g.add(K.node(K.plane(0.15,0.13),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[0,0.105,0.305],r:[-0.55,0,0]}));
   const scope=(x,ry)=>{const q=K.group({p:[x,0.9,0.1],r:[0,ry,0]});R.add(q);q.add(RB(0.2,0.05,0.28,0.02,white,[0,0.025,0],{r:[0,PI/2,0]}));q.add(RB(0.08,0.3,0.1,0.02,white,[0,0.18,-0.09],{r:[0,PI/2,0]}));q.add(RB(0.14,0.1,0.2,0.03,white,[0,0.33,-0.02],{r:[0,PI/2,0]}));q.add(B(0.16,0.012,0.16,blk,[0,0.17,0.03]));q.add(Cy(0.022,0.06,blk,[0,0.25,0.03]));[-0.03,0.03].forEach(a=>q.add(K.node(K.cyl(0.016,0.016,0.1,12),blk,{p:[a,0.41,0.08],r:[0.8,0,0]})));q.add(Cx(0.025,0.14,blk,[0,0.1,-0.09],16));};scope(-0.62,0.4);scope(0.62,-0.5);
   K.label('Indenter + objectives',g,[0.16,0.44,0.06]);K.label('Test stage',g,[0.14,0.28,0.1]);K.label('Microscope',R,[0.62,1.38,0.1]);return {root:R,refs,update(){}};}}});
-
-/* ---- 4. Abrasive cut-off machine ---- */
-D({id:'cutter',name:'Abrasive Cutting Machine',photo:4,view3d:{h:560,cam:{tgt:[0,1.12,0],yaw:0.35,pitch:0.14,dist:2.4},shadow:{c:[0,1,0],r:1.7},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,blk,steel}=k,R=K.group();floor(R);k.stable(R,1.25,0.8,0.85);
-  const g=K.group({p:[0,0.85,0]});R.add(g);refs.g=g;const grey=M('#b9bdc0',{r:.5}),dark=M('#2c2f33',{r:.45});
-  g.add(RB(1.0,0.2,0.62,0.02,dark,[0.02,0.1,0]));const yt=K.tex(512,48,(c,w,h)=>{c.fillStyle='#e8c21a';c.fillRect(0,0,w,h);c.fillStyle='#17181b';c.font='italic bold 34px sans-serif';c.fillText('ABRASIVE CUTTER',150,37);});g.add(K.node(K.plane(0.98,0.07),M('#fff',{t:yt,r:.5}),{p:[0.02,0.17,0.312]}));
-  /* control cabinet */g.add(RB(0.34,0.56,0.6,0.02,grey,[-0.33,0.48,0]));g.add(B(0.34,0.1,0.004,M('#1c63b8',{r:.5}),[-0.33,0.26,0.302]));g.add(B(0.25,0.2,0.006,M('#e9ebea',{r:.5}),[-0.33,0.5,0.302]));g.add(K.node(K.plane(0.2,0.15),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[-0.33,0.5,0.306]}));k.estopZ(g,[-0.33,0.69,0.3]);[['#1d1f22',-0.43],['#2f9b55',-0.33],['#c0221b',-0.23]].forEach(([c,x])=>g.add(Cz(0.02,0.02,M(c,{r:.4}),[x,0.34,0.305],14)));
-  /* cutting hood with window */g.add(RB(0.66,0.42,0.6,0.05,M('#3a3d42',{r:.4,m:.3}),[0.19,0.41,0]));g.add(B(0.4,0.22,0.006,M('#0c0d0e',{r:.15,m:.4}),[0.17,0.44,0.302]));g.add(B(0.03,0.2,0.04,blk,[0.5,0.44,0.31]));g.add(B(0.26,0.035,0.004,M('#f08a1c',{r:.5}),[0.3,0.25,0.302]));
-  /* vice handles on top, coolant hose */g.add(B(0.2,0.012,0.14,M('#b9bdc0',{m:.6}),[0.2,0.63,-0.05]));[0.12,0.3].forEach(x=>{g.add(Cy(0.02,0.07,blk,[x,0.67,-0.05]));g.add(B(0.07,0.05,0.03,blk,[x,0.7,-0.05]));});g.add(K.node(K.sphere(0.07,16),blk,{p:[-0.3,0.78,0],s:[1.4,0.4,1]}));
-  R.add(K.node(K.tube([[0.55,1.3,0.1],[0.75,1.3,0.15],[0.8,0.95,0.2],[0.6,0.6,0.3],[0.62,0.2,0.3]],0.01,8,0.15),M('#2f74c0',{r:.4}),{}));
-  K.label('Control cabinet',g,[-0.33,0.84,0.2]);K.label('Cutting chamber',g,[0.2,0.7,0.3]);return {root:R,refs,update(){}};}}});
 
 /* ---- 5. Muffle furnace ---- */
 D({id:'furnace',name:'Muffle Furnace',photo:5,view3d:{h:560,cam:{tgt:[0,1.2,0],yaw:0.4,pitch:0.16,dist:2.5},shadow:{c:[0,1.1,0],r:1.7},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,blk,steel}=k,R=K.group();floor(R);k.stable(R,1.2,0.8,0.82);
