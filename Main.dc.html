@@ -146,7 +146,10 @@ class Component extends DCLogic {
       ['M-11', 'UNIMAT CNC hot wire cutter 3D', 'CNC machines', 1, 'CNC hot-wire cutter for shaping foam blocks into 2D and 3D forms.', 'Relay box']
     ].map(([no, name, sec, units, desc, extra]) => ({ no, name, sec, desc, extra, extraLabel: units + (units === 1 ? ' unit · Tooling:' : ' units · Tooling:'), status: S, img: 'img/eq/' + no + '.jpg', book: 'Booking.dc.html#eq=' + no }));
     const ice = [
+      [1, 'METCO Bainpol Auto — Automated Polishing Machine', 'Metallurgical', 'Automated grinding and polishing of metallographic specimens before microscopic examination.', 'Polishing platens, specimen holders, polishing cloths, abrasive media, water/coolant supply, control panel', 'op'],
+      [2, 'METCO Bainmount Twin H Auto — Specimen Mounting Press', 'Metallurgical', 'Hot compression mounting system used to encapsulate small specimens in resin for metallographic preparation.', 'Twin mould cylinders, pistons, mounting resin, mould release, control panel, cooling connections', 'op'],
       [3, 'Vickers / Microhardness Testing System', 'Metallurgical', 'Measures hardness by controlled indentation and optical measurement of the impression.', 'Indenter, anvils/test stage, calibration blocks, microscope/objectives, specimen fixtures, digital controller', 'op'],
+      [4, 'METCO Metallographic Abrasive Cutting Machine', 'Metallurgical', 'Cuts metallic and engineering specimens to size while limiting heat and deformation.', 'Cutting wheel, vice/clamps, coolant tank/pump, machine guard, dressing tool, sample supports', 'op'],
       [5, 'Laboratory Muffle Furnace', 'Metallurgical', 'High-temperature furnace for heat treatment, annealing, ashing and controlled thermal processing.', 'Crucibles/trays, tongs, temperature controller, thermocouple, heat-resistant gloves, furnace shelf', 'maint'],
       [6, 'Haver EML Digital Plus Sieve Shaker', 'Material Testing', 'Mechanical sieve analysis for particle-size distribution of powders, aggregates and granular materials.', 'Sieve stack, lid, receiver pan, clamping assembly, spare sieves, timer/control unit', 'op'],
       [7, 'Direct Shear Testing Machine', 'Material Testing', 'Determines shear strength of soil or granular material under controlled normal and horizontal loads.', 'Shear box, specimen mould/cutter, loading system, load cell/proving ring, displacement indicator, weights', 'op'],
@@ -185,7 +188,7 @@ class Component extends DCLogic {
     const secs = lab === 'mfg' ? ['Manual machines', 'CNC machines'] : ['Metallurgical', 'Material Testing', 'Solid Mechanics', 'Thermodynamics', 'Fluid Mechanics', 'Vibration', 'Engineering Science'];
     const labs = [
       { key: 'mfg', name: 'Manufacturing Lab', meta: '11 machines · 21 units · manual & CNC (UNIMAT)' },
-      { key: 'ice', name: 'ICE Lab', meta: '29 apparatus · 6 sections + 21 Engineering Science kits' }
+      { key: 'ice', name: 'ICE Lab', meta: '32 apparatus · 6 sections + 21 Engineering Science kits' }
     ].map((l) => ({ ...l, active: l.key === lab, idle: l.key !== lab, pick: () => this.setState({ lab: l.key, sec: 'All' }) }));
     const chips = ['All'].concat(secs).map((c) => ({ label: c === 'All' ? 'All sections' : c, active: c === sec, idle: c !== sec, pick: () => this.setState({ sec: c }) }));
     const ql = q.trim().toLowerCase();
