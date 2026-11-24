@@ -14,16 +14,6 @@ window.kit4=function(K){const refs={};const k=window.kit3(K),{M,B,Cy,Cz,Cx,RB}=k
   return k;};
 const D=(o)=>NEW3D.push(Object.assign({s:{}},o));
 
-/* ---- 3. Vickers hardness tester with microscopes ---- */
-D({id:'vickers',name:'Vickers Hardness Tester',photo:3,view3d:{h:560,cam:{tgt:[0,1.15,0],yaw:0.35,pitch:0.18,dist:2.4},shadow:{c:[0,1.1,0],r:1.8},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white}=k,R=K.group();floor(R);bench(R,2.2,1.0,0.9,0,0);k.pod(R,1.8,0,-0.35);
-  const g=K.group({p:[0,0.9,0.05]});R.add(g);refs.g=g;
-  g.add(RB(0.24,0.1,0.44,0.02,white,[0,0.05,0],{r:[0,PI/2,0]}));g.add(RB(0.2,0.5,0.16,0.03,white,[0,0.33,-0.13],{r:[0,PI/2,0]}));g.add(RB(0.22,0.16,0.34,0.03,white,[0,0.56,-0.04],{r:[0,PI/2,0]}));g.add(B(0.14,0.04,0.004,M('#2a2c2f'),[0,0.58,0.132]));
-  g.add(Cy(0.03,0.07,blk,[0,0.445,0.06]));g.add(Cy(0.012,0.03,steel,[0,0.4,0.06]));/* turret + indenter */
-  g.add(Cy(0.025,0.14,M('#2a2c2f',{m:.6,r:.4}),[0,0.2,0.06]));g.add(Cy(0.07,0.02,blk,[0,0.275,0.06],30));g.add(Cy(0.05,0.03,M('#33363a',{m:.5}),[0,0.14,0.06],24));
-  g.add(K.node(K.prismX([[0.12,0.0],[-0.02,0.0],[-0.02,0.26],[0.08,0.2]],-0.1,0.1),white,{p:[0,0,0.2]}));g.add(K.node(K.plane(0.15,0.13),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[0,0.105,0.305],r:[-0.55,0,0]}));
-  const scope=(x,ry)=>{const q=K.group({p:[x,0.9,0.1],r:[0,ry,0]});R.add(q);q.add(RB(0.2,0.05,0.28,0.02,white,[0,0.025,0],{r:[0,PI/2,0]}));q.add(RB(0.08,0.3,0.1,0.02,white,[0,0.18,-0.09],{r:[0,PI/2,0]}));q.add(RB(0.14,0.1,0.2,0.03,white,[0,0.33,-0.02],{r:[0,PI/2,0]}));q.add(B(0.16,0.012,0.16,blk,[0,0.17,0.03]));q.add(Cy(0.022,0.06,blk,[0,0.25,0.03]));[-0.03,0.03].forEach(a=>q.add(K.node(K.cyl(0.016,0.016,0.1,12),blk,{p:[a,0.41,0.08],r:[0.8,0,0]})));q.add(Cx(0.025,0.14,blk,[0,0.1,-0.09],16));};scope(-0.62,0.4);scope(0.62,-0.5);
-  K.label('Indenter + objectives',g,[0.16,0.44,0.06]);K.label('Test stage',g,[0.14,0.28,0.1]);K.label('Microscope',R,[0.62,1.38,0.1]);return {root:R,refs,update(){}};}}});
-
 /* ---- 5. Muffle furnace ---- */
 D({id:'furnace',name:'Muffle Furnace',photo:5,view3d:{h:560,cam:{tgt:[0,1.2,0],yaw:0.4,pitch:0.16,dist:2.5},shadow:{c:[0,1.1,0],r:1.7},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,blk,steel}=k,R=K.group();floor(R);k.stable(R,1.2,0.8,0.82);
   const g=K.group({p:[0,0.82,0]});R.add(g);refs.g=g;const beige=M('#d8d2c6',{r:.6}),base=M('#aeb0b0',{r:.55});

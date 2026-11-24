@@ -165,45 +165,5 @@ LAB.def({id:'hsm19d',on3d:'fatigue',title:'HSM19D Rotating Fatigue Machine',manu
  sync(s,s3){if(!s3)return;s3.W=Math.max(10,Math.min(80,Math.round(s.F/3)));s3.on=s.on;s3.broke=s.broke;s3.N=s.N;}
 });})();
 
-/* =====================================================================================
-   Vickers · "Vickers Microhardness Testing System.pdf"
-   ===================================================================================== */
-(function(){
-const SPEC={A:['Specimen A',148],B:['Specimen B',112],C:['Specimen C',92],D:['Specimen D',640],E:['Specimen E',196]};
-const LOADS=[1,2,3,5,10,20,30,50];
-LAB.def({id:'vickers',on3d:'vickers',title:'Vickers Hardness Tester',manual:'Vickers Microhardness Testing System.pdf · MECH241L',
- about:'A square-based diamond pyramid (136° between opposite faces) is pressed into the specimen under the selected load for the dwell time. The indentation is projected on the front screen and its two diagonals are measured.',
- constants:['d = (d1 + d2)/2 (Eq 5.1); HV = 1.854 F / d² with F in kgf and d in mm (Eq 5.2).','Loads 1 to 120 kgf; full load normally held 10 to 15 s.','Gap of about 0.2 to 0.25 mm between the indenter tip and the specimen when focused.','Report as, e.g., 800 HV/10.'],
- assume:['Load knob settings 1, 2, 3, 5, 10, 20, 30 and 50 kgf.','Specimens A–E are unknown samples (about 148, 112, 92, 640 and 196 HV) for you to identify from datasheets. Diagonal readings ±0.4%.'],
- issues:['The title says microhardness (loads of 1 kgf and below) but the procedure uses 1 to 120 kgf, which is macrohardness by the manual’s own definition.'],
- init:()=>({spec:'A',load:10,placed:false,gap:2,dwell:5,phase:'idle',t:0,ind:null,indexed:false,d1:null,d2:null,used:[],pos:0}),
- step(s,dt){if(s.phase==='load'||s.phase==='dwell'||s.phase==='unload'){s.t+=dt;if(s.phase==='load'&&s.t>4){s.phase='dwell';s.t=0;}else if(s.phase==='dwell'&&s.t>s.dwell){s.phase='unload';s.t=0;}else if(s.phase==='unload'&&s.t>3){s.phase='idle';
-   const hv=SPEC[s.spec][1]*(s.dwell<10?1.03:1)*jit(1,0.015);s.ind={d:Math.sqrt(1.8544*s.load/hv),hv,load:s.load,pos:s.pos,near:s.used.includes(s.pos)};s.used.push(s.pos);s.indexed=false;s.d1=s.d2=null;LAB.msg('Loading cycle complete.');}}},
- controls:[sel('spec','Specimen',Object.keys(SPEC).map(k=>[k,SPEC[k][0]]),'Specimen',{set:(s,v)=>{s.spec=v;s.placed=false;s.used=[];s.ind=null;}}),sel('load','Weight selection knob',LOADS.map(l=>[l,l+' kgf']),'Load'),
-   tog('placed','Specimen placed securely on the testing table','Specimen','Placed','Not placed'),rng('gap','Hand wheel: indenter gap',0,3,0.01,'mm',2,'Focus'),rng('dwell','Dwell timer',5,30,1,'s',0,'Load'),
-   btn('START (press and hold)',s=>{if(!s.placed){LAB.msg('Place the specimen first.');return;}if(s.indexed){LAB.msg('Index the head back to the indenter first.');return;}if(s.gap<0.15){LAB.msg('Too close: the indenter would touch the specimen. Turn the hand wheel back.');return;}if(s.gap>0.3){LAB.msg('Not focused: bring the specimen up until it is sharp on the screen (gap 0.2–0.25 mm).');return;}s.phase='load';s.t=0;},'Test'),
-   btn('Index the head (objective over the indentation / back to indenter)',s=>{if(s.phase==='idle')s.indexed=!s.indexed;},'Test'),
-   btn('Measure diagonal d1 on the screen',s=>{if(s.indexed&&s.ind)s.d1=s.ind.d*jit(1,0.004);},'Measure'),btn('Measure diagonal d2 on the screen',s=>{if(s.indexed&&s.ind)s.d2=s.ind.d*jit(1,0.004);},'Measure'),
-   btn('Move the specimen to a new position',s=>{s.pos++;},'Specimen')],
- readings:[rd('ph','Cycle','',0,s=>({idle:'Ready',load:'Loading',dwell:'Dwell',unload:'Unloading'})[s.phase],0,{cal:false}),rd('focus','Screen focus','',0,s=>Math.abs(s.gap-0.225)<0.03?'Sharp':Math.abs(s.gap-0.225)<0.15?'Slightly blurred':'Blurred',0,{cal:false}),
-   rd('d1','Diagonal d1','mm',4,s=>s.d1,0),rd('d2','Diagonal d2','mm',4,s=>s.d2,0),rd('L','Load','kgf',0,s=>s.load,0,{cal:false})],
- warnings:[{when:s=>s.ind&&s.ind.near,msg:'This indentation is next to an earlier one: move the specimen to a new position and repeat.'},{when:s=>s.dwell<10||s.dwell>15,msg:'The full load is normally applied for 10 to 15 seconds.',level:'info'}],
- instPanel:s=>{if(!s.indexed||!s.ind)return '';const z=Math.min(1,0.14/s.ind.d);const a=s.ind.d*z*400;return `<div class="lb-trace"><b>Front focusing screen</b><svg viewBox="0 0 240 240" style="max-width:240px;background:#e9eaec;border-radius:50%"><g transform="translate(120 120) rotate(45)"><rect x="${-a/2}" y="${-a/2}" width="${a}" height="${a}" fill="#55585e" stroke="#222"/><line x1="${-a/2}" y1="${-a/2}" x2="${a/2}" y2="${a/2}" stroke="#ddd" stroke-width="0.6"/><line x1="${a/2}" y1="${-a/2}" x2="${-a/2}" y2="${a/2}" stroke="#ddd" stroke-width="0.6"/></g>${s.ind.near?'<rect x="20" y="40" width="40" height="40" transform="rotate(45 40 60)" fill="#8a8d93"/>':''}</svg></div>`;},
- panelKey:s=>s.indexed+':'+(s.ind&&s.ind.d),
- experiments:[{id:'hv1',title:'Vickers hardness (Table 5.1)',aim:'Measure the Vickers hardness of different specimens under various loads and identify the materials.',steps:[
-   {t:'Select the weight according to the expected hardness with the weight selection knob.'},{t:'Place the specimen securely on the testing table.',check:s=>s.placed},
-   {t:'Turn the hand wheel slowly until the specimen is sharply focused on the screen (gap about 0.2 to 0.25 mm).',check:s=>Math.abs(s.gap-0.225)<0.03},
-   {t:'Adjust the dwell timer for the required duration (10–15 s).',check:s=>s.dwell>=10&&s.dwell<=15},
-   {t:'Press START; the loading, dwell and unloading cycle is automatic.',check:s=>!!s.ind},
-   {t:'Index the indenter head so the objective is over the indentation.',check:s=>s.indexed},
-   {t:'Measure the diagonal of the impression in both axes and find the mean.',rec:true,check:(s,R)=>R.length>=1},
-   {t:'For the next test, move the specimen, check no earlier indentation is near, index back and repeat steps 1–7.',rec:true,check:(s,R)=>R.length>=4},
-   {t:'Test different specimens under various loads and identify each material from datasheets.',check:(s,R)=>new Set(R.map(r=>r.m)).size>=3&&new Set(R.map(r=>r.F)).size>=2}],
-  table:[col('m','Material','',0,(v,s)=>SPEC[s.spec][0]),col('F','Load','kgf',0,(v,s)=>s.ind?s.ind.load:s.load),col('d1','d1','mm',4,v=>v.d1),col('d2','d2','mm',4,v=>v.d2),{k:'d',label:'d','unit':'mm',dp:4},{k:'HV',label:'HV',unit:'',dp:0},{k:'rep',label:'Reported as',unit:'',dp:0}],
-  calc:[r=>{const d=(r.d1+r.d2)/2,HV=1.854*r.F/(d*d);return {d,HV,rep:Math.round(HV)+' HV/'+r.F};}],
-  guard:s=>!s.ind?'Make an indentation first.':s.d1==null||s.d2==null?'Measure both diagonals d1 and d2.':s.ind.near?'This indentation is too close to an earlier one; it should not be used.':null,
-  summary:R=>{const m={};R.forEach(r=>{(m[r.m]=m[r.m]||[]).push(r.HV);});return Object.keys(m).map(k=>[k+' (average of '+m[k].length+')',(m[k].reduce((a,b)=>a+b,0)/m[k].length).toFixed(0)+' HV']);},charts:[]}],
- sync(){}
-});})();
 
 })();

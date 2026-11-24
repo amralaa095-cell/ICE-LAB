@@ -3,7 +3,7 @@
 (function(){
 if(typeof DEVMAP==='undefined'||!window.LAB)return;
 const MAP={h52:'h52',h11:'h11',bernoulli:'venturi',h314:'h314',h8:'h8',h16:'h16',tm1016v:'tm1016v',td360:'td360',td1002:'td1002',td1060v:'td1060v',
-  tensile:'utm',charpy:'charpy',vickers:'vickers',fatigue:'hsm19d',torsion:'torsion',plc:'ce111'};
+  tensile:'utm',charpy:'charpy',fatigue:'hsm19d',torsion:'torsion',plc:'ce111'};
 /* the hydraulic bench flow follows the lab simulation while lab manual mode is on */
 let LQ={};['h8','bernoulli','h16'].forEach(k=>{const o=BFN[k];BFN[k]=()=>{if(LAB.cur&&LAB.d3&&LAB.d3.d===DEVMAP[k]&&LQ[k]!=null)return LQ[k];return o?o():BQ[k]*Math.pow(BENCH.v/100,0.8);};});
 const act=(d,id)=>{const a=(d.actions||[]).find(x=>x.id===id);if(a)try{a.fn(d.s,d);}catch(e){}};
@@ -23,7 +23,6 @@ const BR={
  charpy(L,b,br){b.mat={ms:'c1018',al:'al',br:'s355',ci:'ci'}[L.met]||'c1018';b.type='charpy';
    if(br.st!==L.st){if(L.st==='up'&&b.phase==='done')act(this,'brake');if(L.st==='swing'){b.loaded=!!L.placed||L.broken;act(this,'rel');}br.st=L.st;}
    if(br.placed!==L.placed){if(L.placed&&!b.loaded)act(this,'load');br.placed=L.placed;}},
- vickers(L,b,br){b.mat={A:'ms',B:'brass',C:'cu',D:'ts',E:'ms'}[L.spec];const F=[1,5,10,20,30,50];b.F=F.reduce((a,x)=>Math.abs(x-L.load)<Math.abs(a-L.load)?x:a);b.dw=cl(L.dwell,5,30);if(br.ph!==L.phase){if(L.phase==='load'&&(b.ph==='idle'||b.ph==='view'))act(this,'go');br.ph=L.phase;}},
  fatigue(L,b){b.mat={st:'steel',al:'al',br:'brass'}[L.mat];b.run=!!L.on;b.N=L.N;b.done=L.broke?'frac':null;},
  torsion(L,b){b.mat={st:'steel',al:'al',br:'brass'}[L.mat];b.d=L.d;b.L=L.L;b.th=L.tw;b.run=false;b.brk=false;},
  plc(L){PLC.power=true;PLC.run=false;PLC.ext=L.mode==='EXTERNAL';PLC.umb=true;PLC.leads=true;for(let i=0;i<8;i++)PLC.X[i]=L.X[i]?1:0;for(let i=0;i<6;i++){PLC.Y[i]=L.Y[i]?1:0;PLC.out[i]=L.act[i]?1:0;}
@@ -31,7 +30,7 @@ const BR={
 };
 /* ---------- the new 3D models (M3D) on the benches ---------- */
 const M3=window.M3D||[];const m3=id=>M3.find(x=>x.id===id);
-const V3={h52:'pumps',h16:'pipes',h314:'hydro',h11:'cop',bernoulli:'manometer',h8:'h8',plc:'plc',tensile:'utm',charpy:'charpy',vickers:'vickers',tm1016v:'vibration',torsion:'torsion',fatigue:'fatigue',
+const V3={h52:'pumps',h16:'pipes',h314:'hydro',h11:'cop',bernoulli:'manometer',h8:'h8',plc:'plc',tensile:'utm',charpy:'charpy',tm1016v:'vibration',torsion:'torsion',fatigue:'fatigue',
   td1060v:'steam',td360:'hx',td1002:'heat',windtunnel:'wind',wind:'windenergy',whirling:'rotor',frameworks:'frameworks',beams:'beams',buckling:'buckling',ce117:'process'};
 Object.keys(V3).forEach(bid=>{const d=DEVMAP[bid],m=m3(V3[bid]);if(!d||!m||!m.view3d)return;const v=m.view3d;
   d.view3d=Object.assign({},v,{views:undefined,viewLabels:undefined,xray:false,build(K,s,st){const sc=v.build.call(v,K,m.s,st);m._refs=sc.refs;return sc;}});d._m3d=m;d._had3d=false;});

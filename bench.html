@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
-<meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 29 virtual benches with data analysis and calibration, and the Manufacturing Lab machines.">
+<meta name="description" content="ICE Lab, American University of Bahrain: equipment catalog, lab booking, 27 virtual benches with data analysis and calibration, and the Manufacturing Lab machines.">
 <meta name="theme-color" content="#050A1A">
 <link rel="icon" type="image/png" href="img/ice-mark.png">
 <meta property="og:title" content="ICE Lab · American University of Bahrain">
@@ -845,56 +845,6 @@ DEV({id:'charpy',man:'MECH241L §4 Charpy impact: V-notch specimen, depth at not
   theory:'Body-centred cubic steels change from ductile to brittle as temperature falls; sub-size and blunter notches move the transition to lower temperatures. Unnotched specimens may stall the hammer without breaking.',
   proc:['With the anvils empty, release the hammer to measure friction loss.','Condition the specimen in the bath at the test temperature.','Place it on the anvils (Charpy) or in the vice (Izod) within 5 s.','Raise and latch the hammer, set the pointer, and release.','Read β, brake the hammer, and examine the fracture surface.','Repeat across temperatures and plot the transition curve.']});
 
-/* ---- Vickers ---- */
-const VM={cu:{name:'Copper, annealed',hv:50},al:{name:'Aluminium 6082-T6',hv:95},brass:{name:'Brass CZ121',hv:130},ms:{name:'Mild steel, normalised',hv:150,st:true},ts:{name:'Tool steel O1, hardened',hv:650,st:true}};
-const V_PH=[['idle','Ready'],['app','Approach'],['load','Loading'],['dwell','Dwell'],['unl','Unloading'],['turret','Turret to objective'],['view','Measure']];
-function vField(s){return s.obj===10?1000:250;}
-DEV({id:'vickers',man:'MECH241L §5 Vickers hardness: select the load on the weight knob, dwell 10–15 s, d = (d₁ + d₂)/2, HV = 1.854F/d², report as HV/load (Table 5.1).',sec:'mat',model:'HV',short:'Vickers hardness',name:'Vickers hardness test',full:'Vickers hardness tester with measuring microscope',rigH:440,
-  lede:'Pick the specimen, test force, dwell time and objective, then run the test: the diamond approaches, loads, dwells and lifts, and the turret swings the objective over the indent. Drag the two filar lines onto the indent corners to measure each diagonal.',
-  params:[{id:'mat',label:'Specimen',type:'select',val:'ms',options:Object.keys(VM).map(k=>[k,VM[k].name]),lock:s=>s.ph!=='idle'&&s.ph!=='view'},
-    {id:'F',label:'Test force',type:'seg',num:true,val:10,options:[[1,'1 kgf'],[5,'5 kgf'],[10,'10 kgf'],[20,'20 kgf'],[30,'30 kgf'],[50,'50 kgf']],lock:s=>s.ph!=='idle'&&s.ph!=='view'},
-    {id:'dw',label:'Dwell time',min:5,max:30,step:1,val:15,unit:'s',dec:0,lock:s=>s.ph!=='idle'&&s.ph!=='view'},
-    {id:'obj',label:'Objective',type:'seg',num:true,val:40,options:[[10,'10×'],[40,'40×']]}],
-  init(s){s.ph='idle';s.tp=0;s.ind=null;s.axis=1;s.fl=-60;s.fr=60;s.m={};s.spot=0;srand(7);s.tex=[];for(let i=0;i<260;i++)s.tex.push([rnd(),rnd(),rnd()]);},
-  onParam(s,id){if(id==='mat'||id==='F'){if(s.ph==='view'){s.ph='idle';s.ind=null;s.m={};}}},
-  actions:[{id:'go',primary:true,label:s=>s.ph==='idle'?'Start test':s.ph==='view'?'New indent':'Testing…',dis:s=>s.ph!=='idle'&&s.ph!=='view',fn(s){s.ph='app';s.tp=0;s.ind=null;s.m={};s.spot++;}},
-    {id:'rot',label:s=>'Rotate eyepiece (now d'+s.axis+')',dis:s=>s.ph!=='view',fn(s){s.axis=s.axis===1?2:1;}},
-    {id:'auto',label:'Snap lines to corners',dis:s=>s.ph!=='view',fn(s){const d=(s.axis===1?s.ind.d1:s.ind.d2)*1000;s.fl=-d/2;s.fr=d/2;s.m[s.axis]=d;}}],
-  status:s=>[V_PH.find(p=>p[0]===s.ph)[1]+(s.ph==='dwell'?' '+Math.max(0,s.dw-s.tp).toFixed(0)+' s':''),s.ph==='view'?'ok':s.ph==='idle'?'neutral':'info'],
-  tick(s,dt){if(s.ph==='idle'||s.ph==='view')return false;s.tp+=dt;const dur={app:1.2,load:1.0,dwell:s.dw,unl:0.8,turret:1.0}[s.ph];const sp=s.ph==='dwell'?4:1;s.tp+=dt*(sp-1);
-    if(s.tp>=dur){s.tp=0;const i=V_PH.findIndex(p=>p[0]===s.ph);s.ph=V_PH[i+1][0];if(s.ph==='unl'){const m=VM[s.mat],hv=m.hv*(1+0.02*randn())*(1+0.03*Math.max(0,(10-s.dw)/10));const d=Math.sqrt(1.8544*s.F/hv);s.ind={d1:d*(1+0.008*randn()),d2:d*(1+0.008*randn()),F:s.F,ox:(rnd()-.5)*0.2,oy:(rnd()-.5)*0.2};}
-      if(s.ph==='view'){s.fl=-vField(s)*0.3;s.fr=vField(s)*0.3;}}return true;},
-  rig(ctx,w,h,s){const lw=Math.min(w*0.42,220),cx=lw*0.55,base=h-40;
-    box(ctx,14,base,lw-10,14,C['steel-2'],C.ink);box(ctx,22,40,26,base-40,C.panel,C.ink);box(ctx,22,40,cx+40,40,C.panel,C.ink);
-    const tur=s.ph==='turret'?s.tp/1.0:s.ph==='view'?1:0;const travel=s.ph==='app'?s.tp/1.2*0.85:s.ph==='load'||s.ph==='dwell'?1:s.ph==='unl'?1-s.tp/0.8:0;
-    const sy=base-60,iy=lerp(120,sy-2,travel);const ix=cx+lerp(0,-26,tur),ox=cx+lerp(26,0,tur);
-    box(ctx,cx-34,80,68,20,C['steel-2'],C.ink);poly(ctx,[[ix,100],[ix,iy-12]],C.ink,4);poly(ctx,[[ix-8,iy-12],[ix+8,iy-12],[ix,iy]],C.ink,1,null,C.accent,true);
-    box(ctx,ox-7,100,14,32,C.steel,C.ink);txt(ctx,'objective',ox+10,124,{s:9});
-    box(ctx,cx-40,sy,80,base-sy,C['steel-2'],C.ink);box(ctx,cx-30,sy-8,60,8,'#b9bdb8',C.ink);txt(ctx,'specimen',cx+34,sy-4,{s:9});
-    const Fn=s.ph==='load'?s.F*s.tp:s.ph==='dwell'?s.F:s.ph==='unl'?s.F*(1-s.tp/0.8):0;gauge(ctx,cx,200,22,Fn/30,'load',Fn.toFixed(1)+' kgf');
-    if(s.ph==='dwell')lcd(ctx,22,250,cx+40,24,Math.max(0,s.dw-s.tp).toFixed(0)+' s','dwell');
-    const vx=lw+(w-lw)/2,vy=h/2-10,R=Math.min((w-lw)/2-12,h/2-40);const field=vField(s),ppu=2*R/field;
-    ctx.save();ctx.beginPath();ctx.arc(vx,vy,R,0,PI*2);ctx.clip();ctx.fillStyle='#b9bdb8';ctx.fillRect(vx-R,vy-R,2*R,2*R);
-    s.tex.forEach(([a,b,c])=>{ctx.fillStyle=c>0.5?'rgba(80,84,80,0.16)':'rgba(255,255,255,0.22)';ctx.beginPath();ctx.arc(vx-R+a*2*R,vy-R+b*2*R,1+c*3,0,PI*2);ctx.fill();});
-    if(s.ph==='view'&&s.ind){const ix2=vx+s.ind.ox*R,iy2=vy+s.ind.oy*R;let a=s.ind.d1*1000*ppu/2,b=s.ind.d2*1000*ppu/2;if(s.axis===2){const t=a;a=b;b=t;}
-      poly(ctx,[[ix2-a,iy2],[ix2,iy2-b],[ix2+a,iy2],[ix2,iy2+b]],'#2a2d2a',1.5,null,'#6c706b',true);poly(ctx,[[ix2-a,iy2],[ix2+a,iy2]],'rgba(20,20,20,.45)',1);poly(ctx,[[ix2,iy2-b],[ix2,iy2+b]],'rgba(20,20,20,.45)',1);
-      [s.fl,s.fr].forEach((u,i)=>{const x=ix2+u*ppu;poly(ctx,[[x,vy-R],[x,vy+R]],'#c0451a',1.5);hit(s,x-9,vy-R,18,2*R,i?'drag:R':'drag:L');});s._vx=ix2;s._ppu=ppu;
-      if(a*2>2*R)txt(ctx,'indent larger than field',vx,vy+R-30,{a:'center',c:'#7a1c00',s:11,w:500});}
-    const bar=Math.pow(10,Math.floor(Math.log10(field/3)));poly(ctx,[[vx-R+16,vy+R-18],[vx-R+16+bar*ppu,vy+R-18]],'#111',3);txt(ctx,bar+' µm',vx-R+16,vy+R-30,{c:'#111',s:10});
-    ctx.restore();dot(ctx,vx,vy,R,null,C.ink,3);txt(ctx,s.obj+'× · field '+field+' µm',vx,vy-R-10,{a:'center',s:10});
-    if(s.ph==='view')txt(ctx,'filar reading '+(s.fr-s.fl).toFixed(1)+' µm (d'+s.axis+')',vx,vy+R+16,{a:'center',s:11,c:C.ink,w:500});},
-  onDrag(s,id,x){if(!s._ppu)return;const u=(x-s._vx)/s._ppu;if(id==='drag:L')s.fl=Math.min(u,s.fr-1);else s.fr=Math.max(u,s.fl+1);s.m[s.axis]=s.fr-s.fl;},
-  ro(s){const d1=s.m[1],d2=s.m[2];const hv=d1&&d2?1.8544*s.F/((d1+d2)/2000)**2:null;return [['Test force',f(s.F*G,1),'N'],['Measured d₁',d1?f(d1,1):'—','µm'],['Measured d₂',d2?f(d2,1):'—','µm'],['Hardness',hv?f(hv,0):'—',hv?'HV'+s.F:''],['Est. UTS ≈ 3.3·HV',hv&&VM[s.mat].st?f(3.3*hv,0):'—',hv&&VM[s.mat].st?'MPa':'']];},
-  chartTitle:'Hardness vs test force <small>dashed: handbook value</small>',
-  chart(s){const m=VM[s.mat];return {x:[0,32],y:[0,niceMax(m.hv*1.4)],xl:'test force (kgf)',yl:'HV',series:[{pts:[[0,m.hv],[32,m.hv]],color:C.fit,dash:[5,4],width:1.3},{pts:s.rows.filter(r=>r.d.mat===s.mat).map(r=>[r.d.F,r.d.hv]),kind:'dots',color:C.trace,r:4.5}]};},
-  log:{cols:['Material','Load (kgf)','Dwell (s)','d₁ (mm)','d₂ (mm)','d (mm)','HV','Reported'],btn:'Record indent',
-    row(s){const d1=s.m[1],d2=s.m[2];if(!d1||!d2)return 'Measure both diagonals: set the lines for d1, rotate the eyepiece, then set them for d2.';const hv=1.8544*s.F/((d1+d2)/2000)**2;
-      return {c:[VM[s.mat].name,s.F,s.dw,(d1/1000).toFixed(4),(d2/1000).toFixed(4),((d1+d2)/2000).toFixed(4),hv.toFixed(0),hv.toFixed(0)+' HV/'+s.F],d:{mat:s.mat,F:s.F,hv}};},off:(s,r)=>r.d.mat!==s.mat},
-  result(s){const on=s.rows.filter(r=>r.d.mat===s.mat);if(!on.length)return 'Make three indents per load, at least 3 diagonals apart, and average them.';const mean=on.reduce((a,r)=>a+r.d.hv,0)/on.length;return `Mean of ${on.length}: <b>${mean.toFixed(0)} HV</b> &nbsp; handbook ${VM[s.mat].hv} HV`;},
-  eq:'HV = 2·F·sin(136°/2) / d² = 1.8544·F / d²<br>F in kgf, d = (d₁ + d₂)/2 in mm<br>steels: UTS (MPa) ≈ 3.3 × HV',
-  theory:'The indent is geometrically similar at every load, so HV is nearly load independent. Very short dwell times read slightly high because creep under the indenter is not complete.',
-  proc:['Polish the specimen and place it on the anvil.','Choose the force and dwell; start the test.','After the turret swings, focus and set the filar lines on the corners of d₁.','Rotate the eyepiece 90° and measure d₂.','Calculate HV and repeat at new locations.']});
-
 /* ---- Rotating fatigue HSM19D ---- */
 const FM={steel:{name:'Steel EN8 (080M40)',su:620,sf:1065,b:-0.085,se:280},al:{name:'Aluminium 6082-T6',su:310,sf:517,b:-0.0813,se:0},brass:{name:'Brass CZ121',su:430,sf:757,b:-0.0883,se:0}};
 const F_L=100;
@@ -942,7 +892,7 @@ DEV({id:'fatigue',man:'MECH241L §3 Rotating fatigue (HSM19D): steel, aluminium 
   theory:'Each revolution reverses the bending stress at the neck surface (R = −1). Steels show an endurance limit; aluminium and brass do not. Check the load arm against your lab manual.',
   proc:['Measure the neck diameter and fit the specimen.','Zero the counter, choose the pulley and start the motor.','Apply the dead load W.','Record cycles to failure when the micro switch stops the motor.','Repeat at decreasing loads and plot the S–N curve.']});
 
-/* ---- materials testing in 3D: tensile UTM, pendulum impact, Vickers, rotating fatigue ---- */
+/* ---- materials testing in 3D: tensile UTM, pendulum impact, rotating fatigue ---- */
 (function(){
 const dark=()=>document.documentElement.getAttribute('data-theme')==='dark'||(!document.documentElement.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
 const base=(K,R)=>{const M=K.mat,flM=M('#e9eae6',{r:.9});if(!window.G3_STUDIO)R.add(K.node(K.plane(6,5),flM,{r:[-Math.PI/2,0,0]}));return ()=>{flM.c=dark()?'#4d5258':'#e9eae6';};};
@@ -999,26 +949,6 @@ d.view3d={h:580,cam:{tgt:[0,1.35,0],yaw:0.25,pitch:0.08,dist:3.7},
       frags.forEach((f,i)=>{f.vis=!!s.hit;if(s.hit){const q=(s.frags||[])[i];if(q){f.p=[(i?1:-1)*0.05-q.x/3000*(i?1:-1),Math.max(0.31,0.42-(q.y-q.floor)/3000),0.0+(i?0.15:-0.15)*Math.min(1,Math.abs(q.x)/300)];f.r=[0,0,q.a||0];}else f.p=[(i?1:-1)*0.2,0.31,0];}});
       const pk=s.beta!=null?s.beta:(s.peak||0);pt.r[2]=-(Math.PI/2+Math.min(300,(s.phase==='done'?(d.ro(s).find(r=>r[0]==='Energy (dial)')||[0,'0'])[1]*1:0))/300*Math.PI*1.5)+Math.PI/2;
       tag.el.textContent=s.phase==='swing'?'Swinging':s.phase==='done'?'Read the dial, then brake':loaded?'Specimen on the anvil':'Hammer latched';}};}};})();
-
-/* ===== Vickers hardness tester ===== */
-(function(){const d=DEVMAP.vickers;if(!d)return;
-d.view3d={h:560,cam:{tgt:[0,0.45,0],yaw:0.45,pitch:0.15,dist:1.5},
-  views:{all:{tgt:[0,0.45,0],yaw:0.45,pitch:0.15,dist:1.5},stage:{tgt:[0,0.33,0.08],yaw:0.3,pitch:0.1,dist:0.45}},viewLabels:{all:'Hardness tester',stage:'Indenter + stage'},
-  build(K,s,G){const R=K.group(),M=K.mat,B=(w,h,dd,m,p,o)=>K.node(K.box(w,h,dd),m,Object.assign({p},o||{}));const fl=base(K,R);
-    const body=M('#e6e6e1',{r:.45}),grey=M('#4a4f55',{m:.4,r:.4}),steel=M(MATC.steel,{m:1,r:.25});
-    R.add(B(0.6,0.12,0.45,grey,[0,0.06,0]));R.add(B(0.25,0.75,0.3,body,[0,0.45,-0.12],{pick:'body',tip:'Tester body (dead-weight loading)'}));R.add(B(0.4,0.18,0.3,body,[0,0.82,0.0]));
-    R.add(K.node(K.cyl(0.03,0.03,0.25,16),steel,{p:[0,0.2,0.08]}));const stg=K.group({p:[0,0.33,0.08]});R.add(stg);stg.add(K.node(K.cyl(0.06,0.06,0.02,24),steel,{pick:'stage',tip:'Anvil / elevating stage'}));
-    const spm=K.node(K.cyl(0.025,0.025,0.015,22),M('#b9bec3',{m:1,r:.15}),{p:[0,0.017,0],pick:'stage',tip:'Polished specimen'});stg.add(spm);
-    const tur=K.group({p:[0,0.62,0.08]});R.add(tur);tur.add(K.node(K.cyl(0.07,0.07,0.04,24),grey,{pick:'turret',tip:'Turret: indenter and objectives'}));
-    const ind=K.group({p:[0.05,-0.06,0]});tur.add(ind);ind.add(K.node(K.cyl(0.012,0.012,0.06,12),steel,{p:[0,0,0]}));ind.add(K.node(K.cyl(0.0,0.008,0.012,4),M('#e8f6ff',{m:.2,r:.05}),{p:[0,-0.036,0]}));
-    const obj=K.group({p:[-0.05,-0.05,0]});tur.add(obj);obj.add(K.node(K.cyl(0.015,0.012,0.06,16),M('#222',{m:.5}),{}));
-    R.add(K.node(K.cyl(0.018,0.018,0.2,14),M('#222'),{r:[0.8,0,0],p:[0,0.95,0.1],pick:'rot',tip:'Measuring eyepiece (click to rotate 90°)'}));
-    R.add(K.node(K.cyl(0.03,0.03,0.03,16),M('#2a9d48'),{r:[Math.PI/2,0,0],p:[0.14,0.82,0.155],pick:'go',tip:'START (apply load)'}));
-    const tag=K.label('',R,[0,1.0,0],{cls:'v3tag'});
-    return {root:R,update(s,dt,t){fl();const ph=s.ph||'idle',tp=s.tp||0;let iy=-0.06,tr=0;
-      if(ph==='turret')tr=Math.PI*Math.min(1,tp);else if(ph==='app')iy=-0.06-0.02*Math.min(1,tp/1.2);else if(ph==='load'||ph==='dwell')iy=-0.08-0.004;else if(ph==='unl')iy=-0.08+0.02*Math.min(1,tp/0.8);
-      const atInd=ph==='app'||ph==='load'||ph==='dwell'||ph==='unl';ind.p=[atInd?0:0.05,iy,0];obj.p=[atInd?-0.05:(ph==='view'||ph==='turret'?0:-0.05),-0.05,0];tur.r[1]=tr;
-      tag.el.textContent={idle:'Ready',app:'Approaching',load:'Loading '+s.F+' kgf',dwell:'Dwell',unl:'Unloading',turret:'Turret to objective',view:'Measure the diagonals'}[ph]||ph;}};}};})();
 
 /* ===== rotating bending fatigue ===== */
 (function(){const d=DEVMAP.fatigue;if(!d)return;
@@ -1212,34 +1142,6 @@ DEV({id:'buckling',sec:'solid',model:'Struts',short:'Buckling of struts',name:'E
   proc:['Measure b and t; set the strut length and end fixings.','Zero the dial and load cell.','Wind the screw slowly, recording δ every 5% of the expected P_cr.','Stop when δ grows rapidly.','Plot the Southwell line and compare with Euler.']});
 DEVMAP.buckling.onParam=(s)=>{if(s.rows.length&&s.P===0){s.rows=[];renderTable(DEVMAP.buckling);}};
 
-/* ---- ES kit: springs ---- */
-const ESP={A:{name:'Spring A (light)',k:100},B:{name:'Spring B (stiff)',k:250}};
-function esK(s){const k=ESP[s.sp].k;return s.arr==='single'?k:s.arr==='series'?k/2:2*k;}
-DEV({id:'eskit',sec:'solid',model:'ES kits',short:'ES kit: springs',name:"Hooke's law with spring combinations",full:'Engineering science kit: springs, hanger and slotted masses',
-  lede:"Hang single, series or parallel springs, add slotted masses and watch the hanger bounce and settle. Read the extension on the scale once it is still.",
-  params:[{id:'sp',label:'Spring',type:'seg',val:'A',options:[['A','Spring A'],['B','Spring B']],lock:s=>s.m>0},{id:'arr',label:'Arrangement',type:'seg',val:'single',options:[['single','Single'],['series','Two in series'],['parallel','Two in parallel']],lock:s=>s.m>0}],
-  init(s){s.m=0;s.x=0;s.v=0;s.seq=false;s.tq=0;},
-  actions:[{id:'seq',primary:true,label:s=>s.seq?'Stop sequence':'Run sequence (0 → 500 g)',fn(s){s.seq=!s.seq;s.tq=0;}},{id:'add',label:'Add 50 g',dis:s=>s.seq||s.m>=500,fn(s){s.m+=50;}},{id:'rem',label:'Remove 50 g',dis:s=>s.seq||s.m<=0,fn(s){s.m-=50;}}],
-  status:s=>Math.abs(s.v)>2?['Oscillating','info']:['Settled','ok'],
-  tick(s,dt){const k=esK(s),md=s.m/1000+0.03,c=2*0.04*Math.sqrt(k*md);const n=10,h=dt/n;for(let i=0;i<n;i++){const a=(s.m/1000*G-k*s.x/1000-c*s.v/1000)/md*1000;s.v+=a*h;s.x+=s.v*h;}
-    if(s.seq){s.tq+=dt;if(s.tq>3){s.tq=0;if(s.m>0&&Math.abs(s.v)<3)recordRow(DEVMAP.eskit,true);if(s.m>=500)s.seq=false;else s.m+=50;}}return Math.abs(s.v)>0.01||s.seq;},
-  rig(ctx,w,h,s){const cx=w*0.42,top=40,pxmm=Math.min(2,(h-230)/110),L0=s.arr==='series'?50:80,ext=Math.max(-10,s.x)*pxmm;let yEnd;
-    box(ctx,cx-110,top-14,220,14,C['steel-2'],C.ink);box(ctx,cx-118,top-14,10,h-top-12,C['steel-2'],C.ink);ground(ctx,cx-140,h-26,280);
-    if(s.arr==='single'){springV(ctx,cx,top,top+L0+ext,9,10);yEnd=top+L0+ext;}else if(s.arr==='series'){springV(ctx,cx,top,top+L0+ext/2,9,10);box(ctx,cx-6,top+L0+ext/2,12,6,C.ink);springV(ctx,cx,top+L0+ext/2+6,top+2*L0+ext+6,9,10);yEnd=top+2*L0+ext+6;}
-    else{springV(ctx,cx-22,top,top+L0+ext,9,9);springV(ctx,cx+22,top,top+L0+ext,9,9);box(ctx,cx-34,top+L0+ext,68,6,C.ink);yEnd=top+L0+ext+6;}
-    poly(ctx,[[cx,yEnd],[cx,yEnd+14]],C.ink,2);box(ctx,cx-18,yEnd+14,36,4,C.ink);for(let i=0;i<s.m/50;i++)box(ctx,cx-20,yEnd+18+i*5,40,5,i%2?C.steel:C['steel-2']);
-    const rx=cx+90,y0=top+(s.arr==='series'?2*L0+6:L0)+(s.arr==='parallel'?6:0);box(ctx,rx,top+10,34,h-top-50,C.panel,C.ink);for(let mm=0;mm<=110;mm+=5){const yy=y0+mm*pxmm;if(yy>h-44)break;poly(ctx,[[rx,yy],[rx+(mm%10===0?12:6),yy]],C.ink,1);if(mm%20===0)txt(ctx,String(mm),rx+16,yy,{s:9});}
-    poly(ctx,[[cx+20,yEnd],[rx-2,yEnd]],C.accent,1.5,[3,3]);txt(ctx,s.x.toFixed(1)+' mm',rx+40,yEnd,{c:C.ink,s:12,w:500});txt(ctx,'m = '+s.m+' g',cx-100,h-40,{s:11,c:C.ink});},
-  ro(s){const k=esK(s),F=s.m/1000*G;return [['Load F = m·g',f(F,2),'N'],['Pointer reading',f(s.x,1),'mm'],['Static extension',f(F/k*1000,1),'mm'],['Effective k',f(k,0),'N/m'],['Natural frequency',f(Math.sqrt(k/(s.m/1000+0.03))/2/PI,2),'Hz']];},
-  chartTitle:'Force vs extension',
-  chart(s){const on=s.rows.filter(r=>r.d.sp===s.sp&&r.d.arr===s.arr);return {x:[0,110],y:[0,6],xl:'extension x (mm)',yl:'force F (N)',series:[{pts:[[0,0],[110,esK(s)*0.11]],color:C.fit,dash:[5,4],width:1.3},
-    {pts:s.rows.filter(r=>!(r.d.sp===s.sp&&r.d.arr===s.arr)).map(r=>[r.d.x,r.d.F]),kind:'dots',color:C.muted,alpha:.5,r:3.5},{pts:on.map(r=>[r.d.x,r.d.F]),kind:'dots',color:C.trace,r:4.5}]};},
-  log:{cols:['Spring','Arrangement','m (g)','F (N)','x (mm)'],dis:s=>!s.m,
-    row(s){if(Math.abs(s.v)>3)return 'Wait for the hanger to stop bouncing.';const F=s.m/1000*G;return {c:[s.sp,s.arr,s.m,F.toFixed(2),(s.x+0.3*randn()).toFixed(1)],d:{sp:s.sp,arr:s.arr,F,x:s.x}};},off:(s,r)=>r.d.sp!==s.sp||r.d.arr!==s.arr},
-  result(s){const pts=s.rows.filter(r=>r.d.sp===s.sp&&r.d.arr===s.arr).map(r=>[r.d.x/1000,r.d.F]),k=fit0(pts);if(!k||pts.length<2)return 'Record at least two masses for this arrangement.';return `k_eff = <b>${k.toFixed(0)} N/m</b> &nbsp; theory ${esK(s)} N/m &nbsp; ${pct(k,esK(s))}`;},
-  eq:'F = k·x<br>series: 1/k = 1/k₁ + 1/k₂ &nbsp; parallel: k = k₁ + k₂<br>f = (1/2π)·√(k/m)',
-  theory:'Each added mass sets the hanger oscillating at the spring-mass natural frequency; read the scale only when it has settled.',
-  proc:['Zero the pointer with the empty hanger.','Add 50 g at a time and wait for the bounce to die away.','Read the extension.','Repeat for series and parallel springs and compare stiffness.']});
 /* ---- structures in 3D: truss builder, multi-hanger beams, torsion, buckling, springs ---- */
 (function(){
 const dark=()=>document.documentElement.getAttribute('data-theme')==='dark'||(!document.documentElement.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
@@ -1366,24 +1268,6 @@ d.view3d={h:560,cam:{tgt:[0,1.25,0],yaw:0.35,pitch:0.1,dist:1.9},views:{all:{tgt
       const mid=(s.end==='ff'?1:1)*amp;pl.p=[mid+0.06,Yb+L/2,0];const lv=(s.P||0).toFixed(0)+' N';if(lv!==ll){ll=lv;lcdDraw(lT,lv);}}};}};
 })();
 
-/* ================= SPRINGS (ES kit) ================= */
-(function(){const d=DEVMAP.eskit;if(!d)return;
-d.view3d={h:520,cam:{tgt:[0,1.2,0],yaw:0.3,pitch:0.08,dist:1.2},views:{all:{tgt:[0,1.2,0],yaw:0.3,pitch:0.08,dist:1.2}},viewLabels:{all:'Spring stand'},
-  build(K,s,G){const R=K.group(),M=K.mat,B=(w,h,dd,m,p,o)=>K.node(K.box(w,h,dd),m,Object.assign({p},o||{}));const fl=base(K,R);const TOP=0.82;bench(K,R,B,M,TOP,0.9,0.5);
-    const frame=M('#2b2f33',{m:.4,r:.4}),spM=M('#b9bec3',{m:1,r:.25}),Yt=1.55;R.add(B(0.3,0.02,0.2,frame,[0,TOP+0.01,0]));R.add(B(0.025,Yt-TOP,0.025,frame,[-0.1,(Yt+TOP)/2,0]));R.add(B(0.25,0.025,0.025,frame,[0.0,Yt,0]));
-    const scT=K.tex(64,512,(c,w,h)=>{c.fillStyle='#f6f4e8';c.fillRect(0,0,w,h);c.fillStyle='#111';c.font='16px sans-serif';for(let mm=0;mm<=200;mm+=2){const y=mm/200*(h-10)+5;c.fillRect(0,y,mm%10?10:22,1.5);if(mm%20===0)c.fillText(String(mm),26,y+6);}});
-    R.add(K.node(K.plane(0.04,0.4),M('#fff',{t:scT}),{p:[0.08,Yt-0.32,0.0],pick:'scale',tip:'Scale (mm)'}));
-    const springs=[];const mkS=(x,y0,len)=>{const pts=[];const n=14;for(let i=0;i<=n*12;i++){const a=i/12*Math.PI*2;pts.push([x+Math.cos(a)*0.012,y0-i/(n*12)*len,Math.sin(a)*0.012]);}return pts;};
-    const sp=K.group();R.add(sp);const hang=K.group();R.add(hang);hang.add(B(0.07,0.004,0.004,M('#333'),[0,0,0]));hang.add(K.node(K.cyl(0.002,0.002,0.05,6),M('#333'),{p:[0,-0.025,0]}));
-    const ptr=B(0.03,0.002,0.002,M('#c00'),[0,0,0]);R.add(ptr);const wts=[];for(let i=0;i<10;i++){const w=K.node(K.cyl(0.025,0.025,0.008,16),M(i%2?'#8d939a':'#b0b6bc',{m:1}),{p:[0,-0.055-i*0.009,0],pick:'rem',tip:'50 g slotted mass (click to remove one)'});hang.add(w);wts.push(w);}
-    hang.add(K.node(K.cyl(0.02,0.02,0.004,16),M('#555'),{p:[0,-0.05,0],pick:'add',tip:'Hanger: click to add 50 g'}));
-    let built='',coils=[];
-    return {root:R,update(s,dt,t){fl();const L0=s.arr==='series'?0.05:0.08,ext=(s.x||0)/1000,key=s.arr+'|'+Math.round(ext*1000);
-      const xs=s.arr==='parallel'?[-0.025,0.025]:[0];const tot=s.arr==='series'?2*L0+0.01+ext:L0+ext;
-      if(key!==built){built=key;coils.forEach(c=>sp.kids&&(c.vis=false));coils=[];sp.kids=[];if(s.arr==='series'){const l1=L0+ext/2;sp.add(K.node(K.tube(mkS(0,Yt-0.012,l1),0.0015,5),spM,{pick:'spring',tip:'Two springs in series'}));sp.add(K.node(K.tube(mkS(0,Yt-0.022-l1,l1),0.0015,5),spM,{pick:'spring',tip:'Two springs in series'}));}
-        else xs.forEach(x=>sp.add(K.node(K.tube(mkS(x,Yt-0.012,L0+ext),0.0015,5),spM,{pick:'spring',tip:s.arr==='parallel'?'Two springs in parallel':'Single spring '+s.sp})));}
-      const yb=Yt-0.012-tot;hang.p=[0,yb,0];ptr.p=[0.05,yb,0.005];const n=Math.round((s.m||0)/50);wts.forEach((w,i)=>w.vis=i<n);}};}};
-})();
 })();
 /* ================= VIBRATION ================= */
 /* ---- TM1016V rigid beam and spring (MECH490L §4) ---- */
@@ -4159,7 +4043,6 @@ d.view3d={h:560,cam:{tgt:[0,1.25,0],yaw:0.08,pitch:0.2,dist:1.75},views:{all:{tg
 const MAN={
   tensile:{ref:'MECH241L §1 · Tensile test',eq:['\\sigma=\\dfrac{F}{A_0}','\\varepsilon=\\dfrac{\\Delta L}{L_0}','\\mathrm{FS}=\\dfrac{F_{\\text{fracture}}}{A_f}','\\%\\,\\text{EL}=\\dfrac{L_f-L_0}{L_0}\\times100','\\%\\,\\text{RA}=\\dfrac{A_0-A_f}{A_0}\\times100'],note:'Read \\(E\\), LOP, elastic limit, UYP and LYP, UTS, %EL and %RA from the curve.'},
   charpy:{ref:'MECH241L §4 · Charpy impact',eq:['d_n=d-d_{\\text{notch}}','A=d_n\\,b','K=\\dfrac{E_a}{A}'],note:'V-notch specimen: \\(d_n\\) depth at the notch, \\(b\\) width, \\(E_a\\) energy absorbed (Table 4.2).'},
-  vickers:{ref:'MECH241L §5 · Vickers hardness',eq:['d=\\dfrac{d_1+d_2}{2}','\\mathrm{HV}=\\dfrac{1.854\\,F}{d^{2}}'],note:'Select the load on the weight knob, dwell 10–15 s, report as HV/load (Table 5.1).'},
   fatigue:{ref:'MECH241L §3 · Rotating fatigue (HSM19D)',eq:['\\sigma=\\dfrac{32\\,F\\,L}{\\pi D^{3}}'],note:'Steel, aluminium and brass; Tables 3.2–3.3 and \\(\\log\\sigma\\) against \\(\\log N\\).'},
   torsion:{ref:'MECH241L §2 · Torsion test (PA Hilton)',eq:['\\dfrac{T}{J}=\\dfrac{G\\,\\theta}{L}','J=\\dfrac{\\pi d^{4}}{32}'],note:'Load strictly in the elastic region; Table 2.2: load, torque, HDA200 twist and actual twist.'},
   tm1016v:{ref:'MECH490L §4 · Free and forced vibration',eq:['\\omega_n=\\sqrt{\\dfrac{k}{m}}','f_n=\\dfrac{\\omega_n}{2\\pi}'],note:'Experiment 1 rigid beam and spring with added mass (Table 4.4, holder 0.2 kg + 5 × 400 g); Experiment 2 damping (Table 4.5: undamped, fully open, fully shut; forced vibration in 0.25 Hz steps from speed ratio 0.75, 0.1 Hz near resonance).'},
@@ -4190,13 +4073,11 @@ const T=s=>'\\text{'+s+'}';
 const EQ={
 tensile:['\\sigma=\\dfrac{F}{A_0}','\\varepsilon=\\dfrac{\\Delta L}{L_0}','E=\\dfrac{\\sigma}{\\varepsilon}','\\sigma_{\\max}=\\dfrac{F_{\\max}}{A_0}','\\mathrm{FS}=\\dfrac{F_{\\text{fracture}}}{A_f}','\\%\\,\\text{RA}=\\dfrac{A_0-A_f}{A_0}\\times100','A_0=\\dfrac{\\pi d_0^{2}}{4}\\;'+T(' (round)')+'\\quad A_0=w_0\\,t_0\\;'+T(' (flat)'),'u=\\varepsilon L_0+\\dfrac{F}{k_{\\text{machine}}}\\;'+T(' (crosshead)'),'\\sigma_{0.2}:\\ '+T('curve')+'\\ \\cap\\ \\sigma=E(\\varepsilon-0.002)','\\text{elongation}=\\dfrac{L_f-L_0}{L_0}\\times100\\%'],
 charpy:['E_0=m g R\\,(1-\\cos\\alpha)','E_{\\text{absorbed}}=m g R\\,(\\cos\\beta-\\cos\\alpha)-E_{\\text{friction}}','v_{\\text{impact}}=\\sqrt{2 g R\\,(1-\\cos\\alpha)}',T('Charpy: 3-point bend, 40 mm span; Izod: cantilever, 22 mm above vice')],
-vickers:['\\mathrm{HV}=\\dfrac{2F\\sin(136^{\\circ}/2)}{d^{2}}=\\dfrac{1.8544\\,F}{d^{2}}','d=\\dfrac{d_1+d_2}{2}\\quad'+T('(F in kgf, d in mm)'),'\\text{UTS (MPa)}\\approx3.3\\times\\mathrm{HV}\\;'+T(' (steels)')],
 fatigue:['M=W L\\quad'+T('(L = 100 mm load arm)'),'\\sigma=\\dfrac{32\\,M}{\\pi d^{3}}','\\sigma_a=\\sigma_f\'\\,(2N_f)^{b}\\;'+T(' (Basquin)')],
 torsion:['\\dfrac{T}{J}=\\dfrac{\\tau}{r}=\\dfrac{G\\,\\theta}{L}','J=\\dfrac{\\pi d^{4}}{32}','T_y=\\dfrac{\\tau_y J}{R}','T_p=\\dfrac{2\\pi}{3}\\,\\tau_y R^{3}=\\dfrac{4}{3}\\,T_y'],
 frameworks:['\\sum F_x=0,\\ \\sum F_y=0\\;'+T(' at every joint'),'F=\\varepsilon E A','A=28.3\\ \\text{mm}^{2}\\;'+T(' (Ø6 steel)'),'m+r=2j\\;'+T(' (statically determinate)')],
 beams:['I=\\dfrac{b h^{3}}{12}','\\delta=\\dfrac{P a\\,(3L^{2}-4a^{2})}{48EI}\\;'+T(' simply supported, gauge at midspan (a ≤ L/2)'),'\\delta=\\dfrac{P a^{2}(3L-a)}{6EI}\\;'+T(' cantilever, gauge at tip'),'\\sigma_{\\max}=\\dfrac{M\\,(h/2)}{I}'],
 buckling:['P_{cr}=\\dfrac{\\pi^{2}E I}{L_e^{2}}','I=\\dfrac{b t^{3}}{12}','L_e=K L\\quad(K=1,\\ 0.7,\\ 0.5)','\\delta=\\dfrac{a_0\\,(P/P_{cr})}{1-P/P_{cr}}','\\dfrac{\\delta}{P}=\\dfrac{\\delta}{P_{cr}}+\\dfrac{a_0}{P_{cr}}\\;'+T(' (Southwell)')],
-eskit:['F=k x','\\dfrac{1}{k}=\\dfrac{1}{k_1}+\\dfrac{1}{k_2}\\;'+T(' (series)'),'k=k_1+k_2\\;'+T(' (parallel)'),'f=\\dfrac{1}{2\\pi}\\sqrt{\\dfrac{k}{m}}'],
 tm1016v:['I_A=I_{\\text{beam}}+I_{\\text{exciter}}+I_{\\text{spring}}\\,(+I_{\\text{damper}})','I_{\\text{beam}}=\\tfrac13 m l^{2}=0.365\\ \\text{kg·m}^{2}','I_{\\text{spring}}=\\left(\\dfrac{m_s}{3}+m_{\\text{fix}}\\right)l_s^{2}=0.123\\ \\text{kg·m}^{2}','I_{\\text{exciter}}=m\\,l_e^{2}','f=\\dfrac{1}{2\\pi}\\sqrt{\\dfrac{k\\,l_s^{2}}{I_A}}','\\gamma=\\dfrac{c\\,l_d^{2}}{2I_A}','\\zeta=\\dfrac{c}{c_c}=\\dfrac{\\delta}{\\sqrt{4\\pi^{2}+\\delta^{2}}}','\\delta=\\ln\\dfrac{x_n}{x_{n+1}}'],
 whirling:['\\omega_s=\\pi^{2}\\sqrt{\\dfrac{E I}{\\rho A L^{4}}}','\\omega_d=\\sqrt{\\dfrac{48\\,E I}{M L^{3}}}','\\dfrac{1}{\\omega_c^{2}}=\\dfrac{1}{\\omega_s^{2}}+\\dfrac{1}{\\omega_d^{2}}'],
 h8:['F\\cdot0.15=M g y\\ \\Rightarrow\\ F=39.24\\,y\\quad(M=0.6\\ \\text{kg})','\\dot m=\\rho A u\\ \\Rightarrow\\ u=\\dfrac{\\dot m}{0.07854}','u_0^{2}=u^{2}-2gs=u^{2}-0.6867','F=\\dot m\\,u_0\\,(1-\\cos\\beta)\\;'+T(' (symmetrical)'),'F_p=\\dot m u_0\\cos\\beta,\\quad F_x=\\dot m u_0\\cos^{2}\\beta\\;'+T(' (asymmetrical, β = 30°)')],
@@ -4787,12 +4668,6 @@ if(has('charpy')){const d=DEVMAP.charpy;const key=s=>[s.type,s.mat,s.notch,s.B].
         f:(p,r)=>p[0]+p[1]*Math.tanh((r.T-p[2])/p[3]),
         derive:(p,s)=>{const m=IM[s.mat];return [{label:'Transition temperature T₀ (mid energy)',v:p[2],unit:'°C',ref:m.T0,refLabel:m.name},{label:'Upper shelf',v:p[0]+p[1],unit:'J',ref:m.up},{label:'Lower shelf',v:p[0]-p[1],unit:'J',ref:m.lo},{label:'T at 27 J (T27J)',v:(()=>{const x=(27-p[0])/p[1];return Math.abs(x)<1?p[2]+p[3]*Math.atanh(x):NaN;})(),unit:'°C'}];}}]};}
 
-/* spring kit (Engineering Science): stiffness */
-if(has('eskit')){const d=DEVMAP.eskit;
-  d.lab={cols:[{id:'x',label:'Extension x',unit:'mm'},{id:'F',label:'Force F',unit:'N'}],bench:s=>s.rows.filter(r=>r.d.sp===s.sp&&r.d.arr===s.arr&&r.d.x!=null).map(r=>({x:r.d.x,F:r.d.F})),
-    setup:s=>[['Spring',s.sp,''],['Arrangement',s.arr,'']],
-    models:[LIN('hk','Hooke’s law with preload: F = F₀ + k·x','x','F',{eq:'F = F_0 + k\\,x',params:[{id:'F0',label:'Preload F₀',unit:'N',guess:r=>linfit2(r,'x','F')[1]},{id:'k',label:'Stiffness k',unit:'N/mm',guess:r=>linfit2(r,'x','F')[0]}],derive:p=>[{label:'Stiffness k',v:p[1]*1000,unit:'N/m'},{label:'Preload F₀',v:p[0],unit:'N'}]})]};}
-
 /* hydrostatic pressure (H11): fluid density from the balance */
 if(has('h11')){const d=DEVMAP.h11;
   d.lab={cols:[{id:'h',label:'Water depth h',unit:'m'},{id:'M',label:'Balancing moment M',unit:'N·m'}],bench:s=>s.rows.filter(r=>r.d.M!=null&&r.d.h!=null).map(r=>({h:r.d.h,M:r.d.M})),
@@ -4825,13 +4700,6 @@ if(has('wind')){const d=DEVMAP.wind;
         note:'Sweep the rheostat through the peak. Maximum power is delivered when R = R_i.',
         params:[{id:'V',label:'Open-circuit EMF V_oc',unit:'V',guess:r=>{const m=r.reduce((a,q)=>q.P>a.P?q:a,{P:0,R:10});return Math.sqrt(4*m.R*m.P/1000);}},{id:'Ri',label:'Internal resistance R_i',unit:'Ω',guess:r=>r.reduce((a,q)=>q.P>a.P?q:a,{P:0,R:10}).R}],
         f:(p,r)=>1000*p[0]*p[0]*r.R/((r.R+Math.abs(p[1]))**2),derive:p=>[{label:'Open-circuit EMF V_oc',v:Math.abs(p[0]),unit:'V'},{label:'Internal resistance R_i',v:Math.abs(p[1]),unit:'Ω'},{label:'Maximum power V_oc²/(4R_i)',v:1000*p[0]*p[0]/(4*Math.abs(p[1])),unit:'mW'}]}]};}
-
-/* Vickers: indentation size effect */
-if(has('vickers')){const d=DEVMAP.vickers;
-  d.lab={cols:[{id:'F',label:'Test load F',unit:'kgf'},{id:'HV',label:'Hardness HV',unit:''}],bench:s=>s.rows.filter(r=>r.d.mat===s.mat).map(r=>({F:r.d.F,HV:r.d.hv})),
-    setup:s=>[['Material',VM[s.mat].name,'']],
-    models:[MEAN('m','Mean hardness','F','HV','Mean HV','HV',s=>VM[s.mat].hv),{id:'ise',name:'Indentation size effect: HV = HV∞ + b/F',eq:'HV = HV_\\infty + \\dfrac{b}{F}',x:'F',y:'HV',zero:false,params:[{id:'H',label:'Macro-hardness HV∞',unit:'HV',guess:r=>r.reduce((t,q)=>t+q.HV,0)/r.length},{id:'b',label:'b',unit:'HV·kgf',guess:()=>0}],f:(p,r)=>p[0]+p[1]/r.F,
-      derive:(p,s)=>[{label:'Load-independent hardness HV∞',v:p[0],unit:'HV',ref:VM[s.mat].hv},{label:'Size-effect term b',v:p[1],unit:'HV·kgf',ref:0}]}]};}
 
 /* heat exchangers (TD360): overall coefficient */
 if(has('td360')){const d=DEVMAP.td360;
@@ -5201,16 +5069,6 @@ window.kit4=function(K){const refs={};const k=window.kit3(K),{M,B,Cy,Cz,Cx,RB}=k
   return k;};
 const D=(o)=>NEW3D.push(Object.assign({s:{}},o));
 
-/* ---- 3. Vickers hardness tester with microscopes ---- */
-D({id:'vickers',name:'Vickers Hardness Tester',photo:3,view3d:{h:560,cam:{tgt:[0,1.15,0],yaw:0.35,pitch:0.18,dist:2.4},shadow:{c:[0,1.1,0],r:1.8},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,bench,blk,steel,white}=k,R=K.group();floor(R);bench(R,2.2,1.0,0.9,0,0);k.pod(R,1.8,0,-0.35);
-  const g=K.group({p:[0,0.9,0.05]});R.add(g);refs.g=g;
-  g.add(RB(0.24,0.1,0.44,0.02,white,[0,0.05,0],{r:[0,PI/2,0]}));g.add(RB(0.2,0.5,0.16,0.03,white,[0,0.33,-0.13],{r:[0,PI/2,0]}));g.add(RB(0.22,0.16,0.34,0.03,white,[0,0.56,-0.04],{r:[0,PI/2,0]}));g.add(B(0.14,0.04,0.004,M('#2a2c2f'),[0,0.58,0.132]));
-  g.add(Cy(0.03,0.07,blk,[0,0.445,0.06]));g.add(Cy(0.012,0.03,steel,[0,0.4,0.06]));/* turret + indenter */
-  g.add(Cy(0.025,0.14,M('#2a2c2f',{m:.6,r:.4}),[0,0.2,0.06]));g.add(Cy(0.07,0.02,blk,[0,0.275,0.06],30));g.add(Cy(0.05,0.03,M('#33363a',{m:.5}),[0,0.14,0.06],24));
-  g.add(K.node(K.prismX([[0.12,0.0],[-0.02,0.0],[-0.02,0.26],[0.08,0.2]],-0.1,0.1),white,{p:[0,0,0.2]}));g.add(K.node(K.plane(0.15,0.13),M('#fff',{t:k.screen(),e:'#0b1016',r:.2}),{p:[0,0.105,0.305],r:[-0.55,0,0]}));
-  const scope=(x,ry)=>{const q=K.group({p:[x,0.9,0.1],r:[0,ry,0]});R.add(q);q.add(RB(0.2,0.05,0.28,0.02,white,[0,0.025,0],{r:[0,PI/2,0]}));q.add(RB(0.08,0.3,0.1,0.02,white,[0,0.18,-0.09],{r:[0,PI/2,0]}));q.add(RB(0.14,0.1,0.2,0.03,white,[0,0.33,-0.02],{r:[0,PI/2,0]}));q.add(B(0.16,0.012,0.16,blk,[0,0.17,0.03]));q.add(Cy(0.022,0.06,blk,[0,0.25,0.03]));[-0.03,0.03].forEach(a=>q.add(K.node(K.cyl(0.016,0.016,0.1,12),blk,{p:[a,0.41,0.08],r:[0.8,0,0]})));q.add(Cx(0.025,0.14,blk,[0,0.1,-0.09],16));};scope(-0.62,0.4);scope(0.62,-0.5);
-  K.label('Indenter + objectives',g,[0.16,0.44,0.06]);K.label('Test stage',g,[0.14,0.28,0.1]);K.label('Microscope',R,[0.62,1.38,0.1]);return {root:R,refs,update(){}};}}});
-
 /* ---- 5. Muffle furnace ---- */
 D({id:'furnace',name:'Muffle Furnace',photo:5,view3d:{h:560,cam:{tgt:[0,1.2,0],yaw:0.4,pitch:0.16,dist:2.5},shadow:{c:[0,1.1,0],r:1.7},build(K){const refs={};const k=kit4(K),{M,B,Cy,Cz,Cx,RB,floor,blk,steel}=k,R=K.group();floor(R);k.stable(R,1.2,0.8,0.82);
   const g=K.group({p:[0,0.82,0]});R.add(g);refs.g=g;const beige=M('#d8d2c6',{r:.6}),base=M('#aeb0b0',{r:.55});
@@ -5545,7 +5403,7 @@ NEW3D.push({id:'h314b',name:'Hare’s Tube (H314B)',photo:33,s:{},view3d:{h:560,
 /* Interaction layer: makes the fluid, control and test rigs operable. */
 (function(){const PI=Math.PI,by=id=>NEW3D.find(d=>d.id===id),clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const DROP=['furnace'];for(let i=NEW3D.length-1;i>=0;i--)if(DROP.includes(NEW3D[i].id))NEW3D.splice(i,1);
-const SEC={vickers:'Material testing',h8:'Fluid mechanics',h314b:'Fluid mechanics',shear:'Material testing',sieve:'Material testing',utm:'Material testing',charpy:'Material testing',torsion:'Solid mechanics',fatigue:'Solid mechanics',truss:'Solid mechanics',bending:'Solid mechanics',buckling:'Solid mechanics',beams:'Solid mechanics',frameworks:'Solid mechanics',steam:'Thermodynamics',refrig:'Thermodynamics',hx:'Thermodynamics',heat:'Thermodynamics',wind:'Fluid mechanics',pumps:'Fluid mechanics',pipes:'Fluid mechanics',hydro:'Fluid mechanics',cop:'Fluid mechanics',manometer:'Fluid mechanics',plc:'Control and process',process:'Control and process',windenergy:'Control and process',rotor:'Vibration',vibration:'Vibration'};
+const SEC={h8:'Fluid mechanics',h314b:'Fluid mechanics',shear:'Material testing',sieve:'Material testing',utm:'Material testing',charpy:'Material testing',torsion:'Solid mechanics',fatigue:'Solid mechanics',truss:'Solid mechanics',bending:'Solid mechanics',buckling:'Solid mechanics',beams:'Solid mechanics',frameworks:'Solid mechanics',steam:'Thermodynamics',refrig:'Thermodynamics',hx:'Thermodynamics',heat:'Thermodynamics',wind:'Fluid mechanics',pumps:'Fluid mechanics',pipes:'Fluid mechanics',hydro:'Fluid mechanics',cop:'Fluid mechanics',manometer:'Fluid mechanics',plc:'Control and process',process:'Control and process',windenergy:'Control and process',rotor:'Vibration',vibration:'Vibration'};
 NEW3D.forEach(d=>d.sec=SEC[d.id]||'Other');
 function wrap(id,o,fn){const d=by(id);if(!d)return;Object.assign(d,o);d.live=true;const b0=d.view3d.build;d.view3d.build=(K,s,st)=>{const sc=b0(K,d.s,st);const u=fn(K,d.s,sc.refs,sc.root,d);if(u)sc.update=u;return sc;};}
 const each=(n,f)=>{f(n);(n.kids||[]).forEach(k=>each(k,f));};
@@ -6851,46 +6709,6 @@ LAB.def({id:'hsm19d',on3d:'fatigue',title:'HSM19D Rotating Fatigue Machine',manu
  sync(s,s3){if(!s3)return;s3.W=Math.max(10,Math.min(80,Math.round(s.F/3)));s3.on=s.on;s3.broke=s.broke;s3.N=s.N;}
 });})();
 
-/* =====================================================================================
-   Vickers · "Vickers Microhardness Testing System.pdf"
-   ===================================================================================== */
-(function(){
-const SPEC={A:['Specimen A',148],B:['Specimen B',112],C:['Specimen C',92],D:['Specimen D',640],E:['Specimen E',196]};
-const LOADS=[1,2,3,5,10,20,30,50];
-LAB.def({id:'vickers',on3d:'vickers',title:'Vickers Hardness Tester',manual:'Vickers Microhardness Testing System.pdf · MECH241L',
- about:'A square-based diamond pyramid (136° between opposite faces) is pressed into the specimen under the selected load for the dwell time. The indentation is projected on the front screen and its two diagonals are measured.',
- constants:['d = (d1 + d2)/2 (Eq 5.1); HV = 1.854 F / d² with F in kgf and d in mm (Eq 5.2).','Loads 1 to 120 kgf; full load normally held 10 to 15 s.','Gap of about 0.2 to 0.25 mm between the indenter tip and the specimen when focused.','Report as, e.g., 800 HV/10.'],
- assume:['Load knob settings 1, 2, 3, 5, 10, 20, 30 and 50 kgf.','Specimens A–E are unknown samples (about 148, 112, 92, 640 and 196 HV) for you to identify from datasheets. Diagonal readings ±0.4%.'],
- issues:['The title says microhardness (loads of 1 kgf and below) but the procedure uses 1 to 120 kgf, which is macrohardness by the manual’s own definition.'],
- init:()=>({spec:'A',load:10,placed:false,gap:2,dwell:5,phase:'idle',t:0,ind:null,indexed:false,d1:null,d2:null,used:[],pos:0}),
- step(s,dt){if(s.phase==='load'||s.phase==='dwell'||s.phase==='unload'){s.t+=dt;if(s.phase==='load'&&s.t>4){s.phase='dwell';s.t=0;}else if(s.phase==='dwell'&&s.t>s.dwell){s.phase='unload';s.t=0;}else if(s.phase==='unload'&&s.t>3){s.phase='idle';
-   const hv=SPEC[s.spec][1]*(s.dwell<10?1.03:1)*jit(1,0.015);s.ind={d:Math.sqrt(1.8544*s.load/hv),hv,load:s.load,pos:s.pos,near:s.used.includes(s.pos)};s.used.push(s.pos);s.indexed=false;s.d1=s.d2=null;LAB.msg('Loading cycle complete.');}}},
- controls:[sel('spec','Specimen',Object.keys(SPEC).map(k=>[k,SPEC[k][0]]),'Specimen',{set:(s,v)=>{s.spec=v;s.placed=false;s.used=[];s.ind=null;}}),sel('load','Weight selection knob',LOADS.map(l=>[l,l+' kgf']),'Load'),
-   tog('placed','Specimen placed securely on the testing table','Specimen','Placed','Not placed'),rng('gap','Hand wheel: indenter gap',0,3,0.01,'mm',2,'Focus'),rng('dwell','Dwell timer',5,30,1,'s',0,'Load'),
-   btn('START (press and hold)',s=>{if(!s.placed){LAB.msg('Place the specimen first.');return;}if(s.indexed){LAB.msg('Index the head back to the indenter first.');return;}if(s.gap<0.15){LAB.msg('Too close: the indenter would touch the specimen. Turn the hand wheel back.');return;}if(s.gap>0.3){LAB.msg('Not focused: bring the specimen up until it is sharp on the screen (gap 0.2–0.25 mm).');return;}s.phase='load';s.t=0;},'Test'),
-   btn('Index the head (objective over the indentation / back to indenter)',s=>{if(s.phase==='idle')s.indexed=!s.indexed;},'Test'),
-   btn('Measure diagonal d1 on the screen',s=>{if(s.indexed&&s.ind)s.d1=s.ind.d*jit(1,0.004);},'Measure'),btn('Measure diagonal d2 on the screen',s=>{if(s.indexed&&s.ind)s.d2=s.ind.d*jit(1,0.004);},'Measure'),
-   btn('Move the specimen to a new position',s=>{s.pos++;},'Specimen')],
- readings:[rd('ph','Cycle','',0,s=>({idle:'Ready',load:'Loading',dwell:'Dwell',unload:'Unloading'})[s.phase],0,{cal:false}),rd('focus','Screen focus','',0,s=>Math.abs(s.gap-0.225)<0.03?'Sharp':Math.abs(s.gap-0.225)<0.15?'Slightly blurred':'Blurred',0,{cal:false}),
-   rd('d1','Diagonal d1','mm',4,s=>s.d1,0),rd('d2','Diagonal d2','mm',4,s=>s.d2,0),rd('L','Load','kgf',0,s=>s.load,0,{cal:false})],
- warnings:[{when:s=>s.ind&&s.ind.near,msg:'This indentation is next to an earlier one: move the specimen to a new position and repeat.'},{when:s=>s.dwell<10||s.dwell>15,msg:'The full load is normally applied for 10 to 15 seconds.',level:'info'}],
- instPanel:s=>{if(!s.indexed||!s.ind)return '';const z=Math.min(1,0.14/s.ind.d);const a=s.ind.d*z*400;return `<div class="lb-trace"><b>Front focusing screen</b><svg viewBox="0 0 240 240" style="max-width:240px;background:#e9eaec;border-radius:50%"><g transform="translate(120 120) rotate(45)"><rect x="${-a/2}" y="${-a/2}" width="${a}" height="${a}" fill="#55585e" stroke="#222"/><line x1="${-a/2}" y1="${-a/2}" x2="${a/2}" y2="${a/2}" stroke="#ddd" stroke-width="0.6"/><line x1="${a/2}" y1="${-a/2}" x2="${-a/2}" y2="${a/2}" stroke="#ddd" stroke-width="0.6"/></g>${s.ind.near?'<rect x="20" y="40" width="40" height="40" transform="rotate(45 40 60)" fill="#8a8d93"/>':''}</svg></div>`;},
- panelKey:s=>s.indexed+':'+(s.ind&&s.ind.d),
- experiments:[{id:'hv1',title:'Vickers hardness (Table 5.1)',aim:'Measure the Vickers hardness of different specimens under various loads and identify the materials.',steps:[
-   {t:'Select the weight according to the expected hardness with the weight selection knob.'},{t:'Place the specimen securely on the testing table.',check:s=>s.placed},
-   {t:'Turn the hand wheel slowly until the specimen is sharply focused on the screen (gap about 0.2 to 0.25 mm).',check:s=>Math.abs(s.gap-0.225)<0.03},
-   {t:'Adjust the dwell timer for the required duration (10–15 s).',check:s=>s.dwell>=10&&s.dwell<=15},
-   {t:'Press START; the loading, dwell and unloading cycle is automatic.',check:s=>!!s.ind},
-   {t:'Index the indenter head so the objective is over the indentation.',check:s=>s.indexed},
-   {t:'Measure the diagonal of the impression in both axes and find the mean.',rec:true,check:(s,R)=>R.length>=1},
-   {t:'For the next test, move the specimen, check no earlier indentation is near, index back and repeat steps 1–7.',rec:true,check:(s,R)=>R.length>=4},
-   {t:'Test different specimens under various loads and identify each material from datasheets.',check:(s,R)=>new Set(R.map(r=>r.m)).size>=3&&new Set(R.map(r=>r.F)).size>=2}],
-  table:[col('m','Material','',0,(v,s)=>SPEC[s.spec][0]),col('F','Load','kgf',0,(v,s)=>s.ind?s.ind.load:s.load),col('d1','d1','mm',4,v=>v.d1),col('d2','d2','mm',4,v=>v.d2),{k:'d',label:'d','unit':'mm',dp:4},{k:'HV',label:'HV',unit:'',dp:0},{k:'rep',label:'Reported as',unit:'',dp:0}],
-  calc:[r=>{const d=(r.d1+r.d2)/2,HV=1.854*r.F/(d*d);return {d,HV,rep:Math.round(HV)+' HV/'+r.F};}],
-  guard:s=>!s.ind?'Make an indentation first.':s.d1==null||s.d2==null?'Measure both diagonals d1 and d2.':s.ind.near?'This indentation is too close to an earlier one; it should not be used.':null,
-  summary:R=>{const m={};R.forEach(r=>{(m[r.m]=m[r.m]||[]).push(r.HV);});return Object.keys(m).map(k=>[k+' (average of '+m[k].length+')',(m[k].reduce((a,b)=>a+b,0)/m[k].length).toFixed(0)+' HV']);},charts:[]}],
- sync(){}
-});})();
 
 })();
 
@@ -7060,7 +6878,7 @@ LAB.plc={parse,scan,newMem};
 (function(){
 if(typeof DEVMAP==='undefined'||!window.LAB)return;
 const MAP={h52:'h52',h11:'h11',bernoulli:'venturi',h314:'h314',h8:'h8',h16:'h16',tm1016v:'tm1016v',td360:'td360',td1002:'td1002',td1060v:'td1060v',
-  tensile:'utm',charpy:'charpy',vickers:'vickers',fatigue:'hsm19d',torsion:'torsion',plc:'ce111'};
+  tensile:'utm',charpy:'charpy',fatigue:'hsm19d',torsion:'torsion',plc:'ce111'};
 /* the hydraulic bench flow follows the lab simulation while lab manual mode is on */
 let LQ={};['h8','bernoulli','h16'].forEach(k=>{const o=BFN[k];BFN[k]=()=>{if(LAB.cur&&LAB.d3&&LAB.d3.d===DEVMAP[k]&&LQ[k]!=null)return LQ[k];return o?o():BQ[k]*Math.pow(BENCH.v/100,0.8);};});
 const act=(d,id)=>{const a=(d.actions||[]).find(x=>x.id===id);if(a)try{a.fn(d.s,d);}catch(e){}};
@@ -7080,7 +6898,6 @@ const BR={
  charpy(L,b,br){b.mat={ms:'c1018',al:'al',br:'s355',ci:'ci'}[L.met]||'c1018';b.type='charpy';
    if(br.st!==L.st){if(L.st==='up'&&b.phase==='done')act(this,'brake');if(L.st==='swing'){b.loaded=!!L.placed||L.broken;act(this,'rel');}br.st=L.st;}
    if(br.placed!==L.placed){if(L.placed&&!b.loaded)act(this,'load');br.placed=L.placed;}},
- vickers(L,b,br){b.mat={A:'ms',B:'brass',C:'cu',D:'ts',E:'ms'}[L.spec];const F=[1,5,10,20,30,50];b.F=F.reduce((a,x)=>Math.abs(x-L.load)<Math.abs(a-L.load)?x:a);b.dw=cl(L.dwell,5,30);if(br.ph!==L.phase){if(L.phase==='load'&&(b.ph==='idle'||b.ph==='view'))act(this,'go');br.ph=L.phase;}},
  fatigue(L,b){b.mat={st:'steel',al:'al',br:'brass'}[L.mat];b.run=!!L.on;b.N=L.N;b.done=L.broke?'frac':null;},
  torsion(L,b){b.mat={st:'steel',al:'al',br:'brass'}[L.mat];b.d=L.d;b.L=L.L;b.th=L.tw;b.run=false;b.brk=false;},
  plc(L){PLC.power=true;PLC.run=false;PLC.ext=L.mode==='EXTERNAL';PLC.umb=true;PLC.leads=true;for(let i=0;i<8;i++)PLC.X[i]=L.X[i]?1:0;for(let i=0;i<6;i++){PLC.Y[i]=L.Y[i]?1:0;PLC.out[i]=L.act[i]?1:0;}
@@ -7088,7 +6905,7 @@ const BR={
 };
 /* ---------- the new 3D models (M3D) on the benches ---------- */
 const M3=window.M3D||[];const m3=id=>M3.find(x=>x.id===id);
-const V3={h52:'pumps',h16:'pipes',h314:'hydro',h11:'cop',bernoulli:'manometer',h8:'h8',plc:'plc',tensile:'utm',charpy:'charpy',vickers:'vickers',tm1016v:'vibration',torsion:'torsion',fatigue:'fatigue',
+const V3={h52:'pumps',h16:'pipes',h314:'hydro',h11:'cop',bernoulli:'manometer',h8:'h8',plc:'plc',tensile:'utm',charpy:'charpy',tm1016v:'vibration',torsion:'torsion',fatigue:'fatigue',
   td1060v:'steam',td360:'hx',td1002:'heat',windtunnel:'wind',wind:'windenergy',whirling:'rotor',frameworks:'frameworks',beams:'beams',buckling:'buckling',ce117:'process'};
 Object.keys(V3).forEach(bid=>{const d=DEVMAP[bid],m=m3(V3[bid]);if(!d||!m||!m.view3d)return;const v=m.view3d;
   d.view3d=Object.assign({},v,{views:undefined,viewLabels:undefined,xray:false,build(K,s,st){const sc=v.build.call(v,K,m.s,st);m._refs=sc.refs;return sc;}});d._m3d=m;d._had3d=false;});
